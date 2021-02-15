@@ -1,0 +1,14 @@
+{
+  "name": "containment",
+  "version": "0.0.1",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Max Kelly"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {}
+}
