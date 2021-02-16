@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Start from './pages/Start';
-import './App.global.scss';
+import './App.global.css';
 
 const App: React.FC = () => {
   return (
