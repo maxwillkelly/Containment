@@ -8,8 +8,8 @@ const Start: React.FC = () => {
         <h1 className="py-12 text-5xl font-bold dark:text-gray-200 text-center">
           Containment
         </h1>
-        <MenuItem name="New Game" path="/game" />
-        <MenuItem name="Load Game" path="/" />
+        <MenuItem name="New Game" path="/new-game" />
+        <MenuItem name="Load Game" path="/load-game" />
         <MenuItem name="Settings" path="/settings" />
         <MenuItem name="Exit" />
       </div>
