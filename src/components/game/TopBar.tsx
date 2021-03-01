@@ -1,6 +1,13 @@
 import React from 'react';
-// import { Link } from 'react-router-dom';
-import { GiPauseButton, GiStoneCrafting } from 'react-icons/gi';
+import {
+  GiPauseButton,
+  GiPlayButton,
+  GiPositionMarker,
+  GiProgression,
+  GiStoneCrafting,
+  GiTestTubes,
+} from 'react-icons/gi';
+
 import useGameStore from '../../stores/GameStore';
 
 const PauseButton: React.FC = () => {
@@ -52,6 +59,38 @@ const ReproductionIndicator: React.FC = () => {
   );
 };
 
+const MapSettingsButton: React.FC = () => {
+  return (
+    <button className="shadow p-3" type="button">
+      <GiPositionMarker className="dark:text-gray-200 text-3xl" />
+    </button>
+  );
+};
+
+const ResearchButton: React.FC = () => {
+  return (
+    <button className="shadow p-3" type="button">
+      <GiTestTubes className="dark:text-gray-200 text-3xl" />
+    </button>
+  );
+};
+
+const DashboardButton: React.FC = () => {
+  return (
+    <button className="shadow p-3" type="button">
+      <GiProgression className="dark:text-gray-200 text-3xl" />
+    </button>
+  );
+};
+
+const AdvanceTurnButton: React.FC = () => {
+  return (
+    <button className="shadow p-3" type="button">
+      <GiPlayButton className="dark:text-gray-200 text-3xl" />
+    </button>
+  );
+};
+
 const TopBar: React.FC = () => {
   return (
     <nav className="mx-auto dark:bg-gray-700 dark:text-gray-200">
@@ -61,6 +100,11 @@ const TopBar: React.FC = () => {
         <NationalApproval />
         <BudgetIndicator />
         <div className="mr-auto" />
+        <ReproductionIndicator />
+        <MapSettingsButton />
+        <ResearchButton />
+        <DashboardButton />
+        <AdvanceTurnButton />
       </div>
     </nav>
   );
