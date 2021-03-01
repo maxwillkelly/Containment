@@ -230,7 +230,8 @@
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.5",
     "source-map-support": "^0.5.19",
-    "xstate": "^4.16.2"
+    "xstate": "^4.16.2",
+    "zustand": "^3.3.3"
   },
   "devEngines": {
     "node": ">=10.x",
