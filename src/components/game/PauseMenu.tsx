@@ -1,15 +1,15 @@
 import React from 'react';
-// import { StateMachine } from 'xstate';
-// import { GameStateEvents, GameStateSchema } from '../../interfaces/IGameState';
-
-// interface Props {
-//   gameMachine: StateMachine<null, GameStateSchema, GameStateEvents>;
-// }
+import useGameStore from '../../stores/GameStore';
 
 const PauseMenu: React.FC = () => {
+  const togglePause = useGameStore((state) => state.togglePause);
+
   return (
     <div>
       <h1>Paused</h1>
+      <button type="button" onClick={() => togglePause()}>
+        Unpause
+      </button>
     </div>
   );
 };
