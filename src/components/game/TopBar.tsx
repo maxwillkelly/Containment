@@ -8,9 +8,7 @@ const PauseButton: React.FC = () => {
 
   return (
     <button className="p-3" type="button" onClick={() => togglePause()}>
-      {/* <Link className="p-3" to="/"> */}
-      <GiPauseButton className="text-2xl" />
-      {/* </Link> */}
+      <GiPauseButton className="dark:text-gray-200 text-2xl" />
     </button>
   );
 };
