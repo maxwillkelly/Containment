@@ -83,6 +83,18 @@ const DashboardButton: React.FC = () => {
   );
 };
 
+const ImmunityBar: React.FC = () => {
+  return (
+    <button className="px-3" type="button">
+      <div className="h-3 w-32 relative rounded-full overflow-hidden">
+        <div className="w-full h-full dark:bg-gray-200 absolute" />
+        <div className="transition-all ease-out duration-1000 bg-green-500 relative w-0" />
+      </div>
+      <h6 className="text-xs">Immunity Bar</h6>
+    </button>
+  );
+};
+
 const AdvanceTurnButton: React.FC = () => {
   return (
     <button className="p-3" type="button">
@@ -104,6 +116,7 @@ const TopBar: React.FC = () => {
         <MapSettingsButton />
         <ResearchButton />
         <DashboardButton />
+        <ImmunityBar />
         <AdvanceTurnButton />
       </div>
     </nav>
