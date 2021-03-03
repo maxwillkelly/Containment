@@ -8,16 +8,23 @@ interface Props {
 }
 
 const MenuItem: React.FC<Props> = ({ name, path, handleClick }) => {
-  return (
-    <div className="p-5 text-2xl shadow-2xl dark:bg-gray-700 dark:text-gray-200 my-4 text-center flex-shrink">
-      {path ? (
-        <Link to={path}>{name}</Link>
-      ) : (
-        <button type="button" onClick={handleClick}>
+  if (path) {
+    return (
+      <Link to={path}>
+        <div className="p-5 text-2xl shadow-2xl dark:bg-gray-700 dark:text-gray-200 mb-4 text-center flex-shrink">
           {name}
-        </button>
-      )}
-    </div>
+        </div>
+      </Link>
+    );
+  }
+  return (
+    <button
+      className="w-full p-5 text-2xl shadow-2xl dark:bg-gray-700 dark:text-gray-200 mb-4 text-center flex-shrink"
+      type="button"
+      onClick={handleClick}
+    >
+      {name}
+    </button>
   );
 };
 
