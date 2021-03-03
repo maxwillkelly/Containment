@@ -9,6 +9,7 @@ import {
 } from 'react-icons/gi';
 
 import useGameStore from '../../stores/GameStore';
+import ActionsMenu from './ActionsMenu';
 
 const PauseButton: React.FC = () => {
   const isPaused = useGameStore((state) => state.isPaused);
@@ -31,14 +32,17 @@ const ActionsButton: React.FC = () => {
   const bgClass = show ? 'bg-selected' : '';
 
   return (
-    <button
-      className={`flex items-center justify-items-center p-3 ${bgClass}`}
-      type="button"
-      onClick={() => setShow((state) => !state)}
-    >
-      <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
-      <h3 className="text-xl ml-2">27</h3>
-    </button>
+    <div>
+      <button
+        className={`flex items-center justify-items-center p-3 ${bgClass}`}
+        type="button"
+        onClick={() => setShow((state) => !state)}
+      >
+        <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
+        <h3 className="text-xl ml-2">27</h3>
+      </button>
+      <div className="fixed">{show && <ActionsMenu />}</div>
+    </div>
   );
 };
 
