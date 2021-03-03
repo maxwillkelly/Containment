@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GiPauseButton,
   GiPlayButton,
@@ -21,10 +21,15 @@ const PauseButton: React.FC = () => {
 };
 
 const ActionsButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
     <button
-      className="flex items-center justify-items-center p-3"
+      className={`flex items-center justify-items-center p-3 ${bgClass}`}
       type="button"
+      onClick={() => setShow((state) => !state)}
     >
       <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
       <h3 className="text-xl ml-2">27</h3>
