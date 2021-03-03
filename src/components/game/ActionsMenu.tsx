@@ -18,11 +18,11 @@ interface ActionCategoryProps {
 
 const ActionCategory: React.FC<ActionCategoryProps> = ({ category }) => {
   const [selected, setSelected] = useState(false);
-  const bgColour = selected ? 'bg-selected' : '';
+  const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
-      className={`${bgColour} p-1 rounded-lg`}
+      className={`p-1 rounded-lg ${bgColour}`}
       type="button"
       onClick={() => setSelected((state) => !state)}
     >

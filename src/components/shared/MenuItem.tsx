@@ -9,7 +9,7 @@ interface Props {
 
 const MenuItem: React.FC<Props> = ({ name, path, handleClick }) => {
   const styles =
-    'w-full p-5 text-2xl shadow-2xl dark:bg-gray-700 dark:text-gray-200 mb-4 text-center flex-shrink';
+    'w-full p-5 text-2xl shadow-2xl dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 mb-4 text-center flex-shrink';
 
   if (path)
     return (

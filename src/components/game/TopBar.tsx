@@ -14,7 +14,7 @@ import ActionsMenu from './ActionsMenu';
 const PauseButton: React.FC = () => {
   const isPaused = useGameStore((state) => state.isPaused);
   const togglePause = useGameStore((state) => state.togglePause);
-  const bgClass = isPaused ? 'bg-selected' : '';
+  const bgClass = isPaused ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -29,7 +29,7 @@ const PauseButton: React.FC = () => {
 
 const ActionsButton: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <div>
@@ -48,7 +48,7 @@ const ActionsButton: React.FC = () => {
 
 const NationalApproval: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -64,7 +64,7 @@ const NationalApproval: React.FC = () => {
 
 const BudgetIndicator: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -80,7 +80,7 @@ const BudgetIndicator: React.FC = () => {
 
 const ReproductionIndicator: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -96,7 +96,7 @@ const ReproductionIndicator: React.FC = () => {
 
 const MapSettingsButton: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -111,7 +111,7 @@ const MapSettingsButton: React.FC = () => {
 
 const ResearchButton: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -126,7 +126,7 @@ const ResearchButton: React.FC = () => {
 
 const DashboardButton: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -141,7 +141,7 @@ const DashboardButton: React.FC = () => {
 
 const ImmunityBar: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
@@ -160,7 +160,7 @@ const ImmunityBar: React.FC = () => {
 
 const AdvanceTurnButton: React.FC = () => {
   const [show, setShow] = useState(false);
-  const bgClass = show ? 'bg-selected' : '';
+  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
