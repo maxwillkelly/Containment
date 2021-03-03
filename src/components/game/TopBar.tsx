@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GiPauseButton,
   GiPlayButton,
@@ -11,20 +11,30 @@ import {
 import useGameStore from '../../stores/GameStore';
 
 const PauseButton: React.FC = () => {
+  const isPaused = useGameStore((state) => state.isPaused);
   const togglePause = useGameStore((state) => state.togglePause);
+  const bgClass = isPaused ? 'bg-selected' : '';
 
   return (
-    <button className="p-3" type="button" onClick={() => togglePause()}>
+    <button
+      className={`p-3 ${bgClass}`}
+      type="button"
+      onClick={() => togglePause()}
+    >
       <GiPauseButton className="dark:text-gray-200 text-3xl" />
     </button>
   );
 };
 
 const ActionsButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
     <button
-      className="flex items-center justify-items-center p-3"
+      className={`flex items-center justify-items-center p-3 ${bgClass}`}
       type="button"
+      onClick={() => setShow((state) => !state)}
     >
       <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
       <h3 className="text-xl ml-2">27</h3>
@@ -33,8 +43,15 @@ const ActionsButton: React.FC = () => {
 };
 
 const NationalApproval: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="px-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <h3 className="text-lg">55%</h3>
       <h6 className="text-xs">National Approval</h6>
     </button>
@@ -42,8 +59,15 @@ const NationalApproval: React.FC = () => {
 };
 
 const BudgetIndicator: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="px-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <h3 className="text-lg">£1,136.07 Bn</h3>
       <h6 className="text-xs">Deficit</h6>
     </button>
@@ -51,8 +75,15 @@ const BudgetIndicator: React.FC = () => {
 };
 
 const ReproductionIndicator: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="px-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <h3 className="text-lg">1.5</h3>
       <h6 className="text-xs">R</h6>
     </button>
@@ -60,32 +91,60 @@ const ReproductionIndicator: React.FC = () => {
 };
 
 const MapSettingsButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="p-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <GiPositionMarker className="dark:text-gray-200 text-3xl" />
     </button>
   );
 };
 
 const ResearchButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="p-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <GiTestTubes className="dark:text-gray-200 text-3xl" />
     </button>
   );
 };
 
 const DashboardButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="p-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <GiProgression className="dark:text-gray-200 text-3xl" />
     </button>
   );
 };
 
 const ImmunityBar: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="px-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <div className="h-3 w-32 relative rounded-full overflow-hidden">
         <div className="w-full h-full dark:bg-gray-200 absolute" />
         <div className="transition-all ease-out duration-1000 bg-green-500 relative w-0" />
@@ -96,8 +155,15 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
+  const [show, setShow] = useState(false);
+  const bgClass = show ? 'bg-selected' : '';
+
   return (
-    <button className="p-3" type="button">
+    <button
+      className={`px-3 ${bgClass}`}
+      type="button"
+      onClick={() => setShow((state) => !state)}
+    >
       <GiPlayButton className="dark:text-gray-200 text-3xl" />
     </button>
   );
