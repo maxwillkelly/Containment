@@ -6,10 +6,14 @@ const PauseMenu: React.FC = () => {
   const togglePause = useGameStore((state) => state.togglePause);
 
   return (
-    <div className="z-10 dark:bg-gray dark:text-gray-200">
-      <h1 className="text-2xl text-center my-5 mx-3">Paused</h1>
-      <MenuItem name="Exit to Main Menu" path="/" />
-      <MenuItem name="Return to Game" handleClick={() => togglePause()} />
+    <div className="h-screen w-screen fixed block top-0 left-0 z-10">
+      <div className="flex items-center justify-center h-full w-full blur">
+        <div className="px-5 py-12 w-9/12 rounded border dark:border-gray-300 dark:bg-gray dark:text-gray-200">
+          <h1 className="text-2xl text-center my-5 mx-3">Paused</h1>
+          <MenuItem name="Exit to Main Menu" path="/" />
+          <MenuItem name="Return to Game" handleClick={() => togglePause()} />
+        </div>
+      </div>
     </div>
   );
 };

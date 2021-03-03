@@ -19,3 +19,7 @@ button:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
 }
+
+.blur {
+  backdrop-filter: blur(3px);
+}
