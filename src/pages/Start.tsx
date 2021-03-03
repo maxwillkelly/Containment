@@ -12,7 +12,7 @@ const Start: React.FC = () => {
           <MenuItem name="New Game" path="/new-game" />
           <MenuItem name="Load Game" path="/load-game" />
           <MenuItem name="Settings" path="/settings" />
-          <MenuItem name="Exit" />
+          <MenuItem name="Exit" handleClick={() => window.close()} />
         </div>
       </div>
     </div>
