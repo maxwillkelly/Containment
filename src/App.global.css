@@ -28,3 +28,7 @@ input:focus {
 .blur {
   backdrop-filter: blur(3px);
 }
+
+.border-bg-seperator {
+  border-color: rgba(255, 255, 255, 0.08);
+}

@@ -5,7 +5,7 @@ import categories, { Category } from '../../data/categories';
 
 const SearchBar: React.FC = () => {
   return (
-    <div className="flex flex-row items-center justify-center py-3">
+    <div className="w-full flex flex-row items-center justify-center p-3 border-b border-bg-seperator">
       <FaSearch className="text-xl mr-3" />
       <input
         className="px-5 rounded-full w-full dark:text-gray-900"
@@ -24,7 +24,7 @@ const ActionCategory: React.FC<ActionCategoryProps> = ({ category }) => {
 
   return (
     <button
-      className={`p-1 rounded-lg ${bgColour}`}
+      className={`p-1 rounded-lg text-sm ${bgColour}`}
       type="button"
       onClick={() => setSelected((state) => !state)}
     >
@@ -35,7 +35,7 @@ const ActionCategory: React.FC<ActionCategoryProps> = ({ category }) => {
 
 const ActionCategories: React.FC = () => {
   return (
-    <div className="flex flex-col col-span-2 py-3">
+    <div className="flex flex-col col-span-2 p-3 border-r border-bg-seperator">
       {categories.map((c) => (
         <ActionCategory category={c} key={c} />
       ))}
@@ -76,7 +76,7 @@ const ActionList: React.FC = () => {
 
 const ActionMenu: React.FC = () => {
   return (
-    <div className="dark:bg-gray-700 px-5">
+    <div className="dark:bg-gray-700">
       <SearchBar />
       <div className="grid grid-cols-10">
         <ActionCategories />
