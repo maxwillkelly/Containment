@@ -53,11 +53,13 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
 
   return (
     <button
-      className={`p-1 rounded-lg text-left ${bgColour}`}
+      className={`flex flex-row items-center p-2 rounded-lg text-left ${bgColour}`}
       type="button"
       onClick={() => setSelected((state) => !state)}
     >
+      <div className="h-8 w-8 bg-white mr-4" />
       <p>{action.name}</p>
+      <div className="mr-auto" />
     </button>
   );
 };
