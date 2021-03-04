@@ -30,33 +30,37 @@ const PauseButton: React.FC = () => {
 };
 
 const ActionsButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'ActionsButton';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <div>
       <button
         className={`flex items-center justify-items-center p-3 ${getBgColour(
-          show
+          activeApplet === applet
         )}`}
         type="button"
-        onClick={() => setShow((state) => !state)}
+        onClick={() => toggleActiveApplet(applet)}
       >
         <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
         <h3 className="text-xl ml-2">27</h3>
       </button>
-      <div className="fixed">{show && <ActionsMenu />}</div>
+      <div className="fixed">{activeApplet === applet && <ActionsMenu />}</div>
     </div>
   );
 };
 
 const NationalApproval: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'NationalApproval';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <h3 className="text-lg">55%</h3>
       <h6 className="text-xs">National Approval</h6>
@@ -65,13 +69,15 @@ const NationalApproval: React.FC = () => {
 };
 
 const BudgetIndicator: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'BudgetIndicator';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <h3 className="text-lg">£1,136.07 Bn</h3>
       <h6 className="text-xs">Deficit</h6>
@@ -80,13 +86,15 @@ const BudgetIndicator: React.FC = () => {
 };
 
 const ReproductionIndicator: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'ReproductionIndicator';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <h3 className="text-lg">1.5</h3>
       <h6 className="text-xs">R</h6>
@@ -95,13 +103,15 @@ const ReproductionIndicator: React.FC = () => {
 };
 
 const MapSettingsButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'MapSettingsButton';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <GiPositionMarker className="dark:text-gray-200 text-3xl" />
     </button>
@@ -109,13 +119,15 @@ const MapSettingsButton: React.FC = () => {
 };
 
 const ResearchButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'ResearchButton';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <GiTestTubes className="dark:text-gray-200 text-3xl" />
     </button>
@@ -123,13 +135,15 @@ const ResearchButton: React.FC = () => {
 };
 
 const DashboardButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'DashboardButton';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <GiProgression className="dark:text-gray-200 text-3xl" />
     </button>
@@ -137,13 +151,15 @@ const DashboardButton: React.FC = () => {
 };
 
 const ImmunityBar: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'ImmunityBar';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <div className="h-3 w-32 relative rounded-full overflow-hidden">
         <div className="w-full h-full dark:bg-gray-200 absolute" />
@@ -155,13 +171,15 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const applet = 'AdvanceTurnButton';
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
   return (
     <button
-      className={`px-3 ${getBgColour(show)}`}
+      className={`px-3 ${getBgColour(activeApplet === applet)}`}
       type="button"
-      onClick={() => setShow((state) => !state)}
+      onClick={() => toggleActiveApplet(applet)}
     >
       <GiPlayButton className="dark:text-gray-200 text-3xl" />
     </button>
