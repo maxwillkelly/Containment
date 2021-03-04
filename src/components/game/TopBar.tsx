@@ -11,14 +11,16 @@ import {
 import useGameStore from '../../stores/GameStore';
 import ActionsMenu from './ActionsMenu';
 
+const getBgColour = (state: boolean) =>
+  state ? 'bg-selected' : 'hover:bg-gray-600';
+
 const PauseButton: React.FC = () => {
   const isPaused = useGameStore((state) => state.isPaused);
   const togglePause = useGameStore((state) => state.togglePause);
-  const bgClass = isPaused ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
-      className={`p-3 ${bgClass}`}
+      className={`p-3 ${getBgColour(isPaused)}`}
       type="button"
       onClick={() => togglePause()}
     >
@@ -28,13 +30,14 @@ const PauseButton: React.FC = () => {
 };
 
 const ActionsButton: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <div>
       <button
-        className={`flex items-center justify-items-center p-3 ${bgClass}`}
+        className={`flex items-center justify-items-center p-3 ${getBgColour(
+          show
+        )}`}
         type="button"
         onClick={() => setShow((state) => !state)}
       >
@@ -47,12 +50,11 @@ const ActionsButton: React.FC = () => {
 };
 
 const NationalApproval: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -63,12 +65,11 @@ const NationalApproval: React.FC = () => {
 };
 
 const BudgetIndicator: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -79,12 +80,11 @@ const BudgetIndicator: React.FC = () => {
 };
 
 const ReproductionIndicator: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -95,12 +95,11 @@ const ReproductionIndicator: React.FC = () => {
 };
 
 const MapSettingsButton: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -110,12 +109,11 @@ const MapSettingsButton: React.FC = () => {
 };
 
 const ResearchButton: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -125,12 +123,11 @@ const ResearchButton: React.FC = () => {
 };
 
 const DashboardButton: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -140,12 +137,11 @@ const DashboardButton: React.FC = () => {
 };
 
 const ImmunityBar: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
@@ -159,12 +155,11 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const [show, setShow] = useState<boolean>(false);
-  const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
+  const [show, setShow] = useState(false);
 
   return (
     <button
-      className={`px-3 ${bgClass}`}
+      className={`px-3 ${getBgColour(show)}`}
       type="button"
       onClick={() => setShow((state) => !state)}
     >
