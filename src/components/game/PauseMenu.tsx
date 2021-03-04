@@ -10,8 +10,8 @@ const PauseMenu: React.FC = () => {
       <div className="flex items-center justify-center h-full w-full blur">
         <div className="px-5 py-14 w-9/12 rounded border dark:border-gray-300 dark:bg-gray dark:text-gray-200">
           <h1 className="text-2xl text-center mb-5 mx-3">Paused</h1>
-          <MenuItem name="Exit to Main Menu" path="/" />
           <MenuItem name="Return to Game" handleClick={() => togglePause()} />
+          <MenuItem name="Exit to Main Menu" path="/" />
         </div>
       </div>
     </div>

@@ -20,6 +20,15 @@ button:focus {
   outline-offset: 2px;
 }
 
+input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
 .blur {
   backdrop-filter: blur(3px);
+}
+
+.border-bg-seperator {
+  border-color: rgba(255, 255, 255, 0.08);
 }
