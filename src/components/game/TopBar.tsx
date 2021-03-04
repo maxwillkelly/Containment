@@ -28,7 +28,7 @@ const PauseButton: React.FC = () => {
 };
 
 const ActionsButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -47,7 +47,7 @@ const ActionsButton: React.FC = () => {
 };
 
 const NationalApproval: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -63,7 +63,7 @@ const NationalApproval: React.FC = () => {
 };
 
 const BudgetIndicator: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -79,7 +79,7 @@ const BudgetIndicator: React.FC = () => {
 };
 
 const ReproductionIndicator: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -95,7 +95,7 @@ const ReproductionIndicator: React.FC = () => {
 };
 
 const MapSettingsButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -110,7 +110,7 @@ const MapSettingsButton: React.FC = () => {
 };
 
 const ResearchButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -125,7 +125,7 @@ const ResearchButton: React.FC = () => {
 };
 
 const DashboardButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -140,7 +140,7 @@ const DashboardButton: React.FC = () => {
 };
 
 const ImmunityBar: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -159,7 +159,7 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState<boolean>(false);
   const bgClass = show ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
