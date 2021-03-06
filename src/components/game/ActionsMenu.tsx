@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
+import shallow from 'zustand/shallow';
 import { FaSearch } from 'react-icons/fa';
 import actions, { Action } from '../../data/actions';
 import categories, { Category } from '../../data/categories';
+import useActionsMenuStore from '../../stores/ActionsMenuStore';
 
 const SearchBar: React.FC = () => {
+  const [searchText, setSearchText] = useActionsMenuStore(
+    (state) => [state.searchText, state.setSearchText],
+    shallow
+  );
+
   return (
     <div className="w-full flex flex-row items-center justify-center p-3 border-b border-bg-seperator">
       <FaSearch className="text-xl mr-3" />
       <input
         className="px-5 rounded-full w-full dark:text-gray-900"
         placeholder="Search..."
+        value={searchText}
+        onChange={(event) => setSearchText(event.target.value)}
       />
     </div>
   );
@@ -19,14 +28,18 @@ interface ActionCategoryProps {
 }
 
 const ActionCategory: React.FC<ActionCategoryProps> = ({ category }) => {
-  const [selected, setSelected] = useState<boolean>(false);
-  const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
+  const [categorySelected, setCategorySelected] = useActionsMenuStore(
+    (state) => [state.categorySelected, state.setCategorySelected],
+    shallow
+  );
+  const bgColour =
+    categorySelected === category ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
     <button
       className={`p-1 rounded-lg text-sm ${bgColour}`}
       type="button"
-      onClick={() => setSelected((state) => !state)}
+      onClick={() => setCategorySelected(category)}
     >
       <p>{category}</p>
     </button>
