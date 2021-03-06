@@ -61,7 +61,7 @@ interface ActionItemProps {
 }
 
 const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
-  const [selected, setSelected] = useState<boolean>(false);
+  const [selected, setSelected] = useState(false);
   const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
 
   return (
@@ -78,9 +78,25 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
 };
 
 const ActionList: React.FC = () => {
+  const [categorySelected, searchText] = useActionsMenuStore(
+    (state) => [state.categorySelected, state.searchText],
+    shallow
+  );
+
+  const categoryFilteredActions = actions.filter(
+    (a) => a.category === categorySelected
+  );
+
+  const filterText = searchText.toLowerCase();
+
+  const displayedActions = categoryFilteredActions.filter(
+    (a) =>
+      a.name.toLowerCase().includes(filterText) ||
+      a.category.toLowerCase().includes(filterText)
+  );
   return (
     <div className="flex flex-col col-span-8 p-3">
-      {actions.map((a) => (
+      {displayedActions.map((a) => (
         <ActionItem action={a} key={a.id} />
       ))}
     </div>
