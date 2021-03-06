@@ -83,9 +83,10 @@ const ActionList: React.FC = () => {
     shallow
   );
 
-  const categoryFilteredActions = actions.filter(
-    (a) => a.category === categorySelected
-  );
+  const categoryFilteredActions =
+    categorySelected === ''
+      ? actions
+      : actions.filter((a) => a.category === categorySelected);
 
   const filterText = searchText.toLowerCase();
 
@@ -94,6 +95,7 @@ const ActionList: React.FC = () => {
       a.name.toLowerCase().includes(filterText) ||
       a.category.toLowerCase().includes(filterText)
   );
+
   return (
     <div className="flex flex-col col-span-8 p-3">
       {displayedActions.map((a) => (
