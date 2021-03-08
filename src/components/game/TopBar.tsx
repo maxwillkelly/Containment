@@ -188,7 +188,7 @@ const AdvanceTurnButton: React.FC = () => {
 
 const TopBar: React.FC = () => {
   return (
-    <nav className="mx-auto dark:bg-gray-700 dark:text-gray-200">
+    <nav className="dark:bg-gray-700 dark:text-gray-200">
       <div className="flex flex-row divide-x dark:divide-gray-900 justify-between shadow">
         <PauseButton />
         <ActionsButton />

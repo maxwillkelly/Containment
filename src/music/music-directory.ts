@@ -11,3 +11,5 @@ const MusicDirectory: Record<string, MusicDirectoryType> = {
     path: '/possible/epic',
   },
 };
+
+export default MusicDirectory;
