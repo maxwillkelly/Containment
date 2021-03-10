@@ -8,11 +8,11 @@ import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
 
 const Map: React.FC = () => {
-  const [map, setMap] = useState();
-  const [featuresLayer, setFeaturesLayer] = useState();
-  const [selectedCoord, setSelectedCoord] = useState();
+  const [map, setMap] = useState<MapOL>();
+  const [featuresLayer, setFeaturesLayer] = useState<VectorLayer>();
+  const [selectedCoord, setSelectedCoord] = useState<Array<number>>();
 
-  const mapElement = useRef();
+  const mapElement = useRef<HTMLDivElement>(null);
 
   // Initialize map
   useEffect(() => {
@@ -23,7 +23,7 @@ const Map: React.FC = () => {
 
     // create map
     const initialMap = new MapOL({
-      target: mapElement.current,
+      target: mapElement && mapElement.current ? mapElement.current : undefined,
       layers: [
         // USGS Topo
         new TileLayer({
