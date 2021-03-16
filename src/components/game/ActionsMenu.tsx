@@ -107,7 +107,7 @@ const ActionList: React.FC = () => {
 
 const ActionMenu: React.FC = () => {
   return (
-    <div className="dark:bg-gray-700">
+    <div className="dark:bg-gray-700 z-10">
       <SearchBar />
       <div className="grid grid-cols-10">
         <ActionCategories />

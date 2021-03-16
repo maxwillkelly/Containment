@@ -100,7 +100,7 @@ const Map: React.FC = () => {
     setMap(initialMap);
   }, []);
 
-  return <div className="h-full w-full" ref={mapElement} />;
+  return <div className="h-full w-full z-0" ref={mapElement} />;
 };
 
 export default Map;
