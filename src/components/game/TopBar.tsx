@@ -46,7 +46,7 @@ const ActionsButton: React.FC = () => {
         <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
         <h3 className="text-xl ml-2">27</h3>
       </button>
-      <div className="fixed">{activeApplet === applet && <ActionsMenu />}</div>
+      {activeApplet === applet && <ActionsMenu />}
     </div>
   );
 };
