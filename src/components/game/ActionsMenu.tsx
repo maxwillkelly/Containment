@@ -105,9 +105,9 @@ const ActionList: React.FC = () => {
   );
 };
 
-const ActionMenu: React.FC = () => {
+const ActionsMenu: React.FC = () => {
   return (
-    <div className="dark:bg-gray-700">
+    <div className="fixed block bg-opacity-100 dark:bg-gray-700 z-10">
       <SearchBar />
       <div className="grid grid-cols-10">
         <ActionCategories />
@@ -117,4 +117,4 @@ const ActionMenu: React.FC = () => {
   );
 };
 
-export default ActionMenu;
+export default ActionsMenu;

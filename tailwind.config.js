@@ -7,6 +7,7 @@ module.exports = {
       ...theme('colors'),
       'gray-600': '#55555C',
       'gray-700': '#3F3F46',
+      'gray-800': '#27272A',
       selected: '#299AE0',
     }),
     boxShadow: {
