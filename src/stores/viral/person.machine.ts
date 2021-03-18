@@ -61,16 +61,12 @@ const personMachine = Machine<Context, Schema, Event>({
         Recover: 'recovered',
         Death: 'death',
       },
-      initial: 'untested',
+      type: 'parallel',
       states: {
         test: {
           initial: 'untested',
           states: {
-            untested: {
-              on: {
-                Test: 'tested',
-              },
-            },
+            untested,
             tested: {},
           },
         },
