@@ -26,5 +26,13 @@
     "*.{css,sass,scss}.d.ts": true
   },
   "svg.preview.background": "transparent",
-  "cSpell.words": ["Almos", "Hospitalise", "hospitalised"]
+  "cSpell.words": [
+    "Almos",
+    "Hospitalise",
+    "hospitalised",
+    "immer",
+    "xstate",
+    "zustand",
+    "zustand's"
+  ]
 }

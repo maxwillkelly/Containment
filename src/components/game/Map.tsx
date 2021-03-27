@@ -8,7 +8,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Style, { StyleFunction } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import Text from 'ol/style/Text';
 
+import { FeatureLike } from 'ol/Feature';
 import * as states from '../../../map/geojson/states.geojson';
 
 const Map: React.FC = () => {
@@ -18,60 +20,33 @@ const Map: React.FC = () => {
 
   // Initialize map
   useEffect(() => {
-    const styles: Record<string, Style> = {
-      LineString: new Style({
-        stroke: new Stroke({
-          color: 'green',
-          width: 1,
+    const generateStyles: (feature: FeatureLike) => Record<string, Style> = (
+      feature
+    ) => {
+      return {
+        MultiPolygon: new Style({
+          stroke: new Stroke({
+            color: 'yellow',
+            width: 1,
+          }),
+          fill: new Fill({
+            color: 'rgba(255, 255, 0, 0.1)',
+          }),
+          text: new Text({
+            font: '0.8em Roboto',
+            fill: new Fill({
+              color: 'white',
+            }),
+            text: feature.get('Name'),
+          }),
         }),
-      }),
-      MultiLineString: new Style({
-        stroke: new Stroke({
-          color: 'green',
-          width: 1,
-        }),
-      }),
-      MultiPolygon: new Style({
-        stroke: new Stroke({
-          color: 'yellow',
-          width: 1,
-        }),
-        fill: new Fill({
-          color: 'rgba(255, 255, 0, 0.1)',
-        }),
-      }),
-      Polygon: new Style({
-        stroke: new Stroke({
-          color: 'blue',
-          lineDash: [4],
-          width: 3,
-        }),
-        fill: new Fill({
-          color: 'rgba(0, 0, 255, 0.1)',
-        }),
-      }),
-      GeometryCollection: new Style({
-        stroke: new Stroke({
-          color: 'magenta',
-          width: 2,
-        }),
-        fill: new Fill({
-          color: 'magenta',
-        }),
-      }),
-      Circle: new Style({
-        stroke: new Stroke({
-          color: 'red',
-          width: 2,
-        }),
-        fill: new Fill({
-          color: 'rgba(255,0,0,0.2)',
-        }),
-      }),
+      };
     };
 
-    const styleFunction: StyleFunction = (feature) =>
-      styles[feature.getGeometry().getType()];
+    const styleFunction: StyleFunction = (feature) => {
+      const styles = generateStyles(feature);
+      return styles[feature.getGeometry().getType()];
+    };
 
     const vectorLayer = new VectorLayer({
       source: new VectorSource({
@@ -83,12 +58,7 @@ const Map: React.FC = () => {
     // create map
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
-      layers: [
-        // new TileLayer({
-        //   source: new OSM(),
-        // }),
-        vectorLayer,
-      ],
+      layers: [vectorLayer],
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
