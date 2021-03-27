@@ -24,7 +24,7 @@ interface Schema {
 interface Context {
   id: string;
   infects: number;
-  state: string;
+  residentState: string;
 }
 
 const untested: Record<string, unknown> = {
@@ -35,14 +35,14 @@ const untested: Record<string, unknown> = {
 
 export type PersonMachine = StateMachine<Context, Schema, Event>;
 
-const createPersonMachine = (infects: number, state: string) =>
+export const createPersonMachine = (infects: number, residentState: string) =>
   Machine<Context, Schema, Event>({
     id: 'person',
     initial: 'uninfected',
     context: {
       id: uuid(),
       infects,
-      state,
+      residentState,
     },
     states: {
       uninfected: {
