@@ -33,7 +33,7 @@ const Map: React.FC = () => {
             color: 'rgba(255, 255, 0, 0.1)',
           }),
           text: new Text({
-            font: 'bold 10px "Open Sans", "Arial Unicode MS", "sans-serif"',
+            font: '0.8em Roboto',
             fill: new Fill({
               color: 'white',
             }),
