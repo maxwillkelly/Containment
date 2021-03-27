@@ -8,7 +8,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import Style, { StyleFunction } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import Text from 'ol/style/Text';
 
+import { FeatureLike } from 'ol/Feature';
 import * as states from '../../../map/geojson/states.geojson';
 
 const Map: React.FC = () => {
@@ -18,20 +20,33 @@ const Map: React.FC = () => {
 
   // Initialize map
   useEffect(() => {
-    const styles: Record<string, Style> = {
-      MultiPolygon: new Style({
-        stroke: new Stroke({
-          color: 'yellow',
-          width: 1,
+    const generateStyles: (feature: FeatureLike) => Record<string, Style> = (
+      feature
+    ) => {
+      return {
+        MultiPolygon: new Style({
+          stroke: new Stroke({
+            color: 'yellow',
+            width: 1,
+          }),
+          fill: new Fill({
+            color: 'rgba(255, 255, 0, 0.1)',
+          }),
+          text: new Text({
+            font: 'bold 10px "Open Sans", "Arial Unicode MS", "sans-serif"',
+            fill: new Fill({
+              color: 'white',
+            }),
+            text: feature.get('Name'),
+          }),
         }),
-        fill: new Fill({
-          color: 'rgba(255, 255, 0, 0.1)',
-        }),
-      }),
+      };
     };
 
-    const styleFunction: StyleFunction = (feature) =>
-      styles[feature.getGeometry().getType()];
+    const styleFunction: StyleFunction = (feature) => {
+      const styles = generateStyles(feature);
+      return styles[feature.getGeometry().getType()];
+    };
 
     const vectorLayer = new VectorLayer({
       source: new VectorSource({
@@ -43,12 +58,7 @@ const Map: React.FC = () => {
     // create map
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
-      layers: [
-        // new TileLayer({
-        //   source: new OSM(),
-        // }),
-        vectorLayer,
-      ],
+      layers: [vectorLayer],
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
