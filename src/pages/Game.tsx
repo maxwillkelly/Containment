@@ -7,9 +7,11 @@ import Map from '../components/game/Map';
 import PauseMenu from '../components/game/PauseMenu';
 
 import * as states from '../../map/geojson/states.geojson';
+import MapDrawer from '../components/game/MapDrawer';
+import ActionDrawer from '../components/game/ActionDrawer';
 
 const Game: React.FC = () => {
-  const SIMS_PER_MILLION = 20;
+  const SIMS_PER_MILLION = 0;
   const turn = useGameStore((state) => state.turn);
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
@@ -42,6 +44,8 @@ const Game: React.FC = () => {
     <div className="h-screen w-screen flex flex-col">
       <TopBar />
       <main className="relative flex-1">
+        <ActionDrawer />
+        <MapDrawer />
         <Map />
         {paused && <PauseMenu />}
       </main>
