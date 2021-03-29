@@ -20,7 +20,9 @@ const ActionDrawerToggle: React.FC = () => {
 
   return (
     <button
-      className={`fixed p-2 m-3 ${getBgColour(open)} z-40`}
+      className={`fixed p-2 m-3 dark:bg-gray-700 ${getBgColour(
+        open
+      )} rounded z-40`}
       type="button"
       onClick={() => toggleActionDrawer()}
     >
@@ -35,7 +37,9 @@ const MapDrawerToggle: React.FC = () => {
 
   return (
     <button
-      className={`right-0 fixed p-2 m-3 ${getBgColour(open)} z-40`}
+      className={`right-0 fixed p-2 m-3 dark:bg-gray-700 ${getBgColour(
+        open
+      )} rounded z-40`}
       type="button"
       onClick={() => toggleMapDrawer()}
     >

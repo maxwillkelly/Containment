@@ -7,9 +7,11 @@ const MapDrawer = () => {
 
   return (
     <aside
-      className={`transform right-0 w-64 bg-white fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 ${asideClass}`}
+      className={`transform right-0 w-64 dark:bg-gray-700 dark:text-gray-200 border-l border-t border-gray-900 shadow fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 ${asideClass}`}
     >
-      <h3>Hello</h3>
+      <div className="flex flex-col justify-center">
+        <h3 className="text-lg px-4 py-5">North East Colombia</h3>
+      </div>
     </aside>
   );
 };

@@ -7,7 +7,7 @@ const ActionDrawer = () => {
 
   return (
     <aside
-      className={`transform left-0 w-48 bg-white fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 ${asideClass}`}
+      className={`transform left-0 w-48 dark:bg-gray-700 dark:text-gray-200 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 ${asideClass}`}
     >
       <h3>Actions</h3>
     </aside>
