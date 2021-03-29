@@ -7,6 +7,8 @@ type State = {
   isPaused: boolean;
   activeApplet: string;
   advanceTurn: () => void;
+  toggleActionDrawer: () => void;
+  toggleMapDrawer: () => void;
   togglePause: () => void;
   toggleActiveApplet: (applet: string) => void;
 };
@@ -14,10 +16,14 @@ type State = {
 const useGameStore = create<State>((set) => ({
   turn: 0,
   isPaused: false,
-  isActionDrawerOpen: true,
-  isMapDrawerOpen: true,
+  isActionDrawerOpen: false,
+  isMapDrawerOpen: false,
   activeApplet: '',
   advanceTurn: () => set((state) => ({ turn: state.turn + 1 })),
+  toggleActionDrawer: () =>
+    set((state) => ({ isActionDrawerOpen: !state.isActionDrawerOpen })),
+  toggleMapDrawer: () =>
+    set((state) => ({ isMapDrawerOpen: !state.isMapDrawerOpen })),
   togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
   toggleActiveApplet: (applet) =>
     set((state) =>

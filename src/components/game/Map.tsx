@@ -59,6 +59,7 @@ const Map: React.FC = () => {
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
       layers: [vectorLayer],
+      controls: [],
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
