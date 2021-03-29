@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { GiInfo } from 'react-icons/gi';
+import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import useGameStore from '../stores/GameStore';
 import useViralStore from '../stores/ViralStore';
 
@@ -24,7 +24,7 @@ const ActionDrawerToggle: React.FC = () => {
       type="button"
       onClick={() => toggleActionDrawer()}
     >
-      <GiInfo className="dark:text-gray-200 text-2xl" />
+      <GiHamburgerMenu className="dark:text-gray-200 text-2xl" />
     </button>
   );
 };
