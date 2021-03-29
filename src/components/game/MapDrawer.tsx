@@ -3,7 +3,7 @@ import useGameStore from '../../stores/GameStore';
 
 const MapDrawer = () => {
   const open = useGameStore((state) => state.isMapDrawerOpen);
-  const asideClass = open ? 'translate-x-0' : '-translate-x-full';
+  const asideClass = open ? 'translate-x-0' : 'translate-x-full';
 
   return (
     <aside
