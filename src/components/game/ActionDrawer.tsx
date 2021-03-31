@@ -9,7 +9,9 @@ const ActionDrawer = () => {
     <aside
       className={`transform left-0 w-48 dark:bg-gray-700 dark:text-gray-200 fixed h-full overflow-auto ease-in-out transition-all duration-300 z-30 ${asideClass}`}
     >
-      <h3>Actions</h3>
+      <div className="flex flex-col justify-center items-end">
+        <h3 className="text-lg px-4 py-5">Policies</h3>
+      </div>
     </aside>
   );
 };

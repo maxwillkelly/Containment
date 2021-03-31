@@ -53,7 +53,8 @@ const Map: React.FC = () => {
 
     const styleFunction: StyleFunction = (feature) => {
       const styles = generateStyles(feature);
-      return styles[feature.getGeometry().getType()];
+      const geometry = feature.getGeometry();
+      return geometry ? styles[geometry.getType()] : [];
     };
 
     const vectorLayer = new VectorLayer({
