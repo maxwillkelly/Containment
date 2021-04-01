@@ -1,17 +1,24 @@
 import create from 'zustand';
 
+type ResidentStateDetails = {
+  fid: number;
+  abbreviation: number;
+  name: string;
+  population: number;
+};
+
 type State = {
   turn: number;
   isActionDrawerOpen: boolean;
   isMapDrawerOpen: boolean;
-  selectedState: string;
+  selectedState: Record<string, ResidentStateDetails> | undefined;
   isPaused: boolean;
   activeApplet: string;
 
   advanceTurn: () => void;
   toggleActionDrawer: () => void;
   toggleMapDrawer: (open?: boolean) => void;
-  selectState: (selectedState: string) => void;
+  selectState: (selectedState?: Record<string, ResidentStateDetails>) => void;
   togglePause: () => void;
   toggleActiveApplet: (applet: string) => void;
 };
@@ -21,7 +28,7 @@ const useGameStore = create<State>((set) => ({
   isPaused: false,
   isActionDrawerOpen: false,
   isMapDrawerOpen: false,
-  selectedState: '',
+  selectedState: undefined,
   activeApplet: '',
 
   advanceTurn: () => set((state) => ({ turn: state.turn + 1 })),

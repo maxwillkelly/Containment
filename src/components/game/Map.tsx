@@ -45,7 +45,7 @@ const Map: React.FC = () => {
             fill: new Fill({
               color: 'white',
             }),
-            text: feature.get('Name'),
+            text: feature.get('name'),
           }),
         }),
       };
@@ -72,13 +72,13 @@ const Map: React.FC = () => {
       const features = event.target.getFeatures().array_;
 
       if (!features || features.length < 1) {
-        selectState('');
+        selectState();
         toggleMapDrawer(false);
         return;
       }
 
       const feature = features[0];
-      selectState(feature.values_.Name);
+      selectState(feature.values_);
       toggleMapDrawer(true);
     });
 
