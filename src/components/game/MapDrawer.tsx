@@ -1,7 +1,22 @@
 import React from 'react';
 import useGameStore from '../../stores/GameStore';
 
-const MapDrawer = () => {
+const StateDetails: React.FC = () => {
+  const selectedState = useGameStore((state) => state.selectedState);
+
+  if (!selectedState) return null;
+
+  return (
+    <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
+      <h4 className="text-left">Population</h4>
+      <h4 className="text-right">
+        {`${selectedState.population / 1000000} million`}
+      </h4>
+    </div>
+  );
+};
+
+const MapDrawer: React.FC = () => {
   const open = useGameStore((state) => state.isMapDrawerOpen);
   const selectedState = useGameStore((state) => state.selectedState);
 
@@ -16,6 +31,12 @@ const MapDrawer = () => {
           {selectedState ? selectedState.name : ''}
         </h3>
       </div>
+      <h2 className="text-sm dashed-heading text-center text-gray-300">
+        State Details
+      </h2>
+      {/* <div className="flex flex-col justify-center"> */}
+      <StateDetails />
+      {/* </div> */}
     </aside>
   );
 };
