@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import flat from 'flat';
 import create from 'zustand';
+import lodash from 'lodash';
 import immer from './shared/immer';
 import {
   createPersonMachine,
@@ -48,11 +49,16 @@ const useViralStore = create<State>(
       for (const resident of stateResidents) {
         for (const possibleStates of personStateKeys) {
           if (resident.meta.matches(possibleStates)) {
-            personsStateByState[possibleStates] = personsStateByState[
-              possibleStates
-            ]
-              ? personsStateByState[possibleStates] + 1
-              : 1;
+            const query = lodash.get(personsStateByState, possibleStates);
+
+            if (!query) {
+              lodash.set(personsStateByState, possibleStates, 0);
+            } else if (typeof query !== 'number') {
+              console.error('Query has not returned a number');
+              return personsStateByState;
+            } else {
+              lodash.set(personsStateByState, possibleStates, query + 1);
+            }
           }
         }
       }

@@ -97,7 +97,7 @@ const Map: React.FC = () => {
 
     // save map and vector layer references to state
     setMap(initialMap);
-  }, []);
+  }, [selectState, toggleMapDrawer]);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };

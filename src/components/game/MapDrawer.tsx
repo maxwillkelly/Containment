@@ -27,6 +27,9 @@ const DebugDetails: React.FC = () => {
   const getPersonsTotalByState = useViralStore(
     (state) => state.getPersonsTotalByState
   );
+  const getPersonsStatesByState = useViralStore(
+    (state) => state.getPersonsStatesByState
+  );
 
   if (!selectedState) return null;
 
@@ -40,6 +43,9 @@ const DebugDetails: React.FC = () => {
         <h4 className="text-right">
           {getPersonsTotalByState(selectedState.name)}
         </h4>
+        {/* <pre>
+          {JSON.stringify(getPersonsStatesByState(selectedState.name), null, 2)}
+        </pre> */}
       </div>
     </>
   );
