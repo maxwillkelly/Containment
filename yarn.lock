@@ -1612,6 +1612,11 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.45.tgz#e9387572998e5ecdac221950dab3e8c3b16af884"
   integrity sha512-jnqIUKDUqJbDIUxm0Uj7bnlMnRm1T/eZ9N+AVMqhPgzrba2GhGG5o/jCTwmdPK709nEZsGoMzXEDUjcXHa3W0g==
 
+"@types/flat@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/flat/-/flat-5.0.1.tgz#9d703bbfb59ad9ec9ce376bdeb93a0f85da27059"
+  integrity sha512-ykRODHi9G9exJdTZvQggsqCUtB7jqiwLHcXCjNMb7zgWx6Lc2bydIUYBG1+It6VXZVFaeROv6HqPjDCAsoPG3w==
+
 "@types/fs-extra@^9.0.1":
   version "9.0.4"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-9.0.4.tgz#12553138cf0438db9a31cdc8b0a3aa9332eb67aa"
@@ -5585,6 +5590,11 @@ flat-cache@^2.0.1:
     flatted "^2.0.0"
     rimraf "2.6.3"
     write "1.0.3"
+
+flat@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/flat/-/flat-5.0.2.tgz#8ca6fe332069ffa9d324c327198c598259ceb241"
+  integrity sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==
 
 flatted@^2.0.0:
   version "2.0.2"

@@ -1,7 +1,7 @@
 import { Machine, StateMachine } from 'xstate';
 import { v4 as uuid } from 'uuid';
 
-type Event =
+export type Event =
   | { type: 'Infect' }
   | { type: 'Inoculate' }
   | { type: 'Recover' }
@@ -11,7 +11,18 @@ type Event =
   | { type: 'Hospitalise' }
   | { type: 'Discharge' };
 
-interface Schema {
+export const States = {
+  uninfected: { testing: ['tested', 'untested'] },
+  infected: {
+    testing: ['tested', 'untested'],
+    symptoms: ['mild', 'hospitalised'],
+  },
+  inoculated: {},
+  recovered: {},
+  death: {},
+};
+
+export interface Schema {
   states: {
     uninfected: Record<string, unknown>;
     infected: Record<string, unknown>;
@@ -21,7 +32,7 @@ interface Schema {
   };
 }
 
-interface Context {
+export interface Context {
   id: string;
   infects: number;
   residentState: string;
@@ -67,7 +78,7 @@ export const createPersonMachine = (infects: number, residentState: string) =>
         },
         type: 'parallel',
         states: {
-          test: {
+          testing: {
             initial: 'untested',
             states: {
               untested,
