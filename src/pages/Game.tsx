@@ -49,7 +49,7 @@ const MapDrawerToggle: React.FC = () => {
 };
 
 const Game: React.FC = () => {
-  const SIMS_PER_MILLION = 0;
+  const SIMS_PER_MILLION = 30;
   const turn = useGameStore((state) => state.turn);
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
@@ -59,18 +59,18 @@ const Game: React.FC = () => {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const state of states.features) {
-      const name = state.properties.Name;
-      const population = state.properties.Population;
+      const { name, population } = state.properties;
       const residentPersonsNum = (population / 1000000) * SIMS_PER_MILLION;
 
       for (let index = 0; index < residentPersonsNum; index += 1) {
         createPerson(2, name);
       }
-      console.log(`${name}: ${population} ${residentPersonsNum}`);
     }
 
     const endTime = new Date().getTime();
-    console.log(endTime - startTime);
+    console.log(
+      `Time in ms to finish creating state machines: ${endTime - startTime}`
+    );
   };
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import useGameStore from '../../stores/GameStore';
+import useViralStore from '../../stores/ViralStore';
 
 const StateDetails: React.FC = () => {
   const selectedState = useGameStore((state) => state.selectedState);
@@ -7,12 +8,40 @@ const StateDetails: React.FC = () => {
   if (!selectedState) return null;
 
   return (
-    <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
-      <h4 className="text-left">Population</h4>
-      <h4 className="text-right">
-        {`${selectedState.population / 1000000} million`}
-      </h4>
-    </div>
+    <>
+      <h2 className="text-sm dashed-heading text-center text-gray-300">
+        State Details
+      </h2>
+      <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
+        <h4 className="text-left">Population</h4>
+        <h4 className="text-right">
+          {`${selectedState.population / 1000000} million`}
+        </h4>
+      </div>
+    </>
+  );
+};
+
+const DebugDetails: React.FC = () => {
+  const selectedState = useGameStore((state) => state.selectedState);
+  const getPersonsTotalByState = useViralStore(
+    (state) => state.getPersonsTotalByState
+  );
+
+  if (!selectedState) return null;
+
+  return (
+    <>
+      <h2 className="text-sm dashed-heading text-center text-gray-300">
+        Debug
+      </h2>
+      <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
+        <h4 className="text-left">Person Machines</h4>
+        <h4 className="text-right">
+          {getPersonsTotalByState(selectedState.name)}
+        </h4>
+      </div>
+    </>
   );
 };
 
@@ -31,12 +60,8 @@ const MapDrawer: React.FC = () => {
           {selectedState ? selectedState.name : ''}
         </h3>
       </div>
-      <h2 className="text-sm dashed-heading text-center text-gray-300">
-        State Details
-      </h2>
-      {/* <div className="flex flex-col justify-center"> */}
       <StateDetails />
-      {/* </div> */}
+      <DebugDetails />
     </aside>
   );
 };

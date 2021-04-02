@@ -11,14 +11,14 @@ type State = {
   turn: number;
   isActionDrawerOpen: boolean;
   isMapDrawerOpen: boolean;
-  selectedState: Record<string, ResidentStateDetails> | undefined;
+  selectedState: ResidentStateDetails | undefined;
   isPaused: boolean;
   activeApplet: string;
 
   advanceTurn: () => void;
   toggleActionDrawer: () => void;
   toggleMapDrawer: (open?: boolean) => void;
-  selectState: (selectedState?: Record<string, ResidentStateDetails>) => void;
+  selectState: (selectedState?: ResidentStateDetails) => void;
   togglePause: () => void;
   toggleActiveApplet: (applet: string) => void;
 };
