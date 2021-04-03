@@ -16,7 +16,7 @@ import Select from 'ol/interaction/Select';
 import { click } from 'ol/events/condition';
 
 import { FeatureLike } from 'ol/Feature';
-import * as states from '../../../map/geojson/states.geojson';
+import * as states from '../../../map/geojson/states.json';
 import useGameStore from '../../stores/GameStore';
 
 const Map: React.FC = () => {
