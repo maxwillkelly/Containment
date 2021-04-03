@@ -1,18 +1,30 @@
 /* eslint-disable no-restricted-syntax */
+import flat from 'flat';
+import { flatten } from 'lodash';
 import create from 'zustand';
 import immer from './shared/immer';
-import { createPersonMachine, PersonMachine } from './viral/person.machine';
+import { createPersonMachine, PersonState } from './viral/person.machine';
 
 type State = {
-  persons: Record<string, PersonMachine[]>;
+  persons: Record<string, PersonState[]>;
 
   createPerson: (infects: number, residentState: string) => void;
 
-  getPersonsByState: (residentState: string) => PersonMachine[];
+  getPersonsByState: (residentState: string) => PersonState[];
   getPersonsTotalByState: (residentState: string) => number;
   getPersonsStatesByState: (residentState: string) => Record<string, unknown>;
 
   takeTurn: () => void;
+};
+
+const convertObjectToCompositeKeys: string[] = (
+  object: Record<string, unknown>
+) => {
+  const compositeKeys = [];
+  for (const [key, value] of Object.entries(flat(object))) {
+    compositeKeys.push(`${key}.${value}`);
+  }
+  return compositeKeys;
 };
 
 const useViralStore = create<State>(
@@ -43,13 +55,15 @@ const useViralStore = create<State>(
       // debugger;
 
       for (const resident of stateResidents) {
-        const { stateIds } = resident;
-        for (const stateId of stateIds) {
-          console.log(
-            `stateId: ${stateId}\tmatches: ${resident.meta.matches(stateId)}`
-          );
-        }
-        break;
+        console.log(resident);
+        console.log(convertObjectToCompositeKeys(resident.value));
+        // const { stateIds } = resident;
+        // for (const stateId of stateIds) {
+        //   console.log(
+        //     `stateId: ${stateId}\tmatches: ${resident.meta.matches(stateId)}`
+        //   );
+        // }
+        // break;
         // for (const possibleStates of personStateKeys) {
         //   if (resident.meta.matches(possibleStates)) {
         //     const query = lodash.get(personsStateByState, possibleStates);

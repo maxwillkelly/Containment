@@ -49,7 +49,7 @@ const MapDrawerToggle: React.FC = () => {
 };
 
 const Game: React.FC = () => {
-  const SIMS_PER_MILLION = 30;
+  const SIMS_PER_MILLION = 2;
   const turn = useGameStore((state) => state.turn);
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
