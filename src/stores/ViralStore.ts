@@ -1,13 +1,7 @@
 /* eslint-disable no-restricted-syntax */
-import flat from 'flat';
 import create from 'zustand';
-import lodash from 'lodash';
 import immer from './shared/immer';
-import {
-  createPersonMachine,
-  PersonMachine,
-  States as personStates,
-} from './viral/person.machine';
+import { createPersonMachine, PersonMachine } from './viral/person.machine';
 
 type State = {
   persons: Record<string, PersonMachine[]>;
@@ -43,25 +37,34 @@ const useViralStore = create<State>(
 
     getPersonsStatesByState: (residentState) => {
       const personsStateByState: Record<string, unknown> = {};
-      const personStateKeys: string[] = flat(personStates);
+      // const personStateKeys: string[] = flat(personStates);
       const stateResidents = get().persons[residentState];
 
-      for (const resident of stateResidents) {
-        for (const possibleStates of personStateKeys) {
-          if (resident.meta.matches(possibleStates)) {
-            const query = lodash.get(personsStateByState, possibleStates);
+      // debugger;
 
-            if (!query) {
-              lodash.set(personsStateByState, possibleStates, 0);
-            } else if (typeof query !== 'number') {
-              console.error('Query has not returned a number');
-              return personsStateByState;
-            } else {
-              lodash.set(personsStateByState, possibleStates, query + 1);
-            }
-          }
+      for (const resident of stateResidents) {
+        const { stateIds } = resident;
+        for (const stateId of stateIds) {
+          console.log(
+            `stateId: ${stateId}\tmatches: ${resident.meta.matches(stateId)}`
+          );
         }
+        break;
+        // for (const possibleStates of personStateKeys) {
+        //   if (resident.meta.matches(possibleStates)) {
+        //     const query = lodash.get(personsStateByState, possibleStates);
+
+        //     if (!query) {
+        //       lodash.set(personsStateByState, possibleStates, 0);
+        //     } else if (typeof query !== 'number') {
+        //       console.error('Query has not returned a number');
+        //       return personsStateByState;
+        //     } else {
+        //       lodash.set(personsStateByState, possibleStates, query + 1);
+        //     }
+        //   }
       }
+      // }
 
       return personsStateByState;
     },
