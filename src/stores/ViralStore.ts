@@ -1,18 +1,28 @@
 /* eslint-disable no-restricted-syntax */
 import create from 'zustand';
+import flat from 'flat';
+import { StateValue } from 'xstate';
 import immer from './shared/immer';
-import { createPersonMachine, PersonMachine } from './viral/person.machine';
+import { createPersonMachine, PersonState } from './viral/person.machine';
 
 type State = {
-  persons: Record<string, PersonMachine[]>;
+  persons: Record<string, PersonState[]>;
 
   createPerson: (infects: number, residentState: string) => void;
 
-  getPersonsByState: (residentState: string) => PersonMachine[];
+  getPersonsByState: (residentState: string) => PersonState[];
   getPersonsTotalByState: (residentState: string) => number;
   getPersonsStatesByState: (residentState: string) => Record<string, unknown>;
 
   takeTurn: () => void;
+};
+
+const convertStateValueToCompositeKey = (stateValue: StateValue) => {
+  const compositeKeys = [];
+  for (const [key, value] of Object.entries(flat(stateValue))) {
+    compositeKeys.push(`${key}.${value}`);
+  }
+  return compositeKeys[compositeKeys.length - 1];
 };
 
 const useViralStore = create<State>(
@@ -36,35 +46,14 @@ const useViralStore = create<State>(
     },
 
     getPersonsStatesByState: (residentState) => {
-      const personsStateByState: Record<string, unknown> = {};
-      // const personStateKeys: string[] = flat(personStates);
+      const personsStateByState: Record<string, number> = {};
       const stateResidents = get().persons[residentState];
 
-      // debugger;
-
       for (const resident of stateResidents) {
-        const { stateIds } = resident;
-        for (const stateId of stateIds) {
-          console.log(
-            `stateId: ${stateId}\tmatches: ${resident.meta.matches(stateId)}`
-          );
-        }
-        break;
-        // for (const possibleStates of personStateKeys) {
-        //   if (resident.meta.matches(possibleStates)) {
-        //     const query = lodash.get(personsStateByState, possibleStates);
-
-        //     if (!query) {
-        //       lodash.set(personsStateByState, possibleStates, 0);
-        //     } else if (typeof query !== 'number') {
-        //       console.error('Query has not returned a number');
-        //       return personsStateByState;
-        //     } else {
-        //       lodash.set(personsStateByState, possibleStates, query + 1);
-        //     }
-        //   }
+        const compositeKey = convertStateValueToCompositeKey(resident.value);
+        personsStateByState[compositeKey] =
+          personsStateByState[compositeKey] + 1 || 1;
       }
-      // }
 
       return personsStateByState;
     },

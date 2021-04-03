@@ -43,9 +43,9 @@ const DebugDetails: React.FC = () => {
         <h4 className="text-right">
           {getPersonsTotalByState(selectedState.name)}
         </h4>
-        {/* <pre>
+        <pre>
           {JSON.stringify(getPersonsStatesByState(selectedState.name), null, 2)}
-        </pre> */}
+        </pre>
       </div>
     </>
   );

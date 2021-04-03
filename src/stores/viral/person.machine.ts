@@ -1,4 +1,4 @@
-import { Machine, StateNode, StateMachine } from 'xstate';
+import { Machine, State, StateMachine } from 'xstate';
 import { v4 as uuid } from 'uuid';
 
 export type Event =
@@ -45,7 +45,7 @@ const untested: Record<string, unknown> = {
 };
 
 export type PersonMachine = StateMachine<Context, Schema, Event>;
-export type PersonState = StateNode<Context, Schema, Event>;
+export type PersonState = State<Context, Schema, Event>;
 
 const personMachine = Machine<Context, Schema, Event>({
   id: 'person',
