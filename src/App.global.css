@@ -57,3 +57,18 @@ input:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #299ae0;
 }
+
+/* Dashed heading */
+.dashed-heading:before,
+.dashed-heading:after {
+  content: '';
+  display: inline-block;
+  width: 50%;
+  margin: 0 0.5em 0 -55%;
+  vertical-align: middle;
+  border-bottom: 1px solid;
+}
+
+.dashed-heading:after {
+  margin: 0 -55% 0 0.5em;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect, useRef } from 'react';
 
 import MapOL from 'ol/Map';
@@ -5,18 +6,25 @@ import View from 'ol/View';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
+
 import Style, { StyleFunction } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import Text from 'ol/style/Text';
 
+import Select from 'ol/interaction/Select';
+import { click } from 'ol/events/condition';
+
 import { FeatureLike } from 'ol/Feature';
 import * as states from '../../../map/geojson/states.geojson';
+import useGameStore from '../../stores/GameStore';
 
 const Map: React.FC = () => {
   const [map, setMap] = useState<MapOL>();
-
   const mapElement = useRef<HTMLDivElement>(null);
+
+  const selectState = useGameStore((state) => state.selectState);
+  const toggleMapDrawer = useGameStore((state) => state.toggleMapDrawer);
 
   // Initialize map
   useEffect(() => {
@@ -37,7 +45,7 @@ const Map: React.FC = () => {
             fill: new Fill({
               color: 'white',
             }),
-            text: feature.get('Name'),
+            text: feature.get('name'),
           }),
         }),
       };
@@ -45,7 +53,8 @@ const Map: React.FC = () => {
 
     const styleFunction: StyleFunction = (feature) => {
       const styles = generateStyles(feature);
-      return styles[feature.getGeometry().getType()];
+      const geometry = feature.getGeometry();
+      return geometry ? styles[geometry.getType()] : [];
     };
 
     const vectorLayer = new VectorLayer({
@@ -55,10 +64,30 @@ const Map: React.FC = () => {
       style: styleFunction,
     });
 
+    const selectClick = new Select({
+      condition: click,
+    });
+
+    selectClick.on('select', (event) => {
+      const features = event.target.getFeatures().array_;
+
+      if (!features || features.length < 1) {
+        selectState();
+        toggleMapDrawer(false);
+        return;
+      }
+
+      const feature = features[0];
+      selectState(feature.values_);
+      toggleMapDrawer(true);
+    });
+
     // create map
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
       layers: [vectorLayer],
+      controls: [],
+      interactions: [selectClick],
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
@@ -68,7 +97,7 @@ const Map: React.FC = () => {
 
     // save map and vector layer references to state
     setMap(initialMap);
-  }, []);
+  }, [selectState, toggleMapDrawer]);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };
