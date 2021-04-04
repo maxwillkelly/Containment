@@ -7,7 +7,7 @@ import TopBar from '../components/game/TopBar';
 import Map from '../components/game/Map';
 import PauseMenu from '../components/game/PauseMenu';
 
-import * as states from '../../map/geojson/states.geojson';
+import states from '../../map/geojson/states.json';
 import MapDrawer from '../components/game/MapDrawer';
 import ActionDrawer from '../components/game/ActionDrawer';
 

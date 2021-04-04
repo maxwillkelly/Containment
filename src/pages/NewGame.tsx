@@ -1,22 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-const NewGame = () => {
+import GameWindow from '../components/shared/GameWindow';
+import WindowButton from '../components/shared/WindowButton';
+import WindowLink from '../components/shared/WindowLink';
+import useGameStore from '../stores/GameStore';
+
+const Footer: React.FC = () => {
+  const history = useHistory();
+  const togglePause = useGameStore((state) => state.togglePause);
+
+  const handleStart = () => {
+    togglePause();
+    history.push('/game');
+  };
+
   return (
-    <div className="h-screen w-screen">
-      <div className="h-full w-full">
-        <h1 className="py-12 text-5xl font-bold dark:text-gray-200 text-center">
-          New game
-        </h1>
-        <Link className="dark:text-gray-200 p-5 m-3" to="/">
-          Back
-        </Link>
-        <Link className="dark:text-gray-200 p-5 m-3" to="/game">
-          To Game
-        </Link>
-      </div>
-    </div>
+    <>
+      <WindowButton title="Start" handleClick={handleStart} />
+      <WindowLink title="Cancel" path="/" />
+    </>
   );
+};
+
+const NewGame: React.FC = () => {
+  return <GameWindow title="New game" footer={<Footer />} />;
 };
 
 export default NewGame;
