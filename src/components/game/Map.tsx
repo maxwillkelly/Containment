@@ -13,6 +13,7 @@ import Fill from 'ol/style/Fill';
 import Text from 'ol/style/Text';
 
 import Select from 'ol/interaction/Select';
+import { defaults as defaultInteractions } from 'ol/interaction';
 import { click } from 'ol/events/condition';
 
 import { FeatureLike } from 'ol/Feature';
@@ -87,7 +88,7 @@ const Map: React.FC = () => {
       target: mapElement && mapElement.current ? mapElement.current : undefined,
       layers: [vectorLayer],
       controls: [],
-      interactions: [selectClick],
+      interactions: defaultInteractions().extend([selectClick]),
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
