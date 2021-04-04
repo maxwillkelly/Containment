@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import useGameStore from '../stores/GameStore';
 import useViralStore from '../stores/ViralStore';
@@ -48,8 +48,34 @@ const MapDrawerToggle: React.FC = () => {
   );
 };
 
+const LoadingScreen: React.FC = () => {
+  const [ellipsis, setEllipsis] = useState('');
+
+  useEffect(() => {
+    const changeEllipsis = () => {
+      if (ellipsis === '...') setEllipsis('');
+      else setEllipsis((state) => `${state}.`);
+    };
+
+    const interval = setInterval(changeEllipsis, 500);
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ellipsis]);
+
+  return (
+    <div className="h-screen w-screen grid place-items-center">
+      <h1 className="text-4xl font-bold dark:text-gray-200 text-center">
+        {`Loading${ellipsis}`}
+      </h1>
+    </div>
+  );
+};
+
 const Game: React.FC = () => {
-  const SIMS_PER_MILLION = 2;
+  const SIMS_PER_MILLION = 30;
+  const [loading, setLoading] = useState(true);
   const turn = useGameStore((state) => state.turn);
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
@@ -74,9 +100,14 @@ const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (turn === 0) setupNewGame();
+    setTimeout(() => setLoading(false), 6000);
+
+    // setupNewGame();
+    // setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="h-screen w-screen flex flex-col">
