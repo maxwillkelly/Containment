@@ -154,11 +154,6 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // Geojson support
-      {
-        test: /\.geojson$/,
-        loader: 'json-loader'
-      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

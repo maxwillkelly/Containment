@@ -1,6 +1,7 @@
-import { Machine, StateMachine } from 'xstate';
+import { Machine, State, StateMachine } from 'xstate';
+import { v4 as uuid } from 'uuid';
 
-type Event =
+export type Event =
   | { type: 'Infect' }
   | { type: 'Inoculate' }
   | { type: 'Recover' }
@@ -10,7 +11,18 @@ type Event =
   | { type: 'Hospitalise' }
   | { type: 'Discharge' };
 
-interface Schema {
+export const States = {
+  uninfected: { testing: ['tested', 'untested'] },
+  infected: {
+    testing: ['tested', 'untested'],
+    symptoms: ['mild', 'hospitalised'],
+  },
+  inoculated: {},
+  recovered: {},
+  death: {},
+};
+
+export interface Schema {
   states: {
     uninfected: Record<string, unknown>;
     infected: Record<string, unknown>;
@@ -20,9 +32,10 @@ interface Schema {
   };
 }
 
-interface Context {
+export interface Context {
+  id: string;
   infects: number;
-  state: string;
+  residentState: string;
 }
 
 const untested: Record<string, unknown> = {
@@ -32,14 +45,11 @@ const untested: Record<string, unknown> = {
 };
 
 export type PersonMachine = StateMachine<Context, Schema, Event>;
+export type PersonState = State<Context, Schema, Event>;
 
 const personMachine = Machine<Context, Schema, Event>({
   id: 'person',
   initial: 'uninfected',
-  context: {
-    infects: 2,
-    state: 'Los Almos',
-  },
   states: {
     uninfected: {
       on: {
@@ -61,16 +71,12 @@ const personMachine = Machine<Context, Schema, Event>({
         Recover: 'recovered',
         Death: 'death',
       },
-      initial: 'untested',
+      type: 'parallel',
       states: {
-        test: {
+        testing: {
           initial: 'untested',
           states: {
-            untested: {
-              on: {
-                Test: 'tested',
-              },
-            },
+            untested,
             tested: {},
           },
         },
@@ -101,4 +107,11 @@ const personMachine = Machine<Context, Schema, Event>({
   },
 });
 
-export default personMachine;
+export const createPersonMachine = (infects: number, residentState: string) =>
+  personMachine.withContext({
+    id: uuid(),
+    infects,
+    residentState,
+  }).initialState;
+
+export default createPersonMachine;

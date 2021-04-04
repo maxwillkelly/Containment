@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect, useRef } from 'react';
 
 import MapOL from 'ol/Map';
@@ -5,73 +6,56 @@ import View from 'ol/View';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
+
 import Style, { StyleFunction } from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
+import Text from 'ol/style/Text';
 
-import * as states from '../../../map/geojson/states.geojson';
+import Select from 'ol/interaction/Select';
+import { click } from 'ol/events/condition';
+
+import { FeatureLike } from 'ol/Feature';
+import * as states from '../../../map/geojson/states.json';
+import useGameStore from '../../stores/GameStore';
 
 const Map: React.FC = () => {
   const [map, setMap] = useState<MapOL>();
-
   const mapElement = useRef<HTMLDivElement>(null);
+
+  const selectState = useGameStore((state) => state.selectState);
+  const toggleMapDrawer = useGameStore((state) => state.toggleMapDrawer);
 
   // Initialize map
   useEffect(() => {
-    const styles: Record<string, Style> = {
-      LineString: new Style({
-        stroke: new Stroke({
-          color: 'green',
-          width: 1,
+    const generateStyles: (feature: FeatureLike) => Record<string, Style> = (
+      feature
+    ) => {
+      return {
+        MultiPolygon: new Style({
+          stroke: new Stroke({
+            color: 'yellow',
+            width: 1,
+          }),
+          fill: new Fill({
+            color: 'rgba(255, 255, 0, 0.1)',
+          }),
+          text: new Text({
+            font: '0.8em Roboto',
+            fill: new Fill({
+              color: 'white',
+            }),
+            text: feature.get('name'),
+          }),
         }),
-      }),
-      MultiLineString: new Style({
-        stroke: new Stroke({
-          color: 'green',
-          width: 1,
-        }),
-      }),
-      MultiPolygon: new Style({
-        stroke: new Stroke({
-          color: 'yellow',
-          width: 1,
-        }),
-        fill: new Fill({
-          color: 'rgba(255, 255, 0, 0.1)',
-        }),
-      }),
-      Polygon: new Style({
-        stroke: new Stroke({
-          color: 'blue',
-          lineDash: [4],
-          width: 3,
-        }),
-        fill: new Fill({
-          color: 'rgba(0, 0, 255, 0.1)',
-        }),
-      }),
-      GeometryCollection: new Style({
-        stroke: new Stroke({
-          color: 'magenta',
-          width: 2,
-        }),
-        fill: new Fill({
-          color: 'magenta',
-        }),
-      }),
-      Circle: new Style({
-        stroke: new Stroke({
-          color: 'red',
-          width: 2,
-        }),
-        fill: new Fill({
-          color: 'rgba(255,0,0,0.2)',
-        }),
-      }),
+      };
     };
 
-    const styleFunction: StyleFunction = (feature) =>
-      styles[feature.getGeometry().getType()];
+    const styleFunction: StyleFunction = (feature) => {
+      const styles = generateStyles(feature);
+      const geometry = feature.getGeometry();
+      return geometry ? styles[geometry.getType()] : [];
+    };
 
     const vectorLayer = new VectorLayer({
       source: new VectorSource({
@@ -80,15 +64,30 @@ const Map: React.FC = () => {
       style: styleFunction,
     });
 
+    const selectClick = new Select({
+      condition: click,
+    });
+
+    selectClick.on('select', (event) => {
+      const features = event.target.getFeatures().array_;
+
+      if (!features || features.length < 1) {
+        selectState();
+        toggleMapDrawer(false);
+        return;
+      }
+
+      const feature = features[0];
+      selectState(feature.values_);
+      toggleMapDrawer(true);
+    });
+
     // create map
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
-      layers: [
-        // new TileLayer({
-        //   source: new OSM(),
-        // }),
-        vectorLayer,
-      ],
+      layers: [vectorLayer],
+      controls: [],
+      interactions: [selectClick],
       view: new View({
         projection: 'EPSG:3857',
         center: [528, -361],
@@ -98,7 +97,7 @@ const Map: React.FC = () => {
 
     // save map and vector layer references to state
     setMap(initialMap);
-  }, []);
+  }, [selectState, toggleMapDrawer]);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };
