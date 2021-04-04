@@ -25,7 +25,7 @@ type State = {
 
 const useGameStore = create<State>((set) => ({
   turn: 0,
-  isPaused: false,
+  isPaused: true,
   isActionDrawerOpen: false,
   isMapDrawerOpen: false,
   selectedState: undefined,
