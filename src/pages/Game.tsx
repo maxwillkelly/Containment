@@ -75,12 +75,17 @@ const LoadingScreen: React.FC = () => {
 
 const Game: React.FC = () => {
   const SIMS_PER_MILLION = 30;
-  const [loading, setLoading] = useState(true);
-  const turn = useGameStore((state) => state.turn);
+
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
+  const personsInitialised = useViralStore((state) => state.personsInitialised);
+  const setPersonsInitialised = useViralStore(
+    (state) => state.setPersonsInitialised
+  );
 
-  const setupNewGame = async () => {
+  const [loading, setLoading] = useState(true);
+
+  const setupNewGame = () => {
     const startTime = new Date().getTime();
 
     // eslint-disable-next-line no-restricted-syntax
@@ -97,13 +102,18 @@ const Game: React.FC = () => {
     console.log(
       `Time in ms to finish creating state machines: ${endTime - startTime}`
     );
+
+    setPersonsInitialised(true);
+    setLoading(false);
   };
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 6000);
+    if (!personsInitialised) {
+      setupNewGame();
+    }
 
-    // setupNewGame();
-    // setLoading(false);
+    // const loadingWorker = new Worker();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

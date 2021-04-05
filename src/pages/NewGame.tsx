@@ -5,13 +5,16 @@ import GameWindow from '../components/shared/GameWindow';
 import WindowButton from '../components/shared/WindowButton';
 import WindowLink from '../components/shared/WindowLink';
 import useGameStore from '../stores/GameStore';
+import useViralStore from '../stores/ViralStore';
 
 const Footer: React.FC = () => {
   const history = useHistory();
-  const togglePause = useGameStore((state) => state.togglePause);
+  const resetGameStore = useGameStore((state) => state.reset);
+  const resetViralStore = useViralStore((state) => state.reset);
 
   const handleStart = () => {
-    togglePause();
+    resetGameStore();
+    resetViralStore();
     history.push('/game');
   };
 
