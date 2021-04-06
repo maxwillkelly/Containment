@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import useGameStore from '../stores/GameStore';
 import useViralStore from '../stores/ViralStore';
@@ -8,8 +8,11 @@ import Map from '../components/game/Map';
 import PauseMenu from '../components/game/PauseMenu';
 
 import states from '../../map/geojson/states.json';
+import { FeaturesEntity } from '../interfaces/states';
+
 import MapDrawer from '../components/game/MapDrawer';
 import ActionDrawer from '../components/game/ActionDrawer';
+import LoadingScreen from '../components/game/LoadingScreen';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
@@ -49,34 +52,64 @@ const MapDrawerToggle: React.FC = () => {
 };
 
 const Game: React.FC = () => {
-  const SIMS_PER_MILLION = 2;
-  const turn = useGameStore((state) => state.turn);
+  const SIMS_PER_MILLION = 30;
+
   const paused = useGameStore((state) => state.isPaused);
   const createPerson = useViralStore((state) => state.createPerson);
+  const personsInitialised = useViralStore((state) => state.personsInitialised);
+  const setPersonsInitialised = useViralStore(
+    (state) => state.setPersonsInitialised
+  );
 
-  const setupNewGame = async () => {
+  const [loading, setLoading] = useState(true);
+
+  const setupNewGame = () => {
     const startTime = new Date().getTime();
+    const { features } = states;
+    const processArray = JSON.parse(JSON.stringify(features));
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const state of states.features) {
-      const { name, population } = state.properties;
-      const residentPersonsNum = (population / 1000000) * SIMS_PER_MILLION;
+    const processPersonChunk = (chunk: FeaturesEntity[]) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const state of chunk) {
+        const { name, population } = state.properties;
+        const residentPersonsNum = (population / 1000000) * SIMS_PER_MILLION;
 
-      for (let index = 0; index < residentPersonsNum; index += 1) {
-        createPerson(2, name);
+        for (let index = 0; index < residentPersonsNum; index += 1) {
+          createPerson(2, name);
+        }
       }
-    }
+    };
 
-    const endTime = new Date().getTime();
-    console.log(
-      `Time in ms to finish creating state machines: ${endTime - startTime}`
-    );
+    const generatePersonMachines = () => {
+      if (processArray.length === 0) {
+        const endTime = new Date().getTime();
+        console.log(
+          `Time in ms to finish creating state machines: ${endTime - startTime}`
+        );
+
+        setPersonsInitialised(true);
+        setLoading(false);
+      } else {
+        const chunk = processArray.splice(0, 1);
+        processPersonChunk(chunk);
+        setImmediate(generatePersonMachines);
+      }
+    };
+
+    generatePersonMachines();
   };
 
   useEffect(() => {
-    if (turn === 0) setupNewGame();
+    if (!personsInitialised) {
+      setupNewGame();
+    }
+
+    // const loadingWorker = new Worker();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="h-screen w-screen flex flex-col">

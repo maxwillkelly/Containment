@@ -21,6 +21,7 @@ type State = {
   selectState: (selectedState?: ResidentStateDetails) => void;
   togglePause: () => void;
   toggleActiveApplet: (applet: string) => void;
+  reset: () => void;
 };
 
 const useGameStore = create<State>((set) => ({
@@ -50,6 +51,16 @@ const useGameStore = create<State>((set) => ({
         ? { activeApplet: '' }
         : { activeApplet: applet }
     ),
+
+  reset: () =>
+    set({
+      turn: 0,
+      isPaused: false,
+      isActionDrawerOpen: false,
+      isMapDrawerOpen: false,
+      selectedState: undefined,
+      activeApplet: '',
+    }),
 }));
 
 export default useGameStore;

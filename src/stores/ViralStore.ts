@@ -7,6 +7,7 @@ import { createPersonMachine, PersonState } from './viral/person.machine';
 
 type State = {
   persons: Record<string, PersonState[]>;
+  personsInitialised: boolean;
 
   createPerson: (infects: number, residentState: string) => void;
 
@@ -14,7 +15,11 @@ type State = {
   getPersonsTotalByState: (residentState: string) => number;
   getPersonsStatesByState: (residentState: string) => Record<string, unknown>;
 
+  setPersonsInitialised: (initialised: boolean) => void;
+
   takeTurn: () => void;
+
+  reset: () => void;
 };
 
 const convertStateValueToCompositeKey = (stateValue: StateValue) => {
@@ -28,6 +33,7 @@ const convertStateValueToCompositeKey = (stateValue: StateValue) => {
 const useViralStore = create<State>(
   immer((set, get) => ({
     persons: {},
+    personsInitialised: false,
 
     createPerson: (infects, residentState) => {
       set((state) => {
@@ -58,7 +64,20 @@ const useViralStore = create<State>(
       return personsStateByState;
     },
 
+    setPersonsInitialised: (initialised) => {
+      set((state) => {
+        state.personsInitialised = initialised;
+      });
+    },
+
     takeTurn: () => {},
+
+    reset: () => {
+      set((state) => {
+        state.persons = {};
+        state.personsInitialised = false;
+      });
+    },
   }))
 );
 
