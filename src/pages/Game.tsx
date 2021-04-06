@@ -8,6 +8,8 @@ import Map from '../components/game/Map';
 import PauseMenu from '../components/game/PauseMenu';
 
 import states from '../../map/geojson/states.json';
+import { FeaturesEntity } from '../interfaces/states';
+
 import MapDrawer from '../components/game/MapDrawer';
 import ActionDrawer from '../components/game/ActionDrawer';
 import LoadingScreen from '../components/game/LoadingScreen';
@@ -63,24 +65,38 @@ const Game: React.FC = () => {
 
   const setupNewGame = () => {
     const startTime = new Date().getTime();
+    const { features } = states;
+    const processArray = JSON.parse(JSON.stringify(features));
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const state of states.features) {
-      const { name, population } = state.properties;
-      const residentPersonsNum = (population / 1000000) * SIMS_PER_MILLION;
+    const processPersonChunk = (chunk: FeaturesEntity[]) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const state of chunk) {
+        const { name, population } = state.properties;
+        const residentPersonsNum = (population / 1000000) * SIMS_PER_MILLION;
 
-      for (let index = 0; index < residentPersonsNum; index += 1) {
-        createPerson(2, name);
+        for (let index = 0; index < residentPersonsNum; index += 1) {
+          createPerson(2, name);
+        }
       }
-    }
+    };
 
-    const endTime = new Date().getTime();
-    console.log(
-      `Time in ms to finish creating state machines: ${endTime - startTime}`
-    );
+    const generatePersonMachines = () => {
+      if (processArray.length === 0) {
+        const endTime = new Date().getTime();
+        console.log(
+          `Time in ms to finish creating state machines: ${endTime - startTime}`
+        );
 
-    setPersonsInitialised(true);
-    setLoading(false);
+        setPersonsInitialised(true);
+        setLoading(false);
+      } else {
+        const chunk = processArray.splice(0, 1);
+        processPersonChunk(chunk);
+        setImmediate(generatePersonMachines);
+      }
+    };
+
+    generatePersonMachines();
   };
 
   useEffect(() => {
