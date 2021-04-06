@@ -1,6 +1,12 @@
 import { Machine, State, StateMachine } from 'xstate';
 import { v4 as uuid } from 'uuid';
 
+export interface Context {
+  id: string;
+  infects: number;
+  residentState: string;
+}
+
 export type Event =
   | { type: 'Infect' }
   | { type: 'Inoculate' }
@@ -11,31 +17,19 @@ export type Event =
   | { type: 'Hospitalise' }
   | { type: 'Discharge' };
 
-export const States = {
-  uninfected: { testing: ['tested', 'untested'] },
-  infected: {
-    testing: ['tested', 'untested'],
-    symptoms: ['mild', 'hospitalised'],
-  },
-  inoculated: {},
-  recovered: {},
-  death: {},
-};
-
 export interface Schema {
   states: {
-    uninfected: Record<string, unknown>;
+    uninfected: {
+      states: {
+        untested: Record<string, unknown>;
+        tested: Record<string, unknown>;
+      };
+    };
     infected: Record<string, unknown>;
     inoculated: Record<string, unknown>;
     recovered: Record<string, unknown>;
     death: Record<string, unknown>;
   };
-}
-
-export interface Context {
-  id: string;
-  infects: number;
-  residentState: string;
 }
 
 const untested: Record<string, unknown> = {
@@ -45,7 +39,7 @@ const untested: Record<string, unknown> = {
 };
 
 export type PersonMachine = StateMachine<Context, Schema, Event>;
-export type PersonState = State<Context, Schema, Event>;
+export type PersonState = State<Context, Event, Schema>;
 
 const personMachine = Machine<Context, Schema, Event>({
   id: 'person',
