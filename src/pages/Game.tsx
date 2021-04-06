@@ -10,6 +10,7 @@ import PauseMenu from '../components/game/PauseMenu';
 import states from '../../map/geojson/states.json';
 import MapDrawer from '../components/game/MapDrawer';
 import ActionDrawer from '../components/game/ActionDrawer';
+import LoadingScreen from '../components/game/LoadingScreen';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
@@ -45,31 +46,6 @@ const MapDrawerToggle: React.FC = () => {
     >
       <GiInfo className="dark:text-gray-200 text-2xl" />
     </button>
-  );
-};
-
-const LoadingScreen: React.FC = () => {
-  const [ellipsis, setEllipsis] = useState('');
-
-  useEffect(() => {
-    const changeEllipsis = () => {
-      if (ellipsis === '...') setEllipsis('');
-      else setEllipsis((state) => `${state}.`);
-    };
-
-    const interval = setInterval(changeEllipsis, 500);
-    return () => {
-      clearInterval(interval);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ellipsis]);
-
-  return (
-    <div className="h-screen w-screen grid place-items-center">
-      <h1 className="text-4xl font-bold dark:text-gray-200 text-center">
-        {`Loading${ellipsis}`}
-      </h1>
-    </div>
   );
 };
 
