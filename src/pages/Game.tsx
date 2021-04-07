@@ -59,16 +59,10 @@ const Game: React.FC = () => {
 
   const paused = useGameStore((state) => state.isPaused);
 
-  const [
-    createPerson,
-    personsInitialised,
-    setPersonsInitialised,
-    generateOutbreak,
-  ] = useViralStore(
+  const [createPerson, personsInitialised, generateOutbreak] = useViralStore(
     (state) => [
       state.createPerson,
       state.personsInitialised,
-      state.setPersonsInitialised,
       state.generateOutbreak,
     ],
     shallow
@@ -93,19 +87,23 @@ const Game: React.FC = () => {
       }
     };
 
-    const generatePersonMachines = () => {
-      if (processArray.length === 0) {
-        const endTime = new Date().getTime();
-        console.log(
-          `Time in ms to finish creating state machines: ${endTime - startTime}`
-        );
+    const finishSetup = () => {
+      const endTime = new Date().getTime();
+      console.log(
+        `Time in ms to finish creating state machines: ${endTime - startTime}`
+      );
 
-        generateOutbreak();
-        setLoading(false);
-      } else {
+      generateOutbreak();
+      setLoading(false);
+    };
+
+    const generatePersonMachines = () => {
+      if (processArray.length !== 0) {
         const chunk = processArray.splice(0, 1);
         processPersonChunk(chunk);
         setImmediate(generatePersonMachines);
+      } else {
+        finishSetup();
       }
     };
 
@@ -113,11 +111,7 @@ const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!personsInitialised) {
-      setupNewGame();
-    }
-
-    // const loadingWorker = new Worker();
+    if (!personsInitialised) setupNewGame();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
