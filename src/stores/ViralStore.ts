@@ -3,7 +3,12 @@ import create from 'zustand';
 import flat from 'flat';
 import { StateValue } from 'xstate';
 import immer from './shared/immer';
-import { createPersonMachine, PersonState } from './viral/person.machine';
+import {
+  createPersonMachine,
+  personMachine,
+  PersonState,
+} from './viral/person.machine';
+import states from '../../map/geojson/states.json';
 
 type State = {
   persons: Record<string, PersonState[]>;
@@ -17,6 +22,7 @@ type State = {
 
   setPersonsInitialised: (initialised: boolean) => void;
 
+  generateOutbreak: () => void;
   takeTurn: () => void;
 
   reset: () => void;
@@ -46,6 +52,7 @@ const useViralStore = create<State>(
     },
 
     getPersonsByState: (residentState) => get().persons[residentState],
+
     getPersonsTotalByState: (residentState) => {
       const stateResidents = get().persons[residentState];
       return stateResidents ? stateResidents.length : 0;
@@ -67,6 +74,29 @@ const useViralStore = create<State>(
     setPersonsInitialised: (initialised) => {
       set((state) => {
         state.personsInitialised = initialised;
+      });
+    },
+
+    generateOutbreak: () => {
+      const { features } = states;
+
+      // Selects first outbreak
+      const randomStateIndex = Math.floor(Math.random() * features.length);
+      const firstOutbreakState = features[randomStateIndex].properties.name;
+      console.log(firstOutbreakState);
+
+      const statePersons = get().persons[firstOutbreakState];
+      const randomPersonIndex = Math.floor(Math.random() * statePersons.length);
+      console.log(randomPersonIndex);
+
+      const patientZero = statePersons[randomPersonIndex];
+      const newState = personMachine.transition(patientZero, 'Infect');
+
+      console.log(newState);
+      // Infects patient zero
+      set((state) => {
+        state.persons[firstOutbreakState][randomPersonIndex] = newState;
+        state.personsInitialised = true;
       });
     },
 

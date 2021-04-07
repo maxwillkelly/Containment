@@ -41,7 +41,7 @@ const untested: Record<string, unknown> = {
 export type PersonMachine = StateMachine<Context, Schema, Event>;
 export type PersonState = State<Context, Event, Schema>;
 
-const personMachine = Machine<Context, Schema, Event>({
+export const personMachine = Machine<Context, Schema, Event>({
   id: 'person',
   initial: 'uninfected',
   states: {
@@ -107,5 +107,3 @@ export const createPersonMachine = (infects: number, residentState: string) =>
     infects,
     residentState,
   }).initialState;
-
-export default createPersonMachine;

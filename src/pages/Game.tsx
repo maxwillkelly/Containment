@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
+import shallow from 'zustand/shallow';
+
 import useGameStore from '../stores/GameStore';
 import useViralStore from '../stores/ViralStore';
 
@@ -13,6 +15,7 @@ import { FeaturesEntity } from '../interfaces/states';
 import MapDrawer from '../components/game/MapDrawer';
 import ActionDrawer from '../components/game/ActionDrawer';
 import LoadingScreen from '../components/game/LoadingScreen';
+import { personMachine } from '../stores/viral/person.machine';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
@@ -55,10 +58,14 @@ const Game: React.FC = () => {
   const SIMS_PER_MILLION = 30;
 
   const paused = useGameStore((state) => state.isPaused);
-  const createPerson = useViralStore((state) => state.createPerson);
-  const personsInitialised = useViralStore((state) => state.personsInitialised);
-  const setPersonsInitialised = useViralStore(
-    (state) => state.setPersonsInitialised
+
+  const [createPerson, personsInitialised, generateOutbreak] = useViralStore(
+    (state) => [
+      state.createPerson,
+      state.personsInitialised,
+      state.generateOutbreak,
+    ],
+    shallow
   );
 
   const [loading, setLoading] = useState(true);
@@ -66,7 +73,7 @@ const Game: React.FC = () => {
   const setupNewGame = () => {
     const startTime = new Date().getTime();
     const { features } = states;
-    const processArray = JSON.parse(JSON.stringify(features));
+    const processArray: FeaturesEntity[] = JSON.parse(JSON.stringify(features));
 
     const processPersonChunk = (chunk: FeaturesEntity[]) => {
       // eslint-disable-next-line no-restricted-syntax
@@ -80,19 +87,23 @@ const Game: React.FC = () => {
       }
     };
 
-    const generatePersonMachines = () => {
-      if (processArray.length === 0) {
-        const endTime = new Date().getTime();
-        console.log(
-          `Time in ms to finish creating state machines: ${endTime - startTime}`
-        );
+    const finishSetup = () => {
+      const endTime = new Date().getTime();
+      console.log(
+        `Time in ms to finish creating state machines: ${endTime - startTime}`
+      );
 
-        setPersonsInitialised(true);
-        setLoading(false);
-      } else {
+      generateOutbreak();
+      setLoading(false);
+    };
+
+    const generatePersonMachines = () => {
+      if (processArray.length !== 0) {
         const chunk = processArray.splice(0, 1);
         processPersonChunk(chunk);
         setImmediate(generatePersonMachines);
+      } else {
+        finishSetup();
       }
     };
 
@@ -100,11 +111,7 @@ const Game: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!personsInitialised) {
-      setupNewGame();
-    }
-
-    // const loadingWorker = new Worker();
+    if (!personsInitialised) setupNewGame();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
