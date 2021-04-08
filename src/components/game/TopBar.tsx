@@ -9,6 +9,7 @@ import {
 } from 'react-icons/gi';
 
 import useGameStore from '../../stores/GameStore';
+import useViralStore from '../../stores/ViralStore';
 import ActionsMenu from './ActionsMenu';
 
 const getBgColour = (state: boolean) =>
@@ -171,16 +172,19 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const applet = 'AdvanceTurnButton';
-  const activeApplet = useGameStore((state) => state.activeApplet);
-  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const advanceTurn = useGameStore((state) => state.advanceTurn);
+  const setLoading = useGameStore((state) => state.setLoading);
+  const takeTurn = useViralStore((state) => state.takeTurn);
+
+  const handleClick = () => {
+    setLoading(true);
+    advanceTurn();
+    takeTurn();
+    setLoading(false);
+  };
 
   return (
-    <button
-      className={`px-3 ${getBgColour(activeApplet === applet)}`}
-      type="button"
-      onClick={() => toggleActiveApplet(applet)}
-    >
+    <button className="px-3" type="button" onClick={handleClick}>
       <GiPlayButton className="dark:text-gray-200 text-3xl" />
     </button>
   );

@@ -9,6 +9,7 @@ type ResidentStateDetails = {
 
 type State = {
   turn: number;
+  loading: boolean;
   isActionDrawerOpen: boolean;
   isMapDrawerOpen: boolean;
   selectedState: ResidentStateDetails | undefined;
@@ -16,6 +17,7 @@ type State = {
   activeApplet: string;
 
   advanceTurn: () => void;
+  setLoading: (value: boolean) => void;
   toggleActionDrawer: () => void;
   toggleMapDrawer: (open?: boolean) => void;
   selectState: (selectedState?: ResidentStateDetails) => void;
@@ -26,13 +28,18 @@ type State = {
 
 const useGameStore = create<State>((set) => ({
   turn: 0,
+  loading: true,
   isPaused: true,
   isActionDrawerOpen: false,
   isMapDrawerOpen: false,
   selectedState: undefined,
   activeApplet: '',
 
-  advanceTurn: () => set((state) => ({ turn: state.turn + 1 })),
+  advanceTurn: () => {
+    set((state) => ({ turn: state.turn + 1 }));
+  },
+
+  setLoading: (value) => set((state) => ({ loading: value })),
 
   toggleActionDrawer: () =>
     set((state) => ({ isActionDrawerOpen: !state.isActionDrawerOpen })),

@@ -10,19 +10,33 @@ import {
 } from './viral/person.machine';
 import states from '../../map/geojson/states.json';
 
+type MachineState = {
+  machine: PersonState;
+  represents: number;
+};
+
+type UnsimulatedDetails = {
+  uninfected: number;
+  inoculations: number;
+  deaths: number;
+};
+
 type State = {
-  persons: Record<string, PersonState[]>;
+  rBaseline: number;
+  cfr: number;
+
+  persons: Record<string, MachineState[]>;
+  unsimulatedDetails: Record<string, UnsimulatedDetails>;
+
   personsInitialised: boolean;
 
-  createPerson: (infects: number, residentState: string) => void;
-
-  getPersonsByState: (residentState: string) => PersonState[];
+  getPersonsByState: (residentState: string) => MachineState[];
   getPersonsTotalByState: (residentState: string) => number;
   getPersonsStatesByState: (residentState: string) => Record<string, unknown>;
 
-  setPersonsInitialised: (initialised: boolean) => void;
-
   generateOutbreak: () => void;
+  generateLocalInfection: (residentState: string, infectors?: number) => void;
+
   takeTurn: () => void;
 
   reset: () => void;
@@ -38,18 +52,13 @@ const convertStateValueToCompositeKey = (stateValue: StateValue) => {
 
 const useViralStore = create<State>(
   immer((set, get) => ({
-    persons: {},
-    personsInitialised: false,
+    rBaseline: 2,
+    cfr: 0.02,
 
-    createPerson: (infects, residentState) => {
-      set((state) => {
-        const machine = createPersonMachine(infects, residentState);
-        if (!state.persons[residentState]) {
-          state.persons[residentState] = [];
-        }
-        state.persons[residentState].push(machine);
-      });
-    },
+    persons: {},
+    unsimulatedDetails: {},
+
+    personsInitialised: false,
 
     getPersonsByState: (residentState) => get().persons[residentState],
 
@@ -62,8 +71,12 @@ const useViralStore = create<State>(
       const personsStateByState: Record<string, number> = {};
       const stateResidents = get().persons[residentState];
 
+      if (!stateResidents) return personsStateByState;
+
       for (const resident of stateResidents) {
-        const compositeKey = convertStateValueToCompositeKey(resident.value);
+        const compositeKey = convertStateValueToCompositeKey(
+          resident.machine.value
+        );
         personsStateByState[compositeKey] =
           personsStateByState[compositeKey] + 1 || 1;
       }
@@ -71,40 +84,79 @@ const useViralStore = create<State>(
       return personsStateByState;
     },
 
-    setPersonsInitialised: (initialised) => {
-      set((state) => {
-        state.personsInitialised = initialised;
-      });
-    },
-
     generateOutbreak: () => {
       const { features } = states;
+      const { generateLocalInfection } = get();
 
-      // Selects first outbreak
+      // Selects state of outbreak
       const randomStateIndex = Math.floor(Math.random() * features.length);
       const firstOutbreakState = features[randomStateIndex].properties.name;
       console.log(firstOutbreakState);
 
-      const statePersons = get().persons[firstOutbreakState];
-      const randomPersonIndex = Math.floor(Math.random() * statePersons.length);
-      console.log(randomPersonIndex);
+      // Infects patient
+      generateLocalInfection(firstOutbreakState);
 
-      const patientZero = statePersons[randomPersonIndex];
-      const newState = personMachine.transition(patientZero, 'Infect');
-
-      console.log(newState);
-      // Infects patient zero
       set((state) => {
-        state.persons[firstOutbreakState][randomPersonIndex] = newState;
         state.personsInitialised = true;
       });
     },
 
-    takeTurn: () => {},
+    generateLocalInfection: (residentState, infectors = get().rBaseline) => {
+      const newMachine = createPersonMachine();
+
+      const patient = {
+        machine: personMachine.transition(newMachine, 'Infect'),
+        represents: Math.round(infectors ** 4),
+      };
+
+      // Infects patient
+      set((state) => {
+        if (!state.persons[residentState]) state.persons[residentState] = [];
+        state.persons[residentState].push(patient);
+      });
+    },
+
+    takeTurn: () => {
+      set((state) => {
+        const { persons, cfr, generateLocalInfection } = state;
+
+        for (const [residentState, statePersons] of Object.entries(persons)) {
+          for (let i = 0; i < statePersons.length; i += 1) {
+            const p = statePersons[i];
+
+            if (p.machine.matches('infected')) {
+              // Removes current state machine
+              const oldP = statePersons.splice(i, 1)[0];
+              const { represents } = oldP;
+
+              // Infects state residents
+              generateLocalInfection(residentState, represents);
+
+              // Adds new state machines representing recoveries and deaths
+              const deaths = Math.round(represents * cfr);
+              const recoveries = represents - deaths;
+
+              const dead = {
+                machine: personMachine.transition(oldP.machine, 'Death'),
+                represents: deaths,
+              };
+
+              const recovered = {
+                machine: personMachine.transition(oldP.machine, 'Recover'),
+                represents: recoveries,
+              };
+
+              statePersons.push(recovered, dead);
+            }
+          }
+        }
+      });
+    },
 
     reset: () => {
       set((state) => {
         state.persons = {};
+        state.unsimulatedDetails = {};
         state.personsInitialised = false;
       });
     },
