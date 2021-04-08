@@ -30,6 +30,7 @@ const DebugDetails: React.FC = () => {
   const getPersonsStatesByState = useViralStore(
     (state) => state.getPersonsStatesByState
   );
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
 
   if (!selectedState) return null;
 
@@ -45,6 +46,13 @@ const DebugDetails: React.FC = () => {
         </h4>
         <pre>
           {JSON.stringify(getPersonsStatesByState(selectedState.name), null, 2)}
+        </pre>
+      </div>
+      <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
+        <h4 className="text-left">Viral Details</h4>
+        <h4 className="text-right">{}</h4>
+        <pre>
+          {JSON.stringify(getViralDetails(selectedState.name), null, 2)}
         </pre>
       </div>
     </>

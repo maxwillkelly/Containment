@@ -33,6 +33,7 @@ type State = {
   getPersonsByState: (residentState: string) => MachineState[];
   getPersonsTotalByState: (residentState: string) => number;
   getPersonsStatesByState: (residentState: string) => Record<string, unknown>;
+  getViralDetails: (residentState: string) => Record<string, unknown>;
 
   generateOutbreak: () => void;
   generateLocalInfection: (residentState: string, infectors?: number) => void;
@@ -74,11 +75,25 @@ const useViralStore = create<State>(
       if (!stateResidents) return personsStateByState;
 
       for (const resident of stateResidents) {
-        const compositeKey = convertStateValueToCompositeKey(
-          resident.machine.value
-        );
+        const compositeKey = resident.machine.value;
         personsStateByState[compositeKey] =
           personsStateByState[compositeKey] + 1 || 1;
+      }
+
+      return personsStateByState;
+    },
+
+    getViralDetails: (residentState) => {
+      const personsStateByState: Record<string, number> = {};
+      const stateResidents = get().persons[residentState];
+
+      if (!stateResidents) return personsStateByState;
+
+      for (const resident of stateResidents) {
+        const { represents } = resident;
+        const compositeKey = resident.machine.value;
+        personsStateByState[compositeKey] =
+          personsStateByState[compositeKey] + represents || represents;
       }
 
       return personsStateByState;
@@ -136,17 +151,23 @@ const useViralStore = create<State>(
               const deaths = Math.round(represents * cfr);
               const recoveries = represents - deaths;
 
-              const dead = {
-                machine: personMachine.transition(oldP.machine, 'Death'),
-                represents: deaths,
-              };
+              if (deaths !== 0) {
+                const dead = {
+                  machine: personMachine.transition(oldP.machine, 'Death'),
+                  represents: deaths,
+                };
 
-              const recovered = {
-                machine: personMachine.transition(oldP.machine, 'Recover'),
-                represents: recoveries,
-              };
+                statePersons.push(dead);
+              }
 
-              statePersons.push(recovered, dead);
+              if (recoveries !== 0) {
+                const recovered = {
+                  machine: personMachine.transition(oldP.machine, 'Recover'),
+                  represents: recoveries,
+                };
+
+                statePersons.push(recovered);
+              }
             }
           }
         }
