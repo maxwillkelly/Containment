@@ -121,7 +121,7 @@ const useViralStore = create<State>(
 
       const patient = {
         machine: personMachine.transition(newMachine, 'Infect'),
-        represents: Math.round(infectors ** 4),
+        represents: Math.round(infectors ** 2),
       };
 
       // Infects patient
