@@ -35,11 +35,9 @@ const useGameStore = create<State>((set) => ({
   selectedState: undefined,
   activeApplet: '',
 
-  advanceTurn: () => {
-    set((state) => ({ turn: state.turn + 1 }));
-  },
+  advanceTurn: () => set((state) => ({ turn: state.turn + 1 })),
 
-  setLoading: (value) => set((state) => ({ loading: value })),
+  setLoading: (value) => set(() => ({ loading: value })),
 
   toggleActionDrawer: () =>
     set((state) => ({ isActionDrawerOpen: !state.isActionDrawerOpen })),
@@ -62,6 +60,7 @@ const useGameStore = create<State>((set) => ({
   reset: () =>
     set({
       turn: 0,
+      loading: true,
       isPaused: false,
       isActionDrawerOpen: false,
       isMapDrawerOpen: false,

@@ -116,7 +116,7 @@ const useViralStore = create<State>(
       });
     },
 
-    takeTurn: () => {
+    takeTurn: () =>
       set((state) => {
         const { persons, cfr, generateLocalInfection } = state;
 
@@ -150,16 +150,14 @@ const useViralStore = create<State>(
             }
           }
         }
-      });
-    },
+      }),
 
-    reset: () => {
+    reset: () =>
       set((state) => {
         state.persons = {};
         state.unsimulatedDetails = {};
         state.personsInitialised = false;
-      });
-    },
+      }),
   }))
 );
 
