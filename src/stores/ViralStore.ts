@@ -2,6 +2,7 @@
 import create from 'zustand';
 import flat from 'flat';
 import { StateValue } from 'xstate';
+import lodash from 'lodash';
 import immer from './shared/immer';
 import {
   createPersonMachine,
@@ -133,7 +134,8 @@ const useViralStore = create<State>(
 
     takeTurn: () =>
       set((state) => {
-        const { persons, cfr, generateLocalInfection } = state;
+        const { cfr } = state;
+        const persons = lodash.cloneDeep(state.persons);
 
         for (const [residentState, statePersons] of Object.entries(persons)) {
           for (let i = 0; i < statePersons.length; i += 1) {
@@ -141,12 +143,19 @@ const useViralStore = create<State>(
 
             if (p.machine.matches('infected')) {
               // Removes current state machine
-              const oldP = statePersons.splice(i, 1)[0];
+              const oldP = state.persons[residentState].splice(i, 1)[0];
               const { represents } = oldP;
 
               // Infects state residents
-              generateLocalInfection(residentState, represents);
+              // generateLocalInfection(residentState, represents);
+              const newMachine = createPersonMachine();
 
+              const patient = {
+                machine: personMachine.transition(newMachine, 'Infect'),
+                represents: Math.round(represents * 1.4),
+              };
+
+              state.persons[residentState].push(patient);
               // Adds new state machines representing recoveries and deaths
               const deaths = Math.round(represents * cfr);
               const recoveries = represents - deaths;
@@ -157,7 +166,7 @@ const useViralStore = create<State>(
                   represents: deaths,
                 };
 
-                statePersons.push(dead);
+                state.persons[residentState].push(dead);
               }
 
               if (recoveries !== 0) {
@@ -166,7 +175,7 @@ const useViralStore = create<State>(
                   represents: recoveries,
                 };
 
-                statePersons.push(recovered);
+                state.persons[residentState].push(recovered);
               }
             }
           }
