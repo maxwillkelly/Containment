@@ -1,11 +1,5 @@
 import { Machine, State, StateMachine } from 'xstate';
-import { v4 as uuid } from 'uuid';
-
-export interface Context {
-  id: string;
-  infects: number;
-  residentState: string;
-}
+// import { v4 as uuid } from 'uuid';
 
 export type Event =
   | { type: 'Infect' }
@@ -32,16 +26,16 @@ export interface Schema {
   };
 }
 
-const untested: Record<string, unknown> = {
-  on: {
-    Test: 'tested',
-  },
-};
+// const untested: Record<string, unknown> = {
+//   on: {
+//     Test: 'tested',
+//   },
+// };
 
-export type PersonMachine = StateMachine<Context, Schema, Event>;
-export type PersonState = State<Context, Event, Schema>;
+export type PersonMachine = StateMachine<undefined, Schema, Event>;
+export type PersonState = State<undefined, Event, Schema>;
 
-export const personMachine = Machine<Context, Schema, Event>({
+export const personMachine = Machine<undefined, Schema, Event>({
   id: 'person',
   initial: 'uninfected',
   states: {
@@ -50,46 +44,46 @@ export const personMachine = Machine<Context, Schema, Event>({
         Infect: 'infected',
         Inoculate: 'inoculated',
       },
-      initial: 'untested',
-      states: {
-        untested,
-        tested: {
-          on: {
-            TestExpire: 'untested',
-          },
-        },
-      },
+      // initial: 'untested',
+      // states: {
+      //   untested,
+      //   tested: {
+      //     on: {
+      //       TestExpire: 'untested',
+      //     },
+      //   },
+      // },
     },
     infected: {
       on: {
         Recover: 'recovered',
         Death: 'death',
       },
-      type: 'parallel',
-      states: {
-        testing: {
-          initial: 'untested',
-          states: {
-            untested,
-            tested: {},
-          },
-        },
-        symptoms: {
-          initial: 'mild',
-          states: {
-            mild: {
-              on: {
-                Hospitalise: 'hospitalised',
-              },
-            },
-            hospitalised: {
-              on: {
-                Discharge: 'mild',
-              },
-            },
-          },
-        },
-      },
+      // type: 'parallel',
+      // states: {
+      //   testing: {
+      //     initial: 'untested',
+      //     states: {
+      //       untested,
+      //       tested: {},
+      //     },
+      //   },
+      //   symptoms: {
+      //     initial: 'mild',
+      //     states: {
+      //       mild: {
+      //         on: {
+      //           Hospitalise: 'hospitalised',
+      //         },
+      //       },
+      //       hospitalised: {
+      //         on: {
+      //           Discharge: 'mild',
+      //         },
+      //       },
+      //     },
+      // },
+      // },
     },
     inoculated: {},
     recovered: {
@@ -101,9 +95,4 @@ export const personMachine = Machine<Context, Schema, Event>({
   },
 });
 
-export const createPersonMachine = (infects: number, residentState: string) =>
-  personMachine.withContext({
-    id: uuid(),
-    infects,
-    residentState,
-  }).initialState;
+export const createPersonMachine = () => personMachine.initialState;

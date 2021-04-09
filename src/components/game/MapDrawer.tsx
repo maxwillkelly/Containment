@@ -24,12 +24,9 @@ const StateDetails: React.FC = () => {
 
 const DebugDetails: React.FC = () => {
   const selectedState = useGameStore((state) => state.selectedState);
-  const getPersonsTotalByState = useViralStore(
-    (state) => state.getPersonsTotalByState
-  );
-  const getPersonsStatesByState = useViralStore(
-    (state) => state.getPersonsStatesByState
-  );
+  const getMachinesTotal = useViralStore((state) => state.getMachinesTotal);
+  const getMachinesStates = useViralStore((state) => state.getMachinesStates);
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
 
   if (!selectedState) return null;
 
@@ -40,11 +37,16 @@ const DebugDetails: React.FC = () => {
       </h2>
       <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
         <h4 className="text-left">Person Machines</h4>
-        <h4 className="text-right">
-          {getPersonsTotalByState(selectedState.name)}
-        </h4>
+        <h4 className="text-right">{getMachinesTotal(selectedState.name)}</h4>
         <pre>
-          {JSON.stringify(getPersonsStatesByState(selectedState.name), null, 2)}
+          {JSON.stringify(getMachinesStates(selectedState.name), null, 2)}
+        </pre>
+      </div>
+      <div className="grid grid-cols-2 grid-flow-row px-4 py-5 text-sm">
+        <h4 className="text-left">Viral Details</h4>
+        <h4 className="text-right">{}</h4>
+        <pre>
+          {JSON.stringify(getViralDetails(selectedState.name), null, 2)}
         </pre>
       </div>
     </>
