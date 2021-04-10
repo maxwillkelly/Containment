@@ -14,18 +14,12 @@ type MachineComponent = {
   represents: number;
 };
 
-type UnsimulatedDetails = {
-  uninfected: number;
-  inoculations: number;
-  deaths: number;
-};
-
 type State = {
   rBaseline: number;
   cfr: number;
 
   persons: Record<string, MachineComponent[]>;
-  unsimulatedDetails: Record<string, UnsimulatedDetails>;
+  unsimulated: Record<string, number>;
 
   personsInitialised: boolean;
 
@@ -48,7 +42,7 @@ const useViralStore = create<State>(
     cfr: 0.02,
 
     persons: {},
-    unsimulatedDetails: {},
+    unsimulated: {},
 
     personsInitialised: false,
 
