@@ -3,6 +3,7 @@ import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import shallow from 'zustand/shallow';
 
 import useGameStore from '../stores/GameStore';
+import useMapStore from '../stores/MapStore';
 import useViralStore from '../stores/ViralStore';
 
 import TopBar from '../components/game/TopBar';
@@ -17,8 +18,8 @@ const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
 
 const ActionDrawerToggle: React.FC = () => {
-  const open = useGameStore((state) => state.isActionDrawerOpen);
-  const toggleActionDrawer = useGameStore((state) => state.toggleActionDrawer);
+  const open = useMapStore((state) => state.isActionDrawerOpen);
+  const toggleActionDrawer = useMapStore((state) => state.toggleActionDrawer);
 
   return (
     <button
@@ -34,8 +35,8 @@ const ActionDrawerToggle: React.FC = () => {
 };
 
 const MapDrawerToggle: React.FC = () => {
-  const open = useGameStore((state) => state.isMapDrawerOpen);
-  const toggleMapDrawer = useGameStore((state) => state.toggleMapDrawer);
+  const open = useMapStore((state) => state.isMapDrawerOpen);
+  const toggleMapDrawer = useMapStore((state) => state.toggleMapDrawer);
 
   return (
     <button

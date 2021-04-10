@@ -1,9 +1,9 @@
 import React from 'react';
-import useGameStore from '../../stores/GameStore';
+import useMapStore from '../../stores/MapStore';
 import useViralStore from '../../stores/ViralStore';
 
 const StateDetails: React.FC = () => {
-  const selectedState = useGameStore((state) => state.selectedState);
+  const selectedState = useMapStore((state) => state.selectedState);
 
   if (!selectedState) return null;
 
@@ -23,7 +23,7 @@ const StateDetails: React.FC = () => {
 };
 
 const DebugDetails: React.FC = () => {
-  const selectedState = useGameStore((state) => state.selectedState);
+  const selectedState = useMapStore((state) => state.selectedState);
   const getMachinesTotal = useViralStore((state) => state.getMachinesTotal);
   const getMachinesStates = useViralStore((state) => state.getMachinesStates);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
@@ -54,8 +54,8 @@ const DebugDetails: React.FC = () => {
 };
 
 const MapDrawer: React.FC = () => {
-  const open = useGameStore((state) => state.isMapDrawerOpen);
-  const selectedState = useGameStore((state) => state.selectedState);
+  const open = useMapStore((state) => state.isMapDrawerOpen);
+  const selectedState = useMapStore((state) => state.selectedState);
 
   const asideClass = open ? 'translate-x-0' : 'translate-x-full';
 

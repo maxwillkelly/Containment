@@ -14,18 +14,12 @@ type MachineComponent = {
   represents: number;
 };
 
-type UnsimulatedDetails = {
-  uninfected: number;
-  inoculations: number;
-  deaths: number;
-};
-
 type State = {
   rBaseline: number;
   cfr: number;
 
   persons: Record<string, MachineComponent[]>;
-  unsimulatedDetails: Record<string, UnsimulatedDetails>;
+  unsimulated: Record<string, number>;
 
   personsInitialised: boolean;
 
@@ -33,6 +27,8 @@ type State = {
   getMachinesTotal: (residentState: string) => number;
   getMachinesStates: (residentState: string) => Record<string, unknown>;
   getViralDetails: (residentState: string) => Record<string, unknown>;
+
+  setUnsimulated: () => void;
 
   generateOutbreak: () => void;
   generateLocalInfection: (residentState: string, infectors?: number) => void;
@@ -48,7 +44,7 @@ const useViralStore = create<State>(
     cfr: 0.02,
 
     persons: {},
-    unsimulatedDetails: {},
+    unsimulated: {},
 
     personsInitialised: false,
 
@@ -74,8 +70,12 @@ const useViralStore = create<State>(
     },
 
     getViralDetails: (residentState) => {
-      const viralDetails: Record<string, number> = {};
-      const stateResidents = get().persons[residentState];
+      const { unsimulated, persons } = get();
+      const viralDetails: Record<string, number> = {
+        unsimulated: unsimulated[residentState],
+      };
+
+      const stateResidents = persons[residentState];
 
       if (!stateResidents) return viralDetails;
 
@@ -87,6 +87,13 @@ const useViralStore = create<State>(
 
       return viralDetails;
     },
+
+    setUnsimulated: () =>
+      set((state) => {
+        state.unsimulated = states.features.reduce((obj, s) => {
+          return { ...obj, [s.properties.name]: s.properties.population };
+        }, {});
+      }),
 
     generateOutbreak: () => {
       const { features } = states;
@@ -119,6 +126,7 @@ const useViralStore = create<State>(
       set((state) => {
         if (!state.persons[residentState]) state.persons[residentState] = [];
         state.persons[residentState].push(patient);
+        state.unsimulated[residentState] -= patient.represents;
       });
     },
 
@@ -145,6 +153,7 @@ const useViralStore = create<State>(
               };
 
               state.persons[residentState].push(patient);
+              state.unsimulated[residentState] -= patient.represents;
 
               // Adds new state machines representing recoveries and deaths
               const deaths = Math.round(represents * cfr);
@@ -172,12 +181,14 @@ const useViralStore = create<State>(
         }
       }),
 
-    reset: () =>
+    reset: () => {
+      get().setUnsimulated();
+
       set((state) => {
         state.persons = {};
-        state.unsimulatedDetails = {};
         state.personsInitialised = false;
-      }),
+      });
+    },
   }))
 );
 

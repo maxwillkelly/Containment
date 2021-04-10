@@ -18,14 +18,14 @@ import { click } from 'ol/events/condition';
 
 import { FeatureLike } from 'ol/Feature';
 import * as states from '../../../map/geojson/states.json';
-import useGameStore from '../../stores/GameStore';
+import useMapStore from '../../stores/MapStore';
 
 const Map: React.FC = () => {
   const [map, setMap] = useState<MapOL>();
   const mapElement = useRef<HTMLDivElement>(null);
 
-  const selectState = useGameStore((state) => state.selectState);
-  const toggleMapDrawer = useGameStore((state) => state.toggleMapDrawer);
+  const selectState = useMapStore((state) => state.selectState);
+  const toggleMapDrawer = useMapStore((state) => state.toggleMapDrawer);
 
   // Initialize map
   useEffect(() => {

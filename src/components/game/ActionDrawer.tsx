@@ -1,8 +1,8 @@
 import React from 'react';
-import useGameStore from '../../stores/GameStore';
+import useMapStore from '../../stores/MapStore';
 
 const ActionDrawer = () => {
-  const open = useGameStore((state) => state.isActionDrawerOpen);
+  const open = useMapStore((state) => state.isActionDrawerOpen);
   const asideClass = open ? 'translate-x-0' : '-translate-x-full';
 
   return (

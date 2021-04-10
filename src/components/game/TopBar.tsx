@@ -7,6 +7,7 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
+import useActionsMenuStore from '../../stores/ActionsMenuStore';
 
 import useGameStore from '../../stores/GameStore';
 import useViralStore from '../../stores/ViralStore';
@@ -34,6 +35,12 @@ const ActionsButton: React.FC = () => {
   const applet = 'ActionsButton';
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const resetActionsMenuStore = useActionsMenuStore((state) => state.reset);
+
+  const handleClick = () => {
+    resetActionsMenuStore();
+    toggleActiveApplet(applet);
+  };
 
   return (
     <div>
@@ -42,7 +49,7 @@ const ActionsButton: React.FC = () => {
           activeApplet === applet
         )}`}
         type="button"
-        onClick={() => toggleActiveApplet(applet)}
+        onClick={handleClick}
       >
         <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
         <h3 className="text-xl ml-2">27</h3>
