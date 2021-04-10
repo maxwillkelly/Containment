@@ -57,13 +57,18 @@ const StateDetails: React.FC = () => {
 };
 
 const ViralDetails: React.FC = () => {
-  // const selectedState = useMapStore((state) => state.selectedState);
+  const selectedState = useMapStore((state) => state.selectedState);
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
+
+  const cumulative = selectedState
+    ? getViralDetails(selectedState.name)
+    : getViralDetails();
 
   return (
     <>
       <DashedHeading>Weekly Data</DashedHeading>
       <InformationList>
-        <h4 className="text-left text-base text-yellow-300">Cases</h4>
+        <h4 className="text-left text-base text-yellow-300">Infected</h4>
         <h4 className="text-right">0</h4>
         <h4 className="text-left text-base text-red-500">Deaths</h4>
         <h4 className="text-right">0</h4>
@@ -72,16 +77,16 @@ const ViralDetails: React.FC = () => {
         <h4 className="text-left text-base text-blue-500">Innoculated</h4>
         <h4 className="text-right">0</h4>
       </InformationList>
-      <DashedHeading>Cumalitive Data</DashedHeading>
+      <DashedHeading>Cumulative Data</DashedHeading>
       <InformationList>
-        <h4 className="text-left text-base text-yellow-300">Cases</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-left text-base text-yellow-300">Infected</h4>
+        <h4 className="text-right">{cumulative.infected}</h4>
         <h4 className="text-left text-base text-red-500">Deaths</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{cumulative.death}</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{cumulative.recovered}</h4>
         <h4 className="text-left text-base text-blue-500">Innoculated</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{cumulative.innoculated}</h4>
       </InformationList>
     </>
   );

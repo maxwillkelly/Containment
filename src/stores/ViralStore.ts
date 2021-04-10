@@ -14,6 +14,14 @@ type MachineComponent = {
   represents: number;
 };
 
+type ViralDetails = {
+  unsimulated: number;
+  infected: number;
+  death: number;
+  recovered: number;
+  innoculated: number;
+};
+
 type State = {
   rBaseline: number;
   cfr: number;
@@ -26,7 +34,8 @@ type State = {
   getMachines: (residentState: string) => MachineComponent[];
   getMachinesTotal: (residentState: string) => number;
   getMachinesStates: (residentState: string) => Record<string, unknown>;
-  getViralDetails: (residentState: string) => Record<string, unknown>;
+  // getWeeklyDetails: (residentState: string) => ViralDetails;
+  getViralDetails: (residentState?: string) => ViralDetails;
 
   setUnsimulated: () => void;
 
@@ -69,20 +78,43 @@ const useViralStore = create<State>(
       return machinesStates;
     },
 
+    // getWeeklyDetails: (residentState) => {
+    //   const { persons } = get();
+    //   const weeklyDetails: Record<string, number> = {};
+
+    //   const stateResidents = persons[residentState];
+    // },
+
     getViralDetails: (residentState) => {
       const { unsimulated, persons } = get();
-      const viralDetails: Record<string, number> = {
-        unsimulated: unsimulated[residentState],
+
+      const viralDetails = {
+        unsimulated: residentState
+          ? unsimulated[residentState]
+          : Object.values(unsimulated).reduce(
+              (accumalator, current) => current + accumalator,
+              0
+            ),
+        infected: 0,
+        death: 0,
+        recovered: 0,
+        innoculated: 0,
       };
 
-      const stateResidents = persons[residentState];
+      const calculateViralDetails = (stateResidents: MachineComponent[]) => {
+        if (!stateResidents) return;
 
-      if (!stateResidents) return viralDetails;
+        for (const resident of stateResidents) {
+          const { represents } = resident;
+          const key = resident.machine.value.toString();
+          viralDetails[key] += represents;
+        }
+      };
 
-      for (const resident of stateResidents) {
-        const { represents } = resident;
-        const key = resident.machine.value.toString();
-        viralDetails[key] = viralDetails[key] + represents || represents;
+      if (residentState) {
+        calculateViralDetails(persons[residentState]);
+      } else {
+        Object.values(persons).forEach((p) => calculateViralDetails(p));
       }
 
       return viralDetails;
