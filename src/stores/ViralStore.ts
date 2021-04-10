@@ -70,8 +70,12 @@ const useViralStore = create<State>(
     },
 
     getViralDetails: (residentState) => {
-      const viralDetails: Record<string, number> = {};
-      const stateResidents = get().persons[residentState];
+      const { unsimulated, persons } = get();
+      const viralDetails: Record<string, number> = {
+        unsimulated: unsimulated[residentState],
+      };
+
+      const stateResidents = persons[residentState];
 
       if (!stateResidents) return viralDetails;
 
