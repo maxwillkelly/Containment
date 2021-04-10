@@ -28,6 +28,8 @@ type State = {
   getMachinesStates: (residentState: string) => Record<string, unknown>;
   getViralDetails: (residentState: string) => Record<string, unknown>;
 
+  setUnsimulated: () => void;
+
   generateOutbreak: () => void;
   generateLocalInfection: (residentState: string, infectors?: number) => void;
 
@@ -81,6 +83,13 @@ const useViralStore = create<State>(
 
       return viralDetails;
     },
+
+    setUnsimulated: () =>
+      set((state) => {
+        state.unsimulated = states.features.reduce((obj, s) => {
+          return { ...obj, [s.properties.name]: s.properties.population };
+        }, {});
+      }),
 
     generateOutbreak: () => {
       const { features } = states;
@@ -166,12 +175,14 @@ const useViralStore = create<State>(
         }
       }),
 
-    reset: () =>
+    reset: () => {
+      get().setUnsimulated();
+
       set((state) => {
         state.persons = {};
-        state.unsimulatedDetails = {};
         state.personsInitialised = false;
-      }),
+      });
+    },
   }))
 );
 
