@@ -122,6 +122,7 @@ const useViralStore = create<State>(
       set((state) => {
         if (!state.persons[residentState]) state.persons[residentState] = [];
         state.persons[residentState].push(patient);
+        state.unsimulated[residentState] -= patient.represents;
       });
     },
 
@@ -148,6 +149,7 @@ const useViralStore = create<State>(
               };
 
               state.persons[residentState].push(patient);
+              state.unsimulated[residentState] -= patient.represents;
 
               // Adds new state machines representing recoveries and deaths
               const deaths = Math.round(represents * cfr);
