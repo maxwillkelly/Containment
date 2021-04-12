@@ -17,33 +17,27 @@ type ViralDetails = {
   inoculated: number;
 };
 
-type MachineTransitionedTurn = {
-  infected?: number;
-  death?: number;
-  recovered?: number;
-  inoculated?: number;
-};
-
 type MachineComponent = {
   machine: PersonState;
   represents: number;
-  transitionedTurn: MachineTransitionedTurn;
 };
 
 type State = {
   rBaseline: number;
   cfr: number;
 
-  persons: Record<string, MachineComponent[]>;
+  persons: Record<string, Record<number, MachineComponent[]>>;
   unsimulated: Record<string, number>;
 
   personsInitialised: boolean;
 
-  getMachines: (residentState: string) => MachineComponent[];
-  getMachinesTotal: (residentState: string) => number;
-  getMachinesStates: (residentState: string) => Record<string, unknown>;
-  // getWeeklyDetails: (residentState: string) => ViralDetails;
-  getViralDetails: (residentState?: string) => ViralDetails;
+  getMachines: (residentState: string, turn?: number) => MachineComponent[];
+  getMachinesTotal: (residentState: string, turn?: number) => number;
+  getMachinesStates: (
+    residentState: string,
+    turn?: number
+  ) => Record<string, unknown>;
+  getViralDetails: (turn: number, residentState?: string) => ViralDetails;
 
   setUnsimulated: () => void;
 
@@ -69,57 +63,98 @@ const useViralStore = create<State>(
 
     personsInitialised: false,
 
-    getMachines: (residentState) => get().persons[residentState],
-
-    getMachinesTotal: (residentState) => {
+    getMachines: (residentState, turn) => {
       const stateResidents = get().persons[residentState];
-      return stateResidents ? stateResidents.length : 0;
+
+      return turn === undefined
+        ? Object.values(stateResidents).reduce(
+            (array, r) => [...array, ...r],
+            []
+          )
+        : stateResidents[turn];
     },
 
-    getMachinesStates: (residentState) => {
-      const machinesStates: Record<string, number> = {};
+    getMachinesTotal: (residentState, turn) => {
       const stateResidents = get().persons[residentState];
 
-      if (!stateResidents) return machinesStates;
+      if (!stateResidents) return 0;
 
-      for (const resident of stateResidents) {
-        const key = resident.machine.value.toString();
-        machinesStates[key] = machinesStates[key] + 1 || 1;
+      if (turn === undefined)
+        return Object.values(stateResidents).reduce(
+          (currentLength, r) => currentLength + r.length,
+          0
+        );
+
+      return stateResidents[turn].length;
+    },
+
+    getMachinesStates: (residentState, turn) => {
+      const stateResidents = get().persons[residentState];
+
+      if (!stateResidents) return {};
+
+      const calculateMachineStates = (machineArray: MachineComponent[]) => {
+        const machinesStates: Record<string, number> = {};
+
+        for (const resident of machineArray) {
+          const key = resident.machine.value.toString();
+          machinesStates[key] = machinesStates[key] + 1 || 1;
+        }
+
+        return machinesStates;
+      };
+
+      if (turn === undefined) {
+        const machineArray = Object.values(stateResidents).reduce(
+          (array, r) => [...array, ...r],
+          []
+        );
+        return calculateMachineStates(machineArray);
       }
 
-      return machinesStates;
+      return calculateMachineStates(stateResidents[turn]);
     },
 
-    // getWeeklyDetails: (residentState) => {
-    //   const { persons } = get();
-    //   const weeklyDetails: Record<string, number> = {};
-
-    //   const stateResidents = persons[residentState];
-    // },
-
-    getViralDetails: (residentState) => {
+    getViralDetails: (turn, residentState) => {
       const { unsimulated, persons } = get();
 
       const viralDetails = {
-        unsimulated: residentState
-          ? unsimulated[residentState]
-          : Object.values(unsimulated).reduce(
-              (accumulator, current) => current + accumulator,
-              0
-            ),
-        infected: 0,
-        death: 0,
-        recovered: 0,
-        inoculated: 0,
+        weekly: {
+          infected: 0,
+          death: 0,
+          recovered: 0,
+          inoculated: 0,
+        },
+        cumulative: {
+          unsimulated: residentState
+            ? unsimulated[residentState]
+            : Object.values(unsimulated).reduce(
+                (accumulator, current) => current + accumulator,
+                0
+              ),
+          infected: 0,
+          death: 0,
+          recovered: 0,
+          inoculated: 0,
+        },
       };
 
-      const calculateViralDetails = (stateResidents: MachineComponent[]) => {
-        if (!stateResidents) return;
+      const calculateViralDetails = (
+        turnResidents: Record<number, MachineComponent[]>
+      ) => {
+        if (!turnResidents) return;
 
-        for (const resident of stateResidents) {
-          const { represents } = resident;
-          const key = resident.machine.value.toString();
-          viralDetails[key] += represents;
+        for (const [key, residents] of Object.entries(turnResidents)) {
+          for (const resident of residents) {
+            const { machine, represents } = resident;
+            const machineStateValue = machine.value.toString();
+
+            viralDetails.cumulative[machineStateValue] += represents;
+
+            if (key === turn.toString()) {
+              viralDetails.weekly[machineStateValue] += represents;
+            }
+          }
         }
       };
 
@@ -166,15 +201,19 @@ const useViralStore = create<State>(
       const patient = {
         machine: personMachine.transition(newMachine, 'Infect'),
         represents: Math.round(infectors ** 2),
-        transitionedTurn: { infected: turn },
       };
 
       // Generate 8 turns
 
       // Infects patient
       set((state) => {
-        if (!state.persons[residentState]) state.persons[residentState] = [];
-        state.persons[residentState].push(patient);
+        if (!state.persons[residentState]) state.persons[residentState] = {};
+
+        if (!state.persons[residentState][turn])
+          state.persons[residentState][turn] = [];
+
+        state.persons[residentState][turn].push(patient);
+
         state.unsimulated[residentState] -= patient.represents;
       });
     },
@@ -185,13 +224,11 @@ const useViralStore = create<State>(
         const persons = lodash.cloneDeep(state.persons);
 
         for (const [residentState, statePersons] of Object.entries(persons)) {
-          for (let i = 0; i < statePersons.length; i += 1) {
-            const p = statePersons[i];
+          for (let i = 0; i < statePersons[turn - 1].length; i += 1) {
+            const p = statePersons[turn - 1][i];
 
             if (p.machine.matches('infected')) {
-              // Removes current state machine
-              const oldP = state.persons[residentState].splice(i, 1)[0];
-              const { represents } = oldP;
+              const { represents } = p;
 
               // Infects more state residents
               const newMachine = createPersonMachine();
@@ -202,37 +239,32 @@ const useViralStore = create<State>(
                 transitionedTurn: { infected: turn },
               };
 
-              state.persons[residentState].push(patient);
+              if (!state.persons[residentState][turn])
+                state.persons[residentState][turn] = [];
+
+              state.persons[residentState][turn].push(patient);
               state.unsimulated[residentState] -= patient.represents;
 
               // Adds new state machines representing recoveries and deaths
               const deaths = Math.round(represents * cfr);
               const recoveries = represents - deaths;
 
-              if (deaths !== 0) {
+              if (deaths > 0) {
                 const dead = {
-                  machine: personMachine.transition(oldP.machine, 'Death'),
+                  machine: personMachine.transition(p.machine, 'Death'),
                   represents: deaths,
-                  transitionedTurn: {
-                    ...oldP.transitionedTurn,
-                    death: turn,
-                  },
                 };
 
-                state.persons[residentState].push(dead);
+                state.persons[residentState][turn].push(dead);
               }
 
-              if (recoveries !== 0) {
+              if (recoveries > 0) {
                 const recovered = {
-                  machine: personMachine.transition(oldP.machine, 'Recover'),
+                  machine: personMachine.transition(p.machine, 'Recover'),
                   represents: recoveries,
-                  transitionedTurn: {
-                    ...oldP.transitionedTurn,
-                    recovered: turn,
-                  },
                 };
 
-                state.persons[residentState].push(recovered);
+                state.persons[residentState][turn].push(recovered);
               }
             }
           }

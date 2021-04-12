@@ -1,4 +1,5 @@
 import React from 'react';
+import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 import useViralStore from '../../stores/ViralStore';
 
@@ -57,25 +58,28 @@ const StateDetails: React.FC = () => {
 };
 
 const ViralDetails: React.FC = () => {
+  const turn = useGameStore((state) => state.turn);
   const selectedState = useMapStore((state) => state.selectedState);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
 
-  const cumulative = selectedState
-    ? getViralDetails(selectedState.name)
-    : getViralDetails();
+  const viralDetails = selectedState
+    ? getViralDetails(turn, selectedState.name)
+    : getViralDetails(turn);
+
+  const { cumulative, weekly } = viralDetails;
 
   return (
     <>
       <DashedHeading>Weekly Data</DashedHeading>
       <InformationList>
         <h4 className="text-left text-base text-yellow-300">Infected</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{weekly.infected}</h4>
         <h4 className="text-left text-base text-red-500">Deaths</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{weekly.death}</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{weekly.recovered}</h4>
         <h4 className="text-left text-base text-blue-500">Inoculated</h4>
-        <h4 className="text-right">0</h4>
+        <h4 className="text-right">{weekly.inoculated}</h4>
       </InformationList>
       <DashedHeading>Cumulative Data</DashedHeading>
       <InformationList>
@@ -93,29 +97,32 @@ const ViralDetails: React.FC = () => {
 };
 
 const DebugDetails: React.FC = () => {
+  const turn = useGameStore((state) => state.turn);
   const selectedState = useMapStore((state) => state.selectedState);
   const getMachinesTotal = useViralStore((state) => state.getMachinesTotal);
   const getMachinesStates = useViralStore((state) => state.getMachinesStates);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
 
-  if (!selectedState) return null;
+  const viralDetails = selectedState
+    ? getViralDetails(turn, selectedState.name)
+    : getViralDetails(turn);
 
   return (
     <>
       <DashedHeading>Debug</DashedHeading>
-      <InformationList>
-        <h4 className="text-left">Person Machines</h4>
-        <h4 className="text-right">{getMachinesTotal(selectedState.name)}</h4>
-        <pre>
-          {JSON.stringify(getMachinesStates(selectedState.name), null, 2)}
-        </pre>
-      </InformationList>
+      {selectedState && (
+        <InformationList>
+          <h4 className="text-left">Person Machines</h4>
+          <h4 className="text-right">{getMachinesTotal(selectedState.name)}</h4>
+          <pre>
+            {JSON.stringify(getMachinesStates(selectedState.name), null, 2)}
+          </pre>
+        </InformationList>
+      )}
       <InformationList>
         <h4 className="text-left">Viral Details</h4>
         <h4 className="text-right">{}</h4>
-        <pre>
-          {JSON.stringify(getViralDetails(selectedState.name), null, 2)}
-        </pre>
+        <pre>{JSON.stringify(viralDetails, null, 2)}</pre>
       </InformationList>
     </>
   );

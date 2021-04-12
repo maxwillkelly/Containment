@@ -7879,7 +7879,7 @@
       "type": "Feature",
       "properties": {
         "fid": 27,
-        "name": "Vigina",
+        "name": "Virgina",
         "abbreviation": "VG",
         "population": 9000000
       },
@@ -14157,7 +14157,7 @@
         "fid": 50,
         "name": "Croydon City",
         "abbreviation": "CR",
-        "population": 8000000
+        "population": 5000000
       },
       "geometry": {
         "type": "MultiPolygon",
