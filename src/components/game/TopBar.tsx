@@ -181,12 +181,13 @@ const ImmunityBar: React.FC = () => {
 const AdvanceTurnButton: React.FC = () => {
   const advanceTurn = useGameStore((state) => state.advanceTurn);
   const setLoading = useGameStore((state) => state.setLoading);
+  const turn = useGameStore((state) => state.turn);
   const takeTurn = useViralStore((state) => state.takeTurn);
 
   const handleClick = () => {
     setLoading(true);
+    takeTurn(turn + 1);
     advanceTurn();
-    takeTurn();
     setLoading(false);
   };
 

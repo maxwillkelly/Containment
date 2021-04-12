@@ -9,17 +9,25 @@ import {
 } from './viral/person.machine';
 import states from '../../map/geojson/states.json';
 
-type MachineComponent = {
-  machine: PersonState;
-  represents: number;
-};
-
 type ViralDetails = {
   unsimulated: number;
   infected: number;
   death: number;
   recovered: number;
-  innoculated: number;
+  inoculated: number;
+};
+
+type MachineTransitionedTurn = {
+  infected?: number;
+  death?: number;
+  recovered?: number;
+  inoculated?: number;
+};
+
+type MachineComponent = {
+  machine: PersonState;
+  represents: number;
+  transitionedTurn: MachineTransitionedTurn;
 };
 
 type State = {
@@ -39,10 +47,14 @@ type State = {
 
   setUnsimulated: () => void;
 
-  generateOutbreak: () => void;
-  generateLocalInfection: (residentState: string, infectors?: number) => void;
+  generateOutbreak: (turn: number) => void;
+  generateLocalInfection: (
+    residentState: string,
+    turn: number,
+    infectors?: number
+  ) => void;
 
-  takeTurn: () => void;
+  takeTurn: (turn: number) => void;
 
   reset: () => void;
 };
@@ -92,13 +104,13 @@ const useViralStore = create<State>(
         unsimulated: residentState
           ? unsimulated[residentState]
           : Object.values(unsimulated).reduce(
-              (accumalator, current) => current + accumalator,
+              (accumulator, current) => current + accumulator,
               0
             ),
         infected: 0,
         death: 0,
         recovered: 0,
-        innoculated: 0,
+        inoculated: 0,
       };
 
       const calculateViralDetails = (stateResidents: MachineComponent[]) => {
@@ -127,7 +139,7 @@ const useViralStore = create<State>(
         }, {});
       }),
 
-    generateOutbreak: () => {
+    generateOutbreak: (turn) => {
       const { features } = states;
       const { generateLocalInfection } = get();
 
@@ -137,19 +149,24 @@ const useViralStore = create<State>(
       console.log(firstOutbreakState);
 
       // Infects patient
-      generateLocalInfection(firstOutbreakState);
+      generateLocalInfection(firstOutbreakState, turn);
 
       set((state) => {
         state.personsInitialised = true;
       });
     },
 
-    generateLocalInfection: (residentState, infectors = get().rBaseline) => {
+    generateLocalInfection: (
+      residentState,
+      turn,
+      infectors = get().rBaseline
+    ) => {
       const newMachine = createPersonMachine();
 
       const patient = {
         machine: personMachine.transition(newMachine, 'Infect'),
         represents: Math.round(infectors ** 2),
+        transitionedTurn: { infected: turn },
       };
 
       // Generate 8 turns
@@ -162,7 +179,7 @@ const useViralStore = create<State>(
       });
     },
 
-    takeTurn: () =>
+    takeTurn: (turn) =>
       set((state) => {
         const { cfr } = state;
         const persons = lodash.cloneDeep(state.persons);
@@ -182,6 +199,7 @@ const useViralStore = create<State>(
               const patient = {
                 machine: personMachine.transition(newMachine, 'Infect'),
                 represents: Math.round(represents * 1.4),
+                transitionedTurn: { infected: turn },
               };
 
               state.persons[residentState].push(patient);
@@ -195,6 +213,10 @@ const useViralStore = create<State>(
                 const dead = {
                   machine: personMachine.transition(oldP.machine, 'Death'),
                   represents: deaths,
+                  transitionedTurn: {
+                    ...oldP.transitionedTurn,
+                    death: turn,
+                  },
                 };
 
                 state.persons[residentState].push(dead);
@@ -204,6 +226,10 @@ const useViralStore = create<State>(
                 const recovered = {
                   machine: personMachine.transition(oldP.machine, 'Recover'),
                   represents: recoveries,
+                  transitionedTurn: {
+                    ...oldP.transitionedTurn,
+                    recovered: turn,
+                  },
                 };
 
                 state.persons[residentState].push(recovered);

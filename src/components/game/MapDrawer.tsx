@@ -74,7 +74,7 @@ const ViralDetails: React.FC = () => {
         <h4 className="text-right">0</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
         <h4 className="text-right">0</h4>
-        <h4 className="text-left text-base text-blue-500">Innoculated</h4>
+        <h4 className="text-left text-base text-blue-500">Inoculated</h4>
         <h4 className="text-right">0</h4>
       </InformationList>
       <DashedHeading>Cumulative Data</DashedHeading>
@@ -85,8 +85,8 @@ const ViralDetails: React.FC = () => {
         <h4 className="text-right">{cumulative.death}</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
         <h4 className="text-right">{cumulative.recovered}</h4>
-        <h4 className="text-left text-base text-blue-500">Innoculated</h4>
-        <h4 className="text-right">{cumulative.innoculated}</h4>
+        <h4 className="text-left text-base text-blue-500">Inoculated</h4>
+        <h4 className="text-right">{cumulative.inoculated}</h4>
       </InformationList>
     </>
   );
