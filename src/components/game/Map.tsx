@@ -30,9 +30,10 @@ const Map: React.FC = () => {
 
   // Initialize map
   useEffect(() => {
-    const generateStyles: (feature: FeatureLike) => Record<string, Style> = (
-      feature
-    ) => {
+    const generateStyles: (
+      feature: FeatureLike,
+      clicked: boolean
+    ) => Record<string, Style> = (feature, clicked) => {
       const name = feature.get('name');
 
       return {
@@ -42,7 +43,7 @@ const Map: React.FC = () => {
             width: 1,
           }),
           fill: new Fill({
-            color: '#547953',
+            color: clicked ? 'rgba(84, 121, 83, 1)' : 'rgba(84, 121, 83, 0.8)',
           }),
           text: new Text({
             font: '0.8em Roboto',
@@ -55,8 +56,8 @@ const Map: React.FC = () => {
       };
     };
 
-    const styleFunction: StyleFunction = (feature) => {
-      const styles = generateStyles(feature);
+    const styleFunction = (feature: FeatureLike, clicked: boolean) => {
+      const styles = generateStyles(feature, clicked);
       const geometry = feature.getGeometry();
       return geometry ? styles[geometry.getType()] : [];
     };
@@ -65,11 +66,12 @@ const Map: React.FC = () => {
       source: new VectorSource({
         features: new GeoJSON().readFeatures(states),
       }),
-      style: styleFunction,
+      style: (feature) => styleFunction(feature, false),
     });
 
     const selectClick = new Select({
       condition: click,
+      style: (feature) => styleFunction(feature, true),
     });
 
     selectClick.on('select', (event) => {
@@ -101,7 +103,8 @@ const Map: React.FC = () => {
 
     // save map and vector layer references to state
     setMap(initialMap);
-  }, [selectState, toggleMapDrawer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };
