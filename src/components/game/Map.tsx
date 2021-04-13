@@ -21,6 +21,7 @@ import * as states from '../../../map/geojson/states.json';
 import useMapStore from '../../stores/MapStore';
 
 const Map: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [map, setMap] = useState<MapOL>();
   const mapElement = useRef<HTMLDivElement>(null);
 

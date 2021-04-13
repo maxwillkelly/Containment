@@ -55,6 +55,7 @@ const Game: React.FC = () => {
   const paused = useGameStore((state) => state.isPaused);
   const loading = useGameStore((state) => state.loading);
   const setLoading = useGameStore((state) => state.setLoading);
+  const turn = useGameStore((state) => state.turn);
 
   const [personsInitialised, generateOutbreak] = useViralStore(
     (state) => [state.personsInitialised, state.generateOutbreak],
@@ -62,7 +63,7 @@ const Game: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!personsInitialised) generateOutbreak();
+    if (!personsInitialised) generateOutbreak(turn);
     setLoading(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
