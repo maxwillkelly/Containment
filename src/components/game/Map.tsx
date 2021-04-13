@@ -7,7 +7,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 
-import Style, { StyleFunction } from 'ol/style/Style';
+import Style from 'ol/style/Style';
 import Stroke from 'ol/style/Stroke';
 import Fill from 'ol/style/Fill';
 import Text from 'ol/style/Text';
@@ -33,7 +33,6 @@ const Map: React.FC = () => {
   const toggleMapDrawer = useMapStore((state) => state.toggleMapDrawer);
 
   const turn = useGameStore((state) => state.turn);
-  const persons = useViralStore((state) => state.persons);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
 
   // Initialize map
@@ -45,10 +44,11 @@ const Map: React.FC = () => {
     ) => Record<string, Style> = (feature, clicked) => {
       const name = feature.get('name');
       const { cumulative } = getViralDetails(turn, name);
+      const { infected, death } = cumulative;
 
       const getFillStyles = () => {
-        if (cumulative.death) return 'rgb(239, 68, 68)';
-        if (cumulative.infected) return 'rgb(252, 211, 77)';
+        if (death) return 'rgb(239, 68, 68)';
+        if (infected) return 'rgb(252, 211, 77)';
         return 'rgb(5, 150, 105)';
       };
 
@@ -64,9 +64,8 @@ const Map: React.FC = () => {
           text: new Text({
             font: '0.8em Roboto',
             fill: new Fill({
-              color: cumulative.infected
-                ? 'rgb(17, 24, 39)'
-                : 'rgb(229, 231, 235)',
+              color:
+                infected && !death ? 'rgb(17, 24, 39)' : 'rgb(229, 231, 235)',
             }),
             text: name,
           }),
@@ -128,7 +127,7 @@ const Map: React.FC = () => {
   useEffect(() => {
     if (featuresLayer) featuresLayer.changed();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [persons]);
+  }, [turn]);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };
