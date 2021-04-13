@@ -10,11 +10,19 @@ import {
 import states from '../../map/geojson/states.json';
 
 type ViralDetails = {
-  unsimulated: number;
-  infected: number;
-  death: number;
-  recovered: number;
-  inoculated: number;
+  weekly: {
+    infected: number;
+    death: number;
+    recovered: number;
+    inoculated: number;
+  };
+  cumulative: {
+    unsimulated: number;
+    infected: number;
+    death: number;
+    recovered: number;
+    inoculated: number;
+  };
 };
 
 type MachineComponent = {
@@ -170,7 +178,8 @@ const useViralStore = create<State>(
     setUnsimulated: () =>
       set((state) => {
         state.unsimulated = states.features.reduce((obj, s) => {
-          return { ...obj, [s.properties.name]: s.properties.population };
+          const { name, population } = s.properties;
+          return { ...obj, [name]: population };
         }, {});
       }),
 
