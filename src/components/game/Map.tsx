@@ -19,22 +19,38 @@ import { click } from 'ol/events/condition';
 import { FeatureLike } from 'ol/Feature';
 import * as states from '../../../map/geojson/states.json';
 import useMapStore from '../../stores/MapStore';
+import useViralStore from '../../stores/ViralStore';
+import useGameStore from '../../stores/GameStore';
 
 const Map: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [map, setMap] = useState<MapOL>();
+  const [featuresLayer, setFeaturesLayer] = useState<VectorLayer>();
+
   const mapElement = useRef<HTMLDivElement>(null);
 
   const selectState = useMapStore((state) => state.selectState);
   const toggleMapDrawer = useMapStore((state) => state.toggleMapDrawer);
+
+  const turn = useGameStore((state) => state.turn);
+  const persons = useViralStore((state) => state.persons);
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
 
   // Initialize map
   useEffect(() => {
     const generateStyles: (
       feature: FeatureLike,
       clicked: boolean
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ) => Record<string, Style> = (feature, clicked) => {
       const name = feature.get('name');
+      const { cumulative } = getViralDetails(turn, name);
+
+      const getFillStyles = () => {
+        if (cumulative.death) return 'rgb(239, 68, 68)';
+        if (cumulative.infected) return 'rgb(252, 211, 77)';
+        return 'rgb(5, 150, 105)';
+      };
 
       return {
         MultiPolygon: new Style({
@@ -43,12 +59,12 @@ const Map: React.FC = () => {
             width: 1,
           }),
           fill: new Fill({
-            color: clicked ? 'rgba(84, 121, 83, 1)' : 'rgba(84, 121, 83, 0.8)',
+            color: getFillStyles(),
           }),
           text: new Text({
             font: '0.8em Roboto',
             fill: new Fill({
-              color: 'white',
+              color: 'rgb(229, 231, 235)',
             }),
             text: name,
           }),
@@ -62,7 +78,7 @@ const Map: React.FC = () => {
       return geometry ? styles[geometry.getType()] : [];
     };
 
-    const vectorLayer = new VectorLayer({
+    const initialFeaturesLayer = new VectorLayer({
       source: new VectorSource({
         features: new GeoJSON().readFeatures(states),
       }),
@@ -91,7 +107,7 @@ const Map: React.FC = () => {
     // create map
     const initialMap = new MapOL({
       target: mapElement && mapElement.current ? mapElement.current : undefined,
-      layers: [vectorLayer],
+      layers: [initialFeaturesLayer],
       controls: [],
       interactions: defaultInteractions().extend([selectClick]),
       view: new View({
@@ -103,8 +119,14 @@ const Map: React.FC = () => {
 
     // save map and vector layer references to state
     setMap(initialMap);
+    setFeaturesLayer(initialFeaturesLayer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (featuresLayer) featuresLayer.changed();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [persons]);
 
   return <div className="h-full w-full z-0" ref={mapElement} />;
 };
