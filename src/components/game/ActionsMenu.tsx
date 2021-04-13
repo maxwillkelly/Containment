@@ -4,6 +4,7 @@ import { FaSearch } from 'react-icons/fa';
 import actions, { Action } from '../../data/actions';
 import categories, { Category } from '../../data/categories';
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
+import useGameStore from '../../stores/GameStore';
 
 const SearchBar: React.FC = () => {
   const [searchText, setSearchText] = useActionsMenuStore(
@@ -82,11 +83,16 @@ const ActionList: React.FC = () => {
     (state) => [state.categorySelected, state.searchText],
     shallow
   );
+  const turn = useGameStore((state) => state.turn);
+
+  const unlockedFilteredActions = actions.filter(
+    (a) => a.turnAvailable <= turn
+  );
 
   const categoryFilteredActions =
     categorySelected === ''
-      ? actions
-      : actions.filter((a) => a.category === categorySelected);
+      ? unlockedFilteredActions
+      : unlockedFilteredActions.filter((a) => a.category === categorySelected);
 
   const filterText = searchText.toLowerCase();
 
