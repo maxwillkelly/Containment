@@ -64,7 +64,9 @@ const Map: React.FC = () => {
           text: new Text({
             font: '0.8em Roboto',
             fill: new Fill({
-              color: 'rgb(229, 231, 235)',
+              color: cumulative.infected
+                ? 'rgb(17, 24, 39)'
+                : 'rgb(229, 231, 235)',
             }),
             text: name,
           }),
