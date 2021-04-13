@@ -33,21 +33,23 @@ const Map: React.FC = () => {
     const generateStyles: (feature: FeatureLike) => Record<string, Style> = (
       feature
     ) => {
+      const name = feature.get('name');
+
       return {
         MultiPolygon: new Style({
           stroke: new Stroke({
-            color: 'yellow',
+            color: '#505050',
             width: 1,
           }),
           fill: new Fill({
-            color: 'rgba(255, 255, 0, 0.1)',
+            color: '#547953',
           }),
           text: new Text({
             font: '0.8em Roboto',
             fill: new Fill({
               color: 'white',
             }),
-            text: feature.get('name'),
+            text: name,
           }),
         }),
       };
