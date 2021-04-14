@@ -15,7 +15,7 @@ export const actions: Array<Action> = [
     name: 'Universal Basic Income',
     category: 'Welfare',
     turnAvailable: 0,
-    enabledByDefault: true,
+    enabledByDefault: false,
   },
   {
     id: uuid(),
