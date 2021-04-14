@@ -10,6 +10,7 @@ import {
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
 
 import useGameStore from '../../stores/GameStore';
+import useMapStore from '../../stores/MapStore';
 import useViralStore from '../../stores/ViralStore';
 import ActionsMenu from './ActionsMenu';
 
@@ -35,10 +36,12 @@ const ActionsButton: React.FC = () => {
   const applet = 'ActionsButton';
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const togglePolicyDrawer = useMapStore((state) => state.togglePolicyDrawer);
   const resetActionsMenuStore = useActionsMenuStore((state) => state.reset);
 
   const handleClick = () => {
     resetActionsMenuStore();
+    togglePolicyDrawer(false);
     toggleActiveApplet(applet);
   };
 

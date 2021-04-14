@@ -8,25 +8,27 @@ type ResidentStateDetails = {
 };
 
 type State = {
-  isActionDrawerOpen: boolean;
+  isPolicyDrawerOpen: boolean;
   isMapDrawerOpen: boolean;
   selectedState: ResidentStateDetails | undefined;
 
-  toggleActionDrawer: () => void;
+  togglePolicyDrawer: (open?: boolean) => void;
   toggleMapDrawer: (open?: boolean) => void;
   selectState: (selectedState?: ResidentStateDetails) => void;
   reset: () => void;
 };
 
 const useMapStore = create<State>((set) => ({
-  isActionDrawerOpen: false,
+  isPolicyDrawerOpen: false,
   isMapDrawerOpen: false,
   selectedState: undefined,
 
-  toggleActionDrawer: () =>
-    set((state) => ({ isActionDrawerOpen: !state.isActionDrawerOpen })),
+  togglePolicyDrawer: (open) =>
+    set((state) => ({
+      isPolicyDrawerOpen: open === undefined ? !state.isPolicyDrawerOpen : open,
+    })),
 
-  toggleMapDrawer: (open?: boolean) =>
+  toggleMapDrawer: (open) =>
     set((state) => ({
       isMapDrawerOpen: open === undefined ? !state.isMapDrawerOpen : open,
     })),
@@ -35,7 +37,7 @@ const useMapStore = create<State>((set) => ({
 
   reset: () =>
     set({
-      isActionDrawerOpen: false,
+      isPolicyDrawerOpen: false,
       isMapDrawerOpen: false,
       selectedState: undefined,
     }),

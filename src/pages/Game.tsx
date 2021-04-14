@@ -11,15 +11,21 @@ import Map from '../components/game/Map';
 import PauseMenu from '../components/game/PauseMenu';
 
 import MapDrawer from '../components/game/MapDrawer';
-import ActionDrawer from '../components/game/ActionDrawer';
+import PolicyDrawer from '../components/game/PolicyDrawer';
 import LoadingScreen from '../components/game/LoadingScreen';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
 
-const ActionDrawerToggle: React.FC = () => {
-  const open = useMapStore((state) => state.isActionDrawerOpen);
-  const toggleActionDrawer = useMapStore((state) => state.toggleActionDrawer);
+const PolicyDrawerToggle: React.FC = () => {
+  const open = useMapStore((state) => state.isPolicyDrawerOpen);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const togglePolicyDrawer = useMapStore((state) => state.togglePolicyDrawer);
+
+  const handleClick = () => {
+    toggleActiveApplet('ActionsButton', false);
+    togglePolicyDrawer();
+  };
 
   return (
     <button
@@ -27,7 +33,7 @@ const ActionDrawerToggle: React.FC = () => {
         open
       )} rounded z-40`}
       type="button"
-      onClick={() => toggleActionDrawer()}
+      onClick={handleClick}
     >
       <GiHamburgerMenu className="dark:text-gray-200 text-2xl" />
     </button>
@@ -75,9 +81,9 @@ const Game: React.FC = () => {
     <div className="h-screen w-screen flex flex-col">
       <TopBar />
       <main className="relative flex-1">
-        <ActionDrawerToggle />
+        <PolicyDrawerToggle />
         <MapDrawerToggle />
-        <ActionDrawer />
+        <PolicyDrawer />
         <MapDrawer />
         <Map />
         {paused && <PauseMenu />}

@@ -9,11 +9,11 @@ type State = {
   advanceTurn: () => void;
   setLoading: (value: boolean) => void;
   togglePause: () => void;
-  toggleActiveApplet: (applet: string) => void;
+  toggleActiveApplet: (applet: string, open?: boolean) => void;
   reset: () => void;
 };
 
-const useGameStore = create<State>((set) => ({
+const useGameStore = create<State>((set, get) => ({
   turn: 0,
   loading: true,
   isPaused: true,
@@ -25,12 +25,19 @@ const useGameStore = create<State>((set) => ({
 
   togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
 
-  toggleActiveApplet: (applet) =>
-    set((state) =>
-      state.activeApplet === applet
-        ? { activeApplet: '' }
-        : { activeApplet: applet }
-    ),
+  toggleActiveApplet: (applet, open) => {
+    if (open === undefined) {
+      set((state) =>
+        state.activeApplet === applet
+          ? { activeApplet: '' }
+          : { activeApplet: applet }
+      );
+    } else if (open) {
+      set(() => ({ activeApplet: applet }));
+    } else if (get().activeApplet === applet) {
+      set(() => ({ activeApplet: '' }));
+    }
+  },
 
   reset: () =>
     set({
