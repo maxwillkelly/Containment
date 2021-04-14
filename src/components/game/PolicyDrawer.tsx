@@ -1,8 +1,8 @@
 import React from 'react';
 import useMapStore from '../../stores/MapStore';
 
-const ActionDrawer = () => {
-  const open = useMapStore((state) => state.isActionDrawerOpen);
+const PolicyDrawer = () => {
+  const open = useMapStore((state) => state.isPolicyDrawerOpen);
   const asideClass = open ? 'translate-x-0' : '-translate-x-full';
 
   return (
@@ -16,4 +16,4 @@ const ActionDrawer = () => {
   );
 };
 
-export default ActionDrawer;
+export default PolicyDrawer;
