@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import shallow from 'zustand/shallow';
 
@@ -13,6 +13,7 @@ import PauseMenu from '../components/game/PauseMenu';
 import MapDrawer from '../components/game/MapDrawer';
 import PolicyDrawer from '../components/game/PolicyDrawer';
 import LoadingScreen from '../components/game/LoadingScreen';
+import ActionWindow from '../components/game/ActionWindow';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
@@ -58,6 +59,7 @@ const MapDrawerToggle: React.FC = () => {
 };
 
 const Game: React.FC = () => {
+  const shownAction = useGameStore((state) => state.shownAction);
   const paused = useGameStore((state) => state.isPaused);
   const loading = useGameStore((state) => state.loading);
   const setLoading = useGameStore((state) => state.setLoading);
@@ -86,6 +88,7 @@ const Game: React.FC = () => {
         <PolicyDrawer />
         <MapDrawer />
         <Map />
+        {shownAction && <ActionWindow />}
         {paused && <PauseMenu />}
       </main>
     </div>

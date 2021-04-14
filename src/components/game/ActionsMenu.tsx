@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import shallow from 'zustand/shallow';
 import { FaSearch } from 'react-icons/fa';
 import { Action } from '../../data/actions';
@@ -64,19 +64,31 @@ interface ActionItemProps {
 }
 
 const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
-  const [selected, setSelected] = useState(false);
+  const shownAction = useGameStore((state) => state.shownAction);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const toggleShownAction = useGameStore((state) => state.toggleShownAction);
+
+  const selected = shownAction && shownAction.id === action.id;
   const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
 
+  const handleClick = () => {
+    toggleActiveApplet('ActionsButton', false);
+    toggleShownAction(action);
+  };
+
   return (
-    <button
-      className={`flex flex-row items-center p-2 rounded-lg text-left ${bgColour}`}
-      type="button"
-      onClick={() => setSelected((state) => !state)}
-    >
-      <div className="h-8 w-8 bg-white mr-4" />
-      <p>{action.name}</p>
-      <div className="mr-auto" />
-    </button>
+    <>
+      <button
+        className={`flex flex-row items-center p-2 rounded-lg text-left ${bgColour}`}
+        type="button"
+        onClick={handleClick}
+      >
+        <div className="h-8 w-8 bg-white mr-4" />
+        <p>{action.name}</p>
+
+        <div className="mr-auto" />
+      </button>
+    </>
   );
 };
 

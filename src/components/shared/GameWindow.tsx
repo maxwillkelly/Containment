@@ -7,9 +7,9 @@ interface Props {
 
 const GameWindow: React.FC<Props> = ({ title, footer, children }) => {
   return (
-    <div className="h-screen w-screen">
+    <div className="top-0 left-0 fixed h-screen w-screen">
       <div className="flex flex-col items-center justify-center h-full w-full">
-        <div className="w-9/12 h-4/6 border rounded grid grid-cols-1 grid-rows-12">
+        <div className="w-9/12 h-4/6 dark:bg-gray-800 border rounded grid grid-cols-1 grid-rows-12">
           <div className="row-span-3 flex items-center justify-center">
             <h1 className="text-5xl font-bold dark:text-gray-200 text-center">
               {title}
