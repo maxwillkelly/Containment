@@ -19,7 +19,13 @@ const getBgColour = (state: boolean) =>
 
 const PolicyDrawerToggle: React.FC = () => {
   const open = useMapStore((state) => state.isPolicyDrawerOpen);
+  const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
   const togglePolicyDrawer = useMapStore((state) => state.togglePolicyDrawer);
+
+  const handleClick = () => {
+    toggleActiveApplet('ActionsButton', false);
+    togglePolicyDrawer();
+  };
 
   return (
     <button
@@ -27,7 +33,7 @@ const PolicyDrawerToggle: React.FC = () => {
         open
       )} rounded z-40`}
       type="button"
-      onClick={() => togglePolicyDrawer()}
+      onClick={handleClick}
     >
       <GiHamburgerMenu className="dark:text-gray-200 text-2xl" />
     </button>
