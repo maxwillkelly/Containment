@@ -1,6 +1,6 @@
 import create from 'zustand';
 import immer from './shared/immer';
-import { Action } from '../data/actions';
+import { actions, Action } from '../data/actions';
 
 type State = {
   active: Action[];
@@ -12,7 +12,7 @@ type State = {
   reset: () => void;
 };
 
-const useActionsMenuStore = create<State>(
+const useActionsStore = create<State>(
   immer((set, get) => ({
     active: [],
     inActive: [],
@@ -37,8 +37,13 @@ const useActionsMenuStore = create<State>(
       });
     },
 
-    reset: () => set(() => ({})),
+    reset: () => {
+      set((state) => {
+        state.active = actions.filter((a) => a.enabledByDefault);
+        state.inActive = actions.filter((a) => !a.enabledByDefault);
+      });
+    },
   }))
 );
 
-export default useActionsMenuStore;
+export default useActionsStore;

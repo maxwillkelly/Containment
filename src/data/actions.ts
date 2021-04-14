@@ -9,7 +9,7 @@ export type Action = {
   enabledByDefault: boolean;
 };
 
-const actions: Array<Action> = [
+export const actions: Array<Action> = [
   {
     id: uuid(),
     name: 'Universal Basic Income',
@@ -64,14 +64,14 @@ const actions: Array<Action> = [
     name: 'Public Healthcare',
     category: 'Health',
     turnAvailable: 0,
-    enabledByDefault: false,
+    enabledByDefault: true,
   },
   {
     id: uuid(),
     name: 'Unemployment Benefit',
     category: 'Welfare',
     turnAvailable: 0,
-    enabledByDefault: false,
+    enabledByDefault: true,
   },
   {
     id: uuid(),

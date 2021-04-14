@@ -4,17 +4,22 @@ import { useHistory } from 'react-router-dom';
 import GameWindow from '../components/shared/GameWindow';
 import WindowButton from '../components/shared/WindowButton';
 import WindowLink from '../components/shared/WindowLink';
+
+import useActionsStore from '../stores/ActionsStore';
 import useGameStore from '../stores/GameStore';
 import useMapStore from '../stores/MapStore';
 import useViralStore from '../stores/ViralStore';
 
 const Footer: React.FC = () => {
   const history = useHistory();
+
+  const resetActionsStore = useActionsStore((state) => state.reset);
   const resetGameStore = useGameStore((state) => state.reset);
   const resetMapStore = useMapStore((state) => state.reset);
   const resetViralStore = useViralStore((state) => state.reset);
 
   const handleStart = () => {
+    resetActionsStore();
     resetGameStore();
     resetMapStore();
     resetViralStore();

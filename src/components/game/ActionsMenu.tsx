@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import shallow from 'zustand/shallow';
 import { FaSearch } from 'react-icons/fa';
-import actions, { Action } from '../../data/actions';
+import { Action } from '../../data/actions';
 import categories, { Category } from '../../data/categories';
+
+import useActionsStore from '../../stores/ActionsStore';
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
 import useGameStore from '../../stores/GameStore';
 
@@ -79,13 +81,14 @@ const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
 };
 
 const ActionList: React.FC = () => {
+  const inActiveActions = useActionsStore((state) => state.inActive);
   const [categorySelected, searchText] = useActionsMenuStore(
     (state) => [state.categorySelected, state.searchText],
     shallow
   );
   const turn = useGameStore((state) => state.turn);
 
-  const unlockedFilteredActions = actions.filter(
+  const unlockedFilteredActions = inActiveActions.filter(
     (a) => a.turnAvailable <= turn
   );
 
