@@ -8,6 +8,8 @@ const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
   const toggleShownAction = useGameStore((state) => state.toggleShownAction);
   const active = useActionsStore((state) => state.active);
+  const startAction = useActionsStore((state) => state.startAction);
+  const cancelAction = useActionsStore((state) => state.cancelAction);
 
   if (!shownAction) return null;
 
@@ -15,11 +17,13 @@ const Footer: React.FC = () => {
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
-  const handleCancelAction = () => {
+  const handleStartAction = () => {
+    startAction(shownAction);
     handleClose();
   };
 
-  const handleStartAction = () => {
+  const handleCancelAction = () => {
+    cancelAction(shownAction);
     handleClose();
   };
 
