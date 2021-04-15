@@ -7,7 +7,7 @@ const ActionList: React.FC = () => {
   const activeActions = useActionsStore((state) => state.active);
 
   return (
-    <div className="flex flex-col col-span-8 p-3 max-h-80 overflow-y-auto">
+    <div className="flex flex-col p-3 overflow-y-auto">
       {activeActions.map((a) => (
         <ActionItem action={a} key={a.id} />
       ))}
