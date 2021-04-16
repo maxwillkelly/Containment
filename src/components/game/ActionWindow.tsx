@@ -85,14 +85,12 @@ interface GraduationTextProps {
   graduationPercentage: number;
   range: ActionRange;
   rawRange: number;
-  steps: number;
 }
 
 const GraduationText: React.FC<GraduationTextProps> = ({
   graduationPercentage,
   range,
   rawRange,
-  steps,
 }) => {
   const { lowest, textPrepend, textAppend } = range;
 
@@ -120,7 +118,7 @@ const GraduationControls: React.FC = () => {
 
   return (
     <>
-      <div className="row-start-4 row-span-2 col-start-2 col-end-10">
+      <div className="row-start-4 row-span-2 col-start-2 col-end-12">
         <GraduationInformation graduationPercentage={graduationPercentage} />
       </div>
       <input
@@ -136,7 +134,6 @@ const GraduationControls: React.FC = () => {
           graduationPercentage={graduationPercentage}
           range={range}
           rawRange={rawRange}
-          steps={steps}
         />
       </div>
     </>
