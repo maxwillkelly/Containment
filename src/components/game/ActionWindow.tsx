@@ -57,14 +57,15 @@ const GraduationText: React.FC<GraduationTextProps> = ({
   rawRange,
   steps,
 }) => {
-  const { lowest, type } = range;
+  const { lowest, textPrepend, textAppend } = range;
 
   const graduationNumber = Math.round(lowest + (graduation / steps) * rawRange);
 
-  const graduationShown =
-    type === 'money' ? `£${graduationNumber}` : `${graduationNumber}%`;
+  const graduationShown = `${textPrepend}${graduationNumber}${textAppend}`;
 
-  return <p className="dark:text-gray-200 text-xl">{graduationShown}</p>;
+  return (
+    <p className="dark:text-gray-200 text-lg text-center">{graduationShown}</p>
+  );
 };
 
 const GraduationControls: React.FC = () => {
@@ -89,7 +90,7 @@ const GraduationControls: React.FC = () => {
         onChange={(e) => setGraduation(parseInt(e.target.value, 10))}
         value={graduation}
       />
-      <div className="row-start-6 col-start-11">
+      <div className="row-start-6 col-start-10 col-end-13">
         <GraduationText
           graduation={graduation}
           range={range}

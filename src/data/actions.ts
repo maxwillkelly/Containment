@@ -14,13 +14,12 @@ export type ActionImpact = {
   viralChange: (graduation: number) => number;
 };
 
-export type ActionRangeType = 'money' | 'percentage';
-
 export type ActionRange = {
   step: number;
   lowest: number;
   highest: number;
-  type: ActionRangeType;
+  textPrepend: string;
+  textAppend: string;
 };
 
 export type Action = {
@@ -54,7 +53,8 @@ export const actions: Array<Action> = [
       step: 100,
       lowest: 100,
       highest: 25000,
-      type: 'money',
+      textPrepend: '£',
+      textAppend: ' per year',
     },
     budgetImpact: (graduation) => -23121150000000 * graduation,
     impact: {
