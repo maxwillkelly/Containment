@@ -4,6 +4,7 @@ import useActionsStore from '../../stores/ActionsStore';
 import useGameStore from '../../stores/GameStore';
 import GameWindow from '../shared/GameWindow';
 import WindowButton from '../shared/WindowButton';
+import { formatCurrency, formatPercentage } from '../../libs/numeral';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
@@ -59,12 +60,8 @@ const GraduationInformation: React.FC<GraduationInformationProps> = ({
   const { start } = pointsCost;
   const { budget, popularity } = impact;
 
-  const budgetChange = `${Math.round(
-    budget(graduationPercentage) / 1000000000
-  )} billion`;
-  const popularityChange = `${Math.round(
-    popularity(graduationPercentage) * 100
-  )}%`;
+  const budgetChange = formatCurrency(budget(graduationPercentage));
+  const popularityChange = formatPercentage(popularity(graduationPercentage));
 
   return (
     <div className="grid grid-cols-3 divide-x dark:divide-gray-200 border rounded-md dark:text-gray-200 text-center">
