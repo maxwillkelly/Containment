@@ -57,8 +57,8 @@ export const actions: Array<Action> = [
       textAppend: ' per year',
     },
     impact: {
-      budget: (graduation) => -17340862500000 * graduation,
-      popularity: (graduation) => graduation * 0.2,
+      budget: (graduation) => -6936345000000 + -1727149905000000 * graduation,
+      popularity: (graduation) => 0.03 + graduation * 0.1,
       viral: (graduation) => 0,
     },
   },
