@@ -10,8 +10,9 @@ export type ActionPointsCost = {
 };
 
 export type ActionImpact = {
-  popularityChange: (graduation: number) => number;
-  viralChange: (graduation: number) => number;
+  budget: (graduation: number) => number;
+  popularity: (graduation: number) => number;
+  viral: (graduation: number) => number;
 };
 
 export type ActionRange = {
@@ -32,7 +33,6 @@ export type Action = {
   inputs: ActionInput[];
   pointsCost: ActionPointsCost;
   range: ActionRange;
-  budgetImpact: (graduation: number) => number;
   impact: ActionImpact;
 };
 
@@ -56,10 +56,10 @@ export const actions: Array<Action> = [
       textPrepend: '£',
       textAppend: ' per year',
     },
-    budgetImpact: (graduation) => -23121150000000 * graduation,
     impact: {
-      popularityChange: (graduation) => 0,
-      viralChange: (graduation) => 0,
+      budget: (graduation) => -17340862500000 * graduation,
+      popularity: (graduation) => graduation * 0.2,
+      viral: (graduation) => 0,
     },
   },
   // {

@@ -44,6 +44,42 @@ const Footer: React.FC = () => {
   );
 };
 
+interface GraduationInformationProps {
+  graduation: number;
+}
+
+const GraduationInformation: React.FC<GraduationInformationProps> = ({
+  graduation,
+}) => {
+  const shownAction = useGameStore((state) => state.shownAction);
+
+  if (!shownAction) return null;
+
+  const { pointsCost, impact } = shownAction;
+  const { start } = pointsCost;
+  const { budget, popularity } = impact;
+
+  const budgetChange = `${budget(graduation) / 1000000000} billion`;
+  const popularityChange = `${Math.round(popularity(graduation))}%`;
+
+  return (
+    <div className="grid grid-cols-3 divide-x dark:divide-gray-200 border rounded-md dark:text-gray-200 text-center">
+      <div className="">
+        <h4 className="text-xl">Action Points</h4>
+        <h5 className="">{start}</h5>
+      </div>
+      <div className="">
+        <h4 className="text-lg">Budget Change</h4>
+        <h5 className="">{budgetChange}</h5>
+      </div>
+      <div className="">
+        <h4 className="text-lg">Popularity</h4>
+        <h5 className="">{popularityChange}</h5>
+      </div>
+    </div>
+  );
+};
+
 interface GraduationTextProps {
   graduation: number;
   range: ActionRange;
@@ -82,6 +118,9 @@ const GraduationControls: React.FC = () => {
 
   return (
     <>
+      <div className="row-start-4 row-span-2 col-start-2 col-end-10">
+        <GraduationInformation graduation={graduation} />
+      </div>
       <input
         className="row-start-6 col-start-2 col-end-10"
         type="range"
