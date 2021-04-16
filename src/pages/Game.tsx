@@ -59,7 +59,6 @@ const MapDrawerToggle: React.FC = () => {
 };
 
 const Game: React.FC = () => {
-  const shownAction = useGameStore((state) => state.shownAction);
   const paused = useGameStore((state) => state.isPaused);
   const loading = useGameStore((state) => state.loading);
   const setLoading = useGameStore((state) => state.setLoading);
@@ -88,7 +87,7 @@ const Game: React.FC = () => {
         <PolicyDrawer />
         <MapDrawer />
         <Map />
-        {shownAction && <ActionWindow />}
+        <ActionWindow />
         {paused && <PauseMenu />}
       </main>
     </div>
