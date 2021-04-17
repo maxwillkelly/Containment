@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { ActionRange } from '../../data/actions';
+import React, { ChangeEvent, useEffect } from 'react';
 import useActionsStore from '../../stores/ActionsStore';
 import useGameStore from '../../stores/GameStore';
 import GameWindow from '../shared/GameWindow';
 import WindowButton from '../shared/WindowButton';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
+import useActionWindowStore from '../../stores/ActionWindowStore';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
@@ -12,15 +12,16 @@ const Footer: React.FC = () => {
   const active = useActionsStore((state) => state.active);
   const startAction = useActionsStore((state) => state.startAction);
   const cancelAction = useActionsStore((state) => state.cancelAction);
+  const graduation = useActionWindowStore((state) => state.graduation);
 
-  if (!shownAction) return null;
+  if (!shownAction || graduation.percentage === undefined) return null;
 
   const isActionActive = active.some((a) => a.id === shownAction.id);
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
   const handleStartAction = () => {
-    startAction(shownAction);
+    startAction(shownAction, graduation.percentage);
     handleClose();
   };
 
@@ -33,6 +34,7 @@ const Footer: React.FC = () => {
     return (
       <>
         <WindowButton title="Cancel Action" handleClick={handleCancelAction} />
+        <WindowButton title="Edit Action" handleClick={handleClose} />
         <WindowButton title="Close" handleClick={handleClose} />
       </>
     );
@@ -45,23 +47,25 @@ const Footer: React.FC = () => {
   );
 };
 
-interface GraduationInformationProps {
-  graduationPercentage: number;
-}
-
-const GraduationInformation: React.FC<GraduationInformationProps> = ({
-  graduationPercentage,
-}) => {
+const GraduationInformation: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
+  const graduation = useActionWindowStore((state) => state.graduation);
 
-  if (!shownAction) return null;
+  if (
+    !shownAction ||
+    graduation === undefined ||
+    graduation.percentage === undefined
+  )
+    return null;
 
   const { pointsCost, impact } = shownAction;
   const { start } = pointsCost;
   const { budget, popularity } = impact;
 
-  const budgetChange = formatCurrency(budget(graduationPercentage));
-  const popularityChange = formatPercentage(popularity(graduationPercentage));
+  const { percentage } = graduation;
+
+  const budgetChange = formatCurrency(budget(percentage));
+  const popularityChange = formatPercentage(popularity(percentage));
 
   return (
     <div className="grid grid-cols-3 divide-x dark:divide-gray-200 border rounded-md dark:text-gray-200 text-center">
@@ -81,20 +85,24 @@ const GraduationInformation: React.FC<GraduationInformationProps> = ({
   );
 };
 
-interface GraduationTextProps {
-  graduationPercentage: number;
-  range: ActionRange;
-  rawRange: number;
-}
+const GraduationText: React.FC = () => {
+  const shownAction = useGameStore((state) => state.shownAction);
+  const graduation = useActionWindowStore((state) => state.graduation);
 
-const GraduationText: React.FC<GraduationTextProps> = ({
-  graduationPercentage,
-  range,
-  rawRange,
-}) => {
-  const { lowest, textPrepend, textAppend } = range;
+  if (
+    !shownAction ||
+    graduation === undefined ||
+    graduation.percentage === undefined
+  )
+    return null;
 
-  const graduationNumber = Math.round(lowest + graduationPercentage * rawRange);
+  const { range } = shownAction;
+  const { lowest, highest, textPrepend, textAppend } = range;
+  const rawRange = highest - lowest;
+
+  const { percentage } = graduation;
+
+  const graduationNumber = Math.round(lowest + percentage * rawRange);
 
   const graduationShown = `${textPrepend}${graduationNumber}${textAppend}`;
 
@@ -105,36 +113,38 @@ const GraduationText: React.FC<GraduationTextProps> = ({
 
 const GraduationControls: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
-  const [graduation, setGraduation] = useState(1);
+  const graduation = useActionWindowStore((state) => state.graduation);
+  const setGraduation = useActionWindowStore((state) => state.setGraduation);
 
-  if (!shownAction) return null;
+  if (
+    !shownAction ||
+    graduation.currentSteps === undefined ||
+    graduation.totalSteps === undefined
+  )
+    return null;
 
-  const { range } = shownAction;
-  const { step, lowest, highest } = range;
+  const { currentSteps, totalSteps } = graduation;
 
-  const rawRange = highest - lowest;
-  const steps = rawRange / step;
-  const graduationPercentage = graduation / steps;
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const graduationSteps = parseInt(e.target.value, 10);
+    setGraduation(graduationSteps);
+  };
 
   return (
     <>
       <div className="row-start-4 row-span-2 col-start-2 col-end-12">
-        <GraduationInformation graduationPercentage={graduationPercentage} />
+        <GraduationInformation />
       </div>
       <input
         className="row-start-6 col-start-2 col-end-10"
         type="range"
         min="0"
-        max={steps}
-        onChange={(e) => setGraduation(parseInt(e.target.value, 10))}
-        value={graduation}
+        max={totalSteps}
+        onChange={handleChange}
+        value={currentSteps}
       />
       <div className="row-start-6 col-start-10 col-end-13">
-        <GraduationText
-          graduationPercentage={graduationPercentage}
-          range={range}
-          rawRange={rawRange}
-        />
+        <GraduationText />
       </div>
     </>
   );
@@ -142,6 +152,13 @@ const GraduationControls: React.FC = () => {
 
 const ActionWindow: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
+  const initialiseGraduation = useActionWindowStore(
+    (state) => state.initialiseGraduation
+  );
+
+  useEffect(() => {
+    initialiseGraduation(shownAction);
+  }, [initialiseGraduation, shownAction]);
 
   if (!shownAction) return null;
 

@@ -34,6 +34,7 @@ export type Action = {
   pointsCost: ActionPointsCost;
   range: ActionRange;
   impact: ActionImpact;
+  graduationPercentage?: number;
 };
 
 export const actions: Array<Action> = [
