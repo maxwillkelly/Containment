@@ -12,6 +12,7 @@ const Footer: React.FC = () => {
   const active = useActionsStore((state) => state.active);
   const startAction = useActionsStore((state) => state.startAction);
   const cancelAction = useActionsStore((state) => state.cancelAction);
+  const editAction = useActionsStore((state) => state.editAction);
   const graduation = useActionWindowStore((state) => state.graduation);
 
   if (!shownAction || graduation.percentage === undefined) return null;
@@ -20,28 +21,33 @@ const Footer: React.FC = () => {
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
-  const handleStartAction = () => {
+  const handleStart = () => {
     startAction(shownAction, graduation.percentage);
     handleClose();
   };
 
-  const handleCancelAction = () => {
+  const handleCancel = () => {
     cancelAction(shownAction);
+    handleClose();
+  };
+
+  const handleEdit = () => {
+    editAction(shownAction, graduation.percentage);
     handleClose();
   };
 
   if (isActionActive)
     return (
       <>
-        <WindowButton title="Cancel Action" handleClick={handleCancelAction} />
-        <WindowButton title="Edit Action" handleClick={handleClose} />
+        <WindowButton title="Cancel Action" handleClick={handleCancel} />
+        <WindowButton title="Edit Action" handleClick={handleEdit} />
         <WindowButton title="Close" handleClick={handleClose} />
       </>
     );
 
   return (
     <>
-      <WindowButton title="Start" handleClick={handleStartAction} />
+      <WindowButton title="Start" handleClick={handleStart} />
       <WindowButton title="Close" handleClick={handleClose} />
     </>
   );
@@ -157,7 +163,7 @@ const ActionWindow: React.FC = () => {
   );
 
   useEffect(() => {
-    initialiseGraduation(shownAction);
+    if (!shownAction?.graduationPercentage) initialiseGraduation(shownAction);
   }, [initialiseGraduation, shownAction]);
 
   if (!shownAction) return null;

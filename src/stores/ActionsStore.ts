@@ -8,7 +8,8 @@ type State = {
   inActive: Action[];
 
   startAction: (actionParameter: Action, graduationPercentage: number) => void;
-  cancelAction: (action: Action) => void;
+  editAction: (actionParameter: Action, graduationPercentage: number) => void;
+  cancelAction: (actionParameter: Action) => void;
 
   reset: () => void;
 };
@@ -31,7 +32,23 @@ const useActionsStore = create<State>(
       });
     },
 
-    cancelAction: (action) => {
+    editAction: (actionParameter, graduationPercentage) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = graduationPercentage;
+
+      const { active } = get();
+      const index = active.findIndex((a) => a.id === action.id);
+
+      set((state) => {
+        state.active.splice(index, 1);
+        state.active.push(action);
+      });
+    },
+
+    cancelAction: (actionParameter) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = undefined;
+
       const { active } = get();
       const index = active.findIndex((a) => a.id === action.id);
 
