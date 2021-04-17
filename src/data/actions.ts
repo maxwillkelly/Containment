@@ -48,7 +48,7 @@ export const actions: Array<Action> = [
     pointsCost: {
       start: 14,
       cancel: 20,
-      modify: (changePercentage) => 20 * changePercentage,
+      modify: (changePercentage) => 4 + 20 * changePercentage,
     },
     range: {
       step: 100,

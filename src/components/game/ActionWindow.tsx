@@ -15,14 +15,15 @@ const Footer: React.FC = () => {
   const editAction = useActionsStore((state) => state.editAction);
   const graduation = useActionWindowStore((state) => state.graduation);
 
-  if (!shownAction || graduation.percentage === undefined) return null;
+  if (!shownAction) return null;
 
   const isActionActive = active.some((a) => a.id === shownAction.id);
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
   const handleStart = () => {
-    startAction(shownAction, graduation.percentage);
+    if (graduation.percentage !== undefined)
+      startAction(shownAction, graduation.percentage);
     handleClose();
   };
 
@@ -32,7 +33,8 @@ const Footer: React.FC = () => {
   };
 
   const handleEdit = () => {
-    editAction(shownAction, graduation.percentage);
+    if (graduation.percentage !== undefined)
+      editAction(shownAction, graduation.percentage);
     handleClose();
   };
 

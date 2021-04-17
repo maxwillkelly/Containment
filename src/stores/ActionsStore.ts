@@ -17,7 +17,7 @@ type State = {
   cancelAction: (actionParameter: Action) => void;
 
   decrementPoints: (pointsDecrement: number) => void;
-  takeTurn: () => void;
+  advanceTurn: () => void;
 
   reset: () => void;
 };
@@ -30,25 +30,36 @@ const useActionsStore = create<State>(
 
     startAction: (actionParameter, graduationPercentage) => {
       const action = lodash.cloneDeep(actionParameter);
+
       action.graduationPercentage = graduationPercentage;
 
       const { inActive } = get();
       const index = inActive.findIndex((a) => a.id === action.id);
 
       set((state) => {
+        state.points -= action.pointsCost.start;
         state.inActive.splice(index, 1);
         state.active.push(action);
       });
     },
 
     editAction: (actionParameter, graduationPercentage) => {
+      const oldGraduationPercentage = actionParameter.graduationPercentage;
+
+      if (oldGraduationPercentage === undefined) return;
+
       const action = lodash.cloneDeep(actionParameter);
       action.graduationPercentage = graduationPercentage;
+
+      const graduationChange = Math.abs(
+        oldGraduationPercentage - graduationPercentage
+      );
 
       const { active } = get();
       const index = active.findIndex((a) => a.id === action.id);
 
       set((state) => {
+        state.points -= Math.round(action.pointsCost.modify(graduationChange));
         state.active.splice(index, 1);
         state.active.push(action);
       });
@@ -62,6 +73,7 @@ const useActionsStore = create<State>(
       const index = active.findIndex((a) => a.id === action.id);
 
       set((state) => {
+        state.points -= action.pointsCost.cancel;
         state.active.splice(index, 1);
         state.inActive.push(action);
       });
@@ -72,7 +84,7 @@ const useActionsStore = create<State>(
         state.points -= pointsDecrement;
       }),
 
-    takeTurn: () =>
+    advanceTurn: () =>
       set((state) => {
         const points = Math.min(state.points + POINTS_PER_TURN, POINTS_MAX);
 
