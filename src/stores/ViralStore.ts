@@ -190,7 +190,6 @@ const useViralStore = create<State>(
       // Selects state of outbreak
       const randomStateIndex = Math.floor(Math.random() * features.length);
       const firstOutbreakState = features[randomStateIndex].properties.name;
-      console.log(firstOutbreakState);
 
       // Infects patient
       generateLocalInfection(firstOutbreakState, turn);

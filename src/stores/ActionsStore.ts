@@ -1,4 +1,5 @@
 import create from 'zustand';
+import lodash from 'lodash';
 import immer from './shared/immer';
 import { actions, Action } from '../data/actions';
 
@@ -6,8 +7,9 @@ type State = {
   active: Action[];
   inActive: Action[];
 
-  startAction: (action: Action) => void;
-  cancelAction: (action: Action) => void;
+  startAction: (actionParameter: Action, graduationPercentage: number) => void;
+  editAction: (actionParameter: Action, graduationPercentage: number) => void;
+  cancelAction: (actionParameter: Action) => void;
 
   reset: () => void;
 };
@@ -17,7 +19,10 @@ const useActionsStore = create<State>(
     active: [],
     inActive: [],
 
-    startAction: (action) => {
+    startAction: (actionParameter, graduationPercentage) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = graduationPercentage;
+
       const { inActive } = get();
       const index = inActive.findIndex((a) => a.id === action.id);
 
@@ -27,7 +32,23 @@ const useActionsStore = create<State>(
       });
     },
 
-    cancelAction: (action) => {
+    editAction: (actionParameter, graduationPercentage) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = graduationPercentage;
+
+      const { active } = get();
+      const index = active.findIndex((a) => a.id === action.id);
+
+      set((state) => {
+        state.active.splice(index, 1);
+        state.active.push(action);
+      });
+    },
+
+    cancelAction: (actionParameter) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = undefined;
+
       const { active } = get();
       const index = active.findIndex((a) => a.id === action.id);
 

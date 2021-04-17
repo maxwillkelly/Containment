@@ -1,34 +1,13 @@
-import React, { useState } from 'react';
-import { Action } from '../../data/actions';
+import React from 'react';
 import useActionsStore from '../../stores/ActionsStore';
 import useMapStore from '../../stores/MapStore';
-
-interface ActionItemProps {
-  action: Action;
-}
-
-const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
-  const [selected, setSelected] = useState(false);
-  const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
-
-  return (
-    <button
-      className={`flex flex-row items-center p-2 rounded-lg text-left ${bgColour}`}
-      type="button"
-      onClick={() => setSelected((state) => !state)}
-    >
-      <div className="h-8 w-8 bg-white mr-4" />
-      <p>{action.name}</p>
-      <div className="mr-auto" />
-    </button>
-  );
-};
+import ActionItem from '../shared/ActionItem';
 
 const ActionList: React.FC = () => {
   const activeActions = useActionsStore((state) => state.active);
 
   return (
-    <div className="flex flex-col col-span-8 p-3 max-h-80 overflow-y-auto">
+    <div className="flex flex-col p-3 overflow-y-auto">
       {activeActions.map((a) => (
         <ActionItem action={a} key={a.id} />
       ))}

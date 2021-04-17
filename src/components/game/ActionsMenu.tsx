@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import shallow from 'zustand/shallow';
 import { FaSearch } from 'react-icons/fa';
-import { Action } from '../../data/actions';
+
 import categories, { Category } from '../../data/categories';
 
 import useActionsStore from '../../stores/ActionsStore';
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
 import useGameStore from '../../stores/GameStore';
+import ActionItem from '../shared/ActionItem';
 
 const SearchBar: React.FC = () => {
   const [searchText, setSearchText] = useActionsMenuStore(
@@ -56,27 +57,6 @@ const ActionCategories: React.FC = () => {
         <ActionCategory category={c} key={c} />
       ))}
     </div>
-  );
-};
-
-interface ActionItemProps {
-  action: Action;
-}
-
-const ActionItem: React.FC<ActionItemProps> = ({ action }) => {
-  const [selected, setSelected] = useState(false);
-  const bgColour = selected ? 'bg-selected' : 'hover:bg-gray-600';
-
-  return (
-    <button
-      className={`flex flex-row items-center p-2 rounded-lg text-left ${bgColour}`}
-      type="button"
-      onClick={() => setSelected((state) => !state)}
-    >
-      <div className="h-8 w-8 bg-white mr-4" />
-      <p>{action.name}</p>
-      <div className="mr-auto" />
-    </button>
   );
 };
 
