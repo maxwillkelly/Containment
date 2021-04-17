@@ -4,6 +4,7 @@ import immer from './shared/immer';
 import { actions, Action } from '../data/actions';
 
 type State = {
+  points: number;
   active: Action[];
   inActive: Action[];
 
@@ -11,11 +12,15 @@ type State = {
   editAction: (actionParameter: Action, graduationPercentage: number) => void;
   cancelAction: (actionParameter: Action) => void;
 
+  modifyPoints: (pointsChange: number) => void;
+  takeTurn: () => void;
+
   reset: () => void;
 };
 
 const useActionsStore = create<State>(
   immer((set, get) => ({
+    points: 30,
     active: [],
     inActive: [],
 
@@ -58,8 +63,19 @@ const useActionsStore = create<State>(
       });
     },
 
+    modifyPoints: (pointsChange) =>
+      set((state) => {
+        state.points += pointsChange;
+      }),
+
+    takeTurn: () =>
+      set((state) => {
+        state.points += 10;
+      }),
+
     reset: () => {
       set((state) => {
+        state.points = 30;
         state.active = actions.filter((a) => a.enabledByDefault);
         state.inActive = actions.filter((a) => !a.enabledByDefault);
       });
