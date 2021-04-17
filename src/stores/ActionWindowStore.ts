@@ -9,6 +9,7 @@ type Graduation = {
 
 type State = {
   graduation: Graduation;
+
   initialiseGraduation: (action: Action | undefined) => void;
   setGraduation: (currentSteps: number) => void;
   reset: () => void;

@@ -14,6 +14,10 @@ type State = {
 
   isActionActive: (action: Action) => boolean;
 
+  isActionStartable: (action: Action) => boolean;
+  isActionEditable: (action: Action, graduationPercentage: number) => boolean;
+  isActionCancelable: (action: Action) => boolean;
+
   startAction: (actionParameter: Action, graduationPercentage: number) => void;
 
   calcEditDeduction: (action: Action, graduationPercentage: number) => number;
@@ -39,6 +43,21 @@ const useActionsStore = create<State>(
       return active.some((a) => a.id === action.id);
     },
 
+    isActionStartable: (action: Action) =>
+      action.pointsCost.start <= get().points,
+
+    isActionEditable: (action: Action, graduationPercentage: number) => {
+      const pointDeduction = get().calcEditDeduction(
+        action,
+        graduationPercentage
+      );
+
+      return pointDeduction > 0 && pointDeduction <= get().points;
+    },
+
+    isActionCancelable: (action: Action) =>
+      action.pointsCost.cancel <= get().points,
+
     startAction: (actionParameter, graduationPercentage) => {
       const action = lodash.cloneDeep(actionParameter);
 
@@ -62,6 +81,8 @@ const useActionsStore = create<State>(
       const graduationChange = Math.abs(
         oldGraduationPercentage - graduationPercentage
       );
+
+      if (graduationChange === 0) return -2;
 
       return Math.round(action.pointsCost.modify(graduationChange));
     },

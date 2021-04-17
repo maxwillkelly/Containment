@@ -11,13 +11,19 @@ const Footer: React.FC = () => {
   const toggleShownAction = useGameStore((state) => state.toggleShownAction);
 
   const isActionActive = useActionsStore((state) => state.isActionActive);
+  const isActionStartable = useActionsStore((state) => state.isActionStartable);
+  const isActionEditable = useActionsStore((state) => state.isActionEditable);
+  const isActionCancelable = useActionsStore(
+    (state) => state.isActionCancelable
+  );
+
   const startAction = useActionsStore((state) => state.startAction);
   const cancelAction = useActionsStore((state) => state.cancelAction);
   const editAction = useActionsStore((state) => state.editAction);
 
   const graduation = useActionWindowStore((state) => state.graduation);
 
-  if (!shownAction) return null;
+  if (!shownAction || graduation.percentage === undefined) return null;
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
@@ -41,15 +47,27 @@ const Footer: React.FC = () => {
   if (isActionActive(shownAction))
     return (
       <>
-        <WindowButton title="Cancel Action" handleClick={handleCancel} />
-        <WindowButton title="Edit Action" handleClick={handleEdit} />
+        <WindowButton
+          title="Cancel Action"
+          handleClick={handleCancel}
+          disabled={!isActionCancelable(shownAction)}
+        />
+        <WindowButton
+          title="Edit Action"
+          handleClick={handleEdit}
+          disabled={!isActionEditable(shownAction, graduation.percentage)}
+        />
         <WindowButton title="Close" handleClick={handleClose} />
       </>
     );
 
   return (
     <>
-      <WindowButton title="Start" handleClick={handleStart} />
+      <WindowButton
+        title="Start"
+        handleClick={handleStart}
+        disabled={!isActionStartable(shownAction)}
+      />
       <WindowButton title="Close" handleClick={handleClose} />
     </>
   );
@@ -66,13 +84,13 @@ const ActionPointsInformation: React.FC = () => {
   const { pointsCost } = shownAction;
   const { start, cancel, modify } = pointsCost;
 
-  const percentage = calcEditDeduction(shownAction, graduation.percentage);
+  const editDeduction = calcEditDeduction(shownAction, graduation.percentage);
 
   if (isActionActive(shownAction))
     return (
       <div className="">
         <h4 className="text-xl">Action Points</h4>
-        <h5 className="">{percentage}</h5>
+        <h5 className="">{editDeduction > 0 ? editDeduction : 0}</h5>
       </div>
     );
 
