@@ -8,6 +8,7 @@ import {
   GiTestTubes,
 } from 'react-icons/gi';
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
+import useActionsStore from '../../stores/ActionsStore';
 
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
@@ -37,6 +38,7 @@ const ActionsButton: React.FC = () => {
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
   const togglePolicyDrawer = useMapStore((state) => state.togglePolicyDrawer);
+  const actionPoints = useActionsStore((state) => state.points);
   const resetActionsMenuStore = useActionsMenuStore((state) => state.reset);
 
   const handleClick = () => {
@@ -55,7 +57,7 @@ const ActionsButton: React.FC = () => {
         onClick={handleClick}
       >
         <GiStoneCrafting className="dark:text-gray-200 text-3xl" />
-        <h3 className="text-xl ml-2">27</h3>
+        <h3 className="text-xl ml-2">{actionPoints}</h3>
       </button>
       {activeApplet === applet && <ActionsMenu />}
     </div>
@@ -182,7 +184,8 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const advanceTurn = useGameStore((state) => state.advanceTurn);
+  const advanceGameTurn = useGameStore((state) => state.advanceTurn);
+  const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
   const setLoading = useGameStore((state) => state.setLoading);
   const turn = useGameStore((state) => state.turn);
   const takeTurn = useViralStore((state) => state.takeTurn);
@@ -190,7 +193,8 @@ const AdvanceTurnButton: React.FC = () => {
   const handleClick = () => {
     setLoading(true);
     takeTurn(turn + 1);
-    advanceTurn();
+    advanceGameTurn();
+    advanceActionTurn();
     setLoading(false);
   };
 

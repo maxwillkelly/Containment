@@ -9,20 +9,27 @@ import useActionWindowStore from '../../stores/ActionWindowStore';
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
   const toggleShownAction = useGameStore((state) => state.toggleShownAction);
-  const active = useActionsStore((state) => state.active);
+
+  const isActionActive = useActionsStore((state) => state.isActionActive);
+  const isActionStartable = useActionsStore((state) => state.isActionStartable);
+  const isActionEditable = useActionsStore((state) => state.isActionEditable);
+  const isActionCancelable = useActionsStore(
+    (state) => state.isActionCancelable
+  );
+
   const startAction = useActionsStore((state) => state.startAction);
   const cancelAction = useActionsStore((state) => state.cancelAction);
   const editAction = useActionsStore((state) => state.editAction);
+
   const graduation = useActionWindowStore((state) => state.graduation);
 
   if (!shownAction || graduation.percentage === undefined) return null;
 
-  const isActionActive = active.some((a) => a.id === shownAction.id);
-
   const handleClose = () => toggleShownAction(shownAction, false);
 
   const handleStart = () => {
-    startAction(shownAction, graduation.percentage);
+    if (graduation.percentage !== undefined)
+      startAction(shownAction, graduation.percentage);
     handleClose();
   };
 
@@ -32,24 +39,68 @@ const Footer: React.FC = () => {
   };
 
   const handleEdit = () => {
-    editAction(shownAction, graduation.percentage);
+    if (graduation.percentage !== undefined)
+      editAction(shownAction, graduation.percentage);
     handleClose();
   };
 
-  if (isActionActive)
+  if (isActionActive(shownAction))
     return (
       <>
-        <WindowButton title="Cancel Action" handleClick={handleCancel} />
-        <WindowButton title="Edit Action" handleClick={handleEdit} />
+        <WindowButton
+          title="Cancel Action"
+          handleClick={handleCancel}
+          disabled={!isActionCancelable(shownAction)}
+        />
+        <WindowButton
+          title="Edit Action"
+          handleClick={handleEdit}
+          disabled={!isActionEditable(shownAction, graduation.percentage)}
+        />
         <WindowButton title="Close" handleClick={handleClose} />
       </>
     );
 
   return (
     <>
-      <WindowButton title="Start" handleClick={handleStart} />
+      <WindowButton
+        title="Start"
+        handleClick={handleStart}
+        disabled={!isActionStartable(shownAction)}
+      />
       <WindowButton title="Close" handleClick={handleClose} />
     </>
+  );
+};
+
+const ActionPointsInformation: React.FC = () => {
+  const shownAction = useGameStore((state) => state.shownAction);
+  const isActionActive = useActionsStore((state) => state.isActionActive);
+  const calcEditDeduction = useActionsStore((state) => state.calcEditDeduction);
+  const graduation = useActionWindowStore((state) => state.graduation);
+
+  if (!shownAction || graduation.percentage === undefined) return null;
+
+  const { pointsCost } = shownAction;
+  const { start, cancel } = pointsCost;
+
+  const editDeduction = calcEditDeduction(shownAction, graduation.percentage);
+
+  if (isActionActive(shownAction))
+    return (
+      <div className="">
+        <h4 className="text-xl">
+          Action Points To {editDeduction > 0 ? 'Edit' : 'Cancel'}
+        </h4>
+        <h5 className="">{editDeduction > 0 ? editDeduction : cancel}</h5>
+      </div>
+    );
+
+  return (
+    <div className="">
+      <h4 className="text-xl">Action Points To Start</h4>
+      <h5 className="">{start}</h5>
+    </div>
   );
 };
 
@@ -64,8 +115,7 @@ const GraduationInformation: React.FC = () => {
   )
     return null;
 
-  const { pointsCost, impact } = shownAction;
-  const { start } = pointsCost;
+  const { impact } = shownAction;
   const { budget, popularity } = impact;
 
   const { percentage } = graduation;
@@ -75,10 +125,7 @@ const GraduationInformation: React.FC = () => {
 
   return (
     <div className="grid grid-cols-3 divide-x dark:divide-gray-200 border rounded-md dark:text-gray-200 text-center">
-      <div className="">
-        <h4 className="text-xl">Action Points</h4>
-        <h5 className="">{start}</h5>
-      </div>
+      <ActionPointsInformation />
       <div className="">
         <h4 className="text-lg">Budget Change</h4>
         <h5 className="">{budgetChange}</h5>

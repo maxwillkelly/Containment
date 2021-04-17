@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import GameWindow from '../components/shared/GameWindow';
 import WindowButton from '../components/shared/WindowButton';
-import WindowLink from '../components/shared/WindowLink';
 
 import useActionsStore from '../stores/ActionsStore';
 import useGameStore from '../stores/GameStore';
@@ -29,7 +28,7 @@ const Footer: React.FC = () => {
   return (
     <>
       <WindowButton title="Start" handleClick={handleStart} />
-      <WindowLink title="Cancel" path="/" />
+      <WindowButton title="Cancel" handleClick={() => history.push('/')} />
     </>
   );
 };

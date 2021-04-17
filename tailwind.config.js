@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors');
+// const colors = require('tailwindcss/colors');
 
 module.exports = {
   darkMode: 'class',
@@ -8,6 +8,7 @@ module.exports = {
       'gray-600': '#55555C',
       'gray-700': '#3F3F46',
       'gray-800': '#27272A',
+      disabled: '#2E2E36',
       selected: '#299AE0',
     }),
     boxShadow: {
@@ -15,13 +16,17 @@ module.exports = {
     },
     extend: {
       gridTemplateRows: {
-        '12': 'repeat(12, minmax(0, 1fr))',
+        12: 'repeat(12, minmax(0, 1fr))',
       },
       gridRow: {
         'span-7': 'span 7 / span 7',
       },
     },
   },
-  variants: {},
+  variants: {
+    extend: {
+      backgroundColor: ['disabled'],
+    },
+  },
   plugins: [],
 };
