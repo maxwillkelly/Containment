@@ -12,8 +12,14 @@ type State = {
   active: Action[];
   inActive: Action[];
 
+  isActionActive: (action: Action) => boolean;
+
   startAction: (actionParameter: Action, graduationPercentage: number) => void;
+
+  calcEditDeduction: (action: Action, graduationPercentage: number) => number;
+
   editAction: (actionParameter: Action, graduationPercentage: number) => void;
+
   cancelAction: (actionParameter: Action) => void;
 
   decrementPoints: (pointsDecrement: number) => void;
@@ -27,6 +33,11 @@ const useActionsStore = create<State>(
     points: POINTS_START,
     active: [],
     inActive: [],
+
+    isActionActive: (action) => {
+      const { active } = get();
+      return active.some((a) => a.id === action.id);
+    },
 
     startAction: (actionParameter, graduationPercentage) => {
       const action = lodash.cloneDeep(actionParameter);
@@ -43,23 +54,32 @@ const useActionsStore = create<State>(
       });
     },
 
-    editAction: (actionParameter, graduationPercentage) => {
-      const oldGraduationPercentage = actionParameter.graduationPercentage;
+    calcEditDeduction: (action: Action, graduationPercentage: number) => {
+      const oldGraduationPercentage = action.graduationPercentage;
 
-      if (oldGraduationPercentage === undefined) return;
-
-      const action = lodash.cloneDeep(actionParameter);
-      action.graduationPercentage = graduationPercentage;
+      if (oldGraduationPercentage === undefined) return -1;
 
       const graduationChange = Math.abs(
         oldGraduationPercentage - graduationPercentage
       );
 
-      const { active } = get();
+      return Math.round(action.pointsCost.modify(graduationChange));
+    },
+
+    editAction: (actionParameter, graduationPercentage) => {
+      const action = lodash.cloneDeep(actionParameter);
+      action.graduationPercentage = graduationPercentage;
+
+      const { active, calcEditDeduction } = get();
       const index = active.findIndex((a) => a.id === action.id);
 
+      const pointDeduction = calcEditDeduction(
+        actionParameter,
+        graduationPercentage
+      );
+
       set((state) => {
-        state.points -= Math.round(action.pointsCost.modify(graduationChange));
+        state.points -= pointDeduction;
         state.active.splice(index, 1);
         state.active.push(action);
       });
