@@ -3,6 +3,10 @@ import lodash from 'lodash';
 import immer from './shared/immer';
 import { actions, Action } from '../data/actions';
 
+const POINTS_START = 30;
+const POINTS_MAX = 40;
+const POINTS_PER_TURN = 10;
+
 type State = {
   points: number;
   active: Action[];
@@ -12,7 +16,7 @@ type State = {
   editAction: (actionParameter: Action, graduationPercentage: number) => void;
   cancelAction: (actionParameter: Action) => void;
 
-  modifyPoints: (pointsChange: number) => void;
+  decrementPoints: (pointsDecrement: number) => void;
   takeTurn: () => void;
 
   reset: () => void;
@@ -20,7 +24,7 @@ type State = {
 
 const useActionsStore = create<State>(
   immer((set, get) => ({
-    points: 30,
+    points: POINTS_START,
     active: [],
     inActive: [],
 
@@ -63,19 +67,21 @@ const useActionsStore = create<State>(
       });
     },
 
-    modifyPoints: (pointsChange) =>
+    decrementPoints: (pointsDecrement) =>
       set((state) => {
-        state.points += pointsChange;
+        state.points -= pointsDecrement;
       }),
 
     takeTurn: () =>
       set((state) => {
-        state.points += 10;
+        const points = Math.min(state.points + POINTS_PER_TURN, POINTS_MAX);
+
+        state.points = points;
       }),
 
     reset: () => {
       set((state) => {
-        state.points = 30;
+        state.points = POINTS_START;
         state.active = actions.filter((a) => a.enabledByDefault);
         state.inActive = actions.filter((a) => !a.enabledByDefault);
       });
