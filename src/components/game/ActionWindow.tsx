@@ -82,21 +82,23 @@ const ActionPointsInformation: React.FC = () => {
   if (!shownAction || graduation.percentage === undefined) return null;
 
   const { pointsCost } = shownAction;
-  const { start, cancel, modify } = pointsCost;
+  const { start, cancel } = pointsCost;
 
   const editDeduction = calcEditDeduction(shownAction, graduation.percentage);
 
   if (isActionActive(shownAction))
     return (
       <div className="">
-        <h4 className="text-xl">Action Points</h4>
-        <h5 className="">{editDeduction > 0 ? editDeduction : 0}</h5>
+        <h4 className="text-xl">
+          Action Points To {editDeduction > 0 ? 'Edit' : 'Cancel'}
+        </h4>
+        <h5 className="">{editDeduction > 0 ? editDeduction : cancel}</h5>
       </div>
     );
 
   return (
     <div className="">
-      <h4 className="text-xl">Action Points</h4>
+      <h4 className="text-xl">Action Points To Start</h4>
       <h5 className="">{start}</h5>
     </div>
   );

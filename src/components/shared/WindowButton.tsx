@@ -8,7 +8,7 @@ type Props = {
 
 const WindowButton: React.FC<Props> = ({ title, handleClick, disabled }) => (
   <button
-    className="w-32 h-10 rounded-full text-lg grid place-items-center dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 disabled:bg-gray-500"
+    className="w-32 h-10 rounded-full text-lg grid place-items-center dark:disabled:bg-disabled dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200"
     type="button"
     onClick={handleClick}
     disabled={disabled}
