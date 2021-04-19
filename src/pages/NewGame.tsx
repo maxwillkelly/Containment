@@ -7,6 +7,7 @@ import WindowButton from '../components/shared/WindowButton';
 import useActionsStore from '../stores/ActionsStore';
 import useGameStore from '../stores/GameStore';
 import useMapStore from '../stores/MapStore';
+import usePoliticalStore from '../stores/PoliticalStore';
 import useViralStore from '../stores/ViralStore';
 
 const Footer: React.FC = () => {
@@ -15,12 +16,14 @@ const Footer: React.FC = () => {
   const resetActionsStore = useActionsStore((state) => state.reset);
   const resetGameStore = useGameStore((state) => state.reset);
   const resetMapStore = useMapStore((state) => state.reset);
+  const resetPoliticalStore = usePoliticalStore((state) => state.reset);
   const resetViralStore = useViralStore((state) => state.reset);
 
   const handleStart = () => {
     resetActionsStore();
     resetGameStore();
     resetMapStore();
+    resetPoliticalStore();
     resetViralStore();
     history.push('/game');
   };

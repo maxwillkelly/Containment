@@ -20,7 +20,7 @@ type State = {
 
 const usePoliticalStore = create<State>(
   immer((set, get) => ({
-    base: 55,
+    base: 0.55,
     actionModifiers: {},
 
     getPopularity: (turn) => {
@@ -70,7 +70,7 @@ const usePoliticalStore = create<State>(
       });
 
       set((state) => {
-        state.actionModifiers[0] = initialModifiers;
+        state.actionModifiers = { 0: initialModifiers };
       });
     },
   }))
