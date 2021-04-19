@@ -10,7 +10,7 @@ type Graduation = {
 type State = {
   graduation: Graduation;
 
-  initialiseGraduation: (action: Action | undefined) => void;
+  initialiseGraduation: (action: Action | undefined) => boolean;
   setGraduation: (currentSteps: number) => void;
   reset: () => void;
 };
@@ -19,17 +19,19 @@ const useActionWindowStore = create<State>((set, get) => ({
   graduation: {},
 
   initialiseGraduation: (action) => {
-    if (!action) return;
+    if (!action) return false;
 
-    const { range } = action;
-    const { step, lowest, highest } = range;
+    const { step, lowest, highest } = action.range;
 
     const rawRange = highest - lowest;
     const totalSteps = rawRange / step;
 
     const currentSteps = Math.round(totalSteps / 2);
     const percentage = currentSteps / totalSteps;
+
     set({ graduation: { totalSteps, currentSteps, percentage } });
+
+    return true;
   },
 
   setGraduation: (currentSteps) => {
@@ -39,6 +41,7 @@ const useActionWindowStore = create<State>((set, get) => ({
     if (!totalSteps) return;
 
     const percentage = currentSteps / totalSteps;
+
     set({ graduation: { currentSteps, totalSteps, percentage } });
   },
 

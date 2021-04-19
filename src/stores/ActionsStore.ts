@@ -21,12 +21,10 @@ type State = {
   startAction: (actionParameter: Action, graduationPercentage: number) => void;
 
   calcEditDeduction: (action: Action, graduationPercentage: number) => number;
-
   editAction: (actionParameter: Action, graduationPercentage: number) => void;
 
   cancelAction: (actionParameter: Action) => void;
 
-  decrementPoints: (pointsDecrement: number) => void;
   advanceTurn: () => void;
 
   reset: () => void;
@@ -119,11 +117,6 @@ const useActionsStore = create<State>(
         state.inActive.push(action);
       });
     },
-
-    decrementPoints: (pointsDecrement) =>
-      set((state) => {
-        state.points -= pointsDecrement;
-      }),
 
     advanceTurn: () =>
       set((state) => {
