@@ -5,9 +5,11 @@ import GameWindow from '../shared/GameWindow';
 import WindowButton from '../shared/WindowButton';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
 import useActionWindowStore from '../../stores/ActionWindowStore';
+import usePoliticalStore from '../../stores/PoliticalStore';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
+  const turn = useGameStore((state) => state.turn);
   const toggleShownAction = useGameStore((state) => state.toggleShownAction);
 
   const isActionActive = useActionsStore((state) => state.isActionActive);
@@ -23,24 +25,41 @@ const Footer: React.FC = () => {
 
   const graduation = useActionWindowStore((state) => state.graduation);
 
+  const addActionModifier = usePoliticalStore(
+    (state) => state.addActionModifier
+  );
+
+  const editActionModifier = usePoliticalStore(
+    (state) => state.editActionModifier
+  );
+
+  const removeActionModifier = usePoliticalStore(
+    (state) => state.removeActionModifier
+  );
+
   if (!shownAction || graduation.percentage === undefined) return null;
 
   const handleClose = () => toggleShownAction(shownAction, false);
 
   const handleStart = () => {
-    if (graduation.percentage !== undefined)
-      startAction(shownAction, graduation.percentage);
-    handleClose();
-  };
-
-  const handleCancel = () => {
-    cancelAction(shownAction);
+    if (graduation.percentage !== undefined) {
+      const action = startAction(shownAction, graduation.percentage);
+      addActionModifier(action, turn);
+    }
     handleClose();
   };
 
   const handleEdit = () => {
-    if (graduation.percentage !== undefined)
-      editAction(shownAction, graduation.percentage);
+    if (graduation.percentage !== undefined) {
+      const action = editAction(shownAction, graduation.percentage);
+      editActionModifier(action, turn);
+    }
+    handleClose();
+  };
+
+  const handleCancel = () => {
+    const action = cancelAction(shownAction);
+    removeActionModifier(action, turn);
     handleClose();
   };
 

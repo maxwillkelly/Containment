@@ -18,12 +18,15 @@ type State = {
   isActionEditable: (action: Action, graduationPercentage: number) => boolean;
   isActionCancelable: (action: Action) => boolean;
 
-  startAction: (actionParameter: Action, graduationPercentage: number) => void;
+  startAction: (
+    actionParameter: Action,
+    graduationPercentage: number
+  ) => Action;
 
   calcEditDeduction: (action: Action, graduationPercentage: number) => number;
-  editAction: (actionParameter: Action, graduationPercentage: number) => void;
+  editAction: (actionParameter: Action, graduationPercentage: number) => Action;
 
-  cancelAction: (actionParameter: Action) => void;
+  cancelAction: (actionParameter: Action) => Action;
 
   advanceTurn: () => void;
 
@@ -69,6 +72,8 @@ const useActionsStore = create<State>(
         state.inActive.splice(index, 1);
         state.active.push(action);
       });
+
+      return action;
     },
 
     calcEditDeduction: (action: Action, graduationPercentage: number) => {
@@ -102,6 +107,8 @@ const useActionsStore = create<State>(
         state.active.splice(index, 1);
         state.active.push(action);
       });
+
+      return action;
     },
 
     cancelAction: (actionParameter) => {
@@ -116,6 +123,8 @@ const useActionsStore = create<State>(
         state.active.splice(index, 1);
         state.inActive.push(action);
       });
+
+      return action;
     },
 
     advanceTurn: () =>

@@ -7,11 +7,13 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
+import { formatPercentage } from '../../libs/numeral';
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
 import useActionsStore from '../../stores/ActionsStore';
 
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
+import usePoliticalStore from '../../stores/PoliticalStore';
 import useViralStore from '../../stores/ViralStore';
 import ActionsMenu from './ActionsMenu';
 
@@ -66,8 +68,12 @@ const ActionsButton: React.FC = () => {
 
 const NationalApproval: React.FC = () => {
   const applet = 'NationalApproval';
+  const turn = useGameStore((state) => state.turn);
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const getPopularity = usePoliticalStore((state) => state.getPopularity);
+
+  const popularity = formatPercentage(getPopularity(turn));
 
   return (
     <button
@@ -75,7 +81,7 @@ const NationalApproval: React.FC = () => {
       type="button"
       onClick={() => toggleActiveApplet(applet)}
     >
-      <h3 className="text-lg">55%</h3>
+      <h3 className="text-lg">{popularity}</h3>
       <h6 className="text-xs">National Approval</h6>
     </button>
   );
@@ -208,6 +214,7 @@ const ImmunityBar: React.FC = () => {
 const AdvanceTurnButton: React.FC = () => {
   const advanceGameTurn = useGameStore((state) => state.advanceTurn);
   const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
+  const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
   const setLoading = useGameStore((state) => state.setLoading);
   const turn = useGameStore((state) => state.turn);
   const takeTurn = useViralStore((state) => state.takeTurn);
@@ -217,6 +224,7 @@ const AdvanceTurnButton: React.FC = () => {
     takeTurn(turn + 1);
     advanceGameTurn();
     advanceActionTurn();
+    advancePoliticalTurn();
     setLoading(false);
   };
 
