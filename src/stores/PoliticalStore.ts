@@ -11,6 +11,7 @@ type State = {
   getPopularity: (turn: number) => number;
 
   addActionModifier: (action: Action, turn: number) => void;
+  editActionModifier: (action: Action, turn: number) => void;
   removeActionModifier: (action: Action, turn: number) => void;
 
   advanceTurn: () => void;
@@ -38,7 +39,7 @@ const usePoliticalStore = create<State>(
     addActionModifier: (action, turn) => {
       const { id, graduationPercentage, impact } = action;
 
-      if (!graduationPercentage) return;
+      if (graduationPercentage === undefined) return;
 
       const modifier = impact.popularity(graduationPercentage);
 
@@ -47,8 +48,12 @@ const usePoliticalStore = create<State>(
       });
     },
 
+    editActionModifier: (action, turn) => get().addActionModifier(action, turn),
+
     removeActionModifier: (action, turn) =>
-      set((state) => delete state.actionModifiers[turn + 1][action.id]),
+      set((state) => {
+        delete state.actionModifiers[turn + 1][action.id];
+      }),
 
     advanceTurn: () => {
       const { actionModifiers } = get();
@@ -70,7 +75,7 @@ const usePoliticalStore = create<State>(
       });
 
       set((state) => {
-        state.actionModifiers = { 0: initialModifiers };
+        state.actionModifiers = { 0: initialModifiers, 1: initialModifiers };
       });
     },
   }))
