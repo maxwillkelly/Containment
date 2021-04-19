@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   GiPauseButton,
   GiPlayButton,
@@ -165,8 +165,27 @@ const DashboardButton: React.FC = () => {
 
 const ImmunityBar: React.FC = () => {
   const applet = 'ImmunityBar';
+
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+  const turn = useGameStore((state) => state.turn);
+
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
+
+  const progressBar = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const viralDetails = getViralDetails(turn);
+
+    const immune =
+      viralDetails.cumulative.inoculated + viralDetails.cumulative.recovered;
+
+    const immunity = (immune / 923000000) * 100;
+    // const immunity = 50;
+
+    if (progressBar.current)
+      progressBar.current.style.width = `${immunity.toString()}%`;
+  });
 
   return (
     <button
@@ -176,7 +195,10 @@ const ImmunityBar: React.FC = () => {
     >
       <div className="h-3 w-32 relative rounded-full overflow-hidden">
         <div className="w-full h-full dark:bg-gray-200 absolute" />
-        <div className="transition-all ease-out duration-1000 bg-green-500 relative w-0" />
+        <div
+          className="transition-all ease-out duration-1000 bg-green-500 relative h-full"
+          ref={progressBar}
+        />
       </div>
       <h6 className="text-xs">Immunity Bar</h6>
     </button>
