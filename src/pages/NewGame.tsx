@@ -5,6 +5,7 @@ import GameWindow from '../components/shared/GameWindow';
 import WindowButton from '../components/shared/WindowButton';
 
 import useActionsStore from '../stores/ActionsStore';
+import useBudgetStore from '../stores/BudgetStore';
 import useGameStore from '../stores/GameStore';
 import useMapStore from '../stores/MapStore';
 import usePoliticalStore from '../stores/PoliticalStore';
@@ -14,6 +15,7 @@ const Footer: React.FC = () => {
   const history = useHistory();
 
   const resetActionsStore = useActionsStore((state) => state.reset);
+  const resetBudgetStore = useBudgetStore((state) => state.reset);
   const resetGameStore = useGameStore((state) => state.reset);
   const resetMapStore = useMapStore((state) => state.reset);
   const resetPoliticalStore = usePoliticalStore((state) => state.reset);
@@ -21,6 +23,7 @@ const Footer: React.FC = () => {
 
   const handleStart = () => {
     resetActionsStore();
+    resetBudgetStore();
     resetGameStore();
     resetMapStore();
     resetPoliticalStore();

@@ -7,10 +7,11 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
-import { formatPercentage } from '../../libs/numeral';
+import { formatCurrency, formatPercentage } from '../../libs/numeral';
+
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
 import useActionsStore from '../../stores/ActionsStore';
-
+import useBudgetStore from '../../stores/BudgetStore';
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 import usePoliticalStore from '../../stores/PoliticalStore';
@@ -89,8 +90,17 @@ const NationalApproval: React.FC = () => {
 
 const BudgetIndicator: React.FC = () => {
   const applet = 'BudgetIndicator';
+
+  const turn = useGameStore((state) => state.turn);
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
+
+  const getBudgetDetails = useBudgetStore((state) => state.getBudgetDetails);
+
+  const budgetDetails = getBudgetDetails(turn);
+  const { absoluteDifference, inDebt } = budgetDetails;
+
+  const difference = formatCurrency(absoluteDifference);
 
   return (
     <button
@@ -98,8 +108,8 @@ const BudgetIndicator: React.FC = () => {
       type="button"
       onClick={() => toggleActiveApplet(applet)}
     >
-      <h3 className="text-lg">£1,136.07 Bn</h3>
-      <h6 className="text-xs">Deficit</h6>
+      <h3 className="text-lg">{difference}</h3>
+      <h6 className="text-xs">{inDebt ? 'Deficit' : 'Surplus'}</h6>
     </button>
   );
 };
@@ -212,19 +222,24 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
-  const advanceGameTurn = useGameStore((state) => state.advanceTurn);
-  const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
-  const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
   const setLoading = useGameStore((state) => state.setLoading);
   const turn = useGameStore((state) => state.turn);
   const takeTurn = useViralStore((state) => state.takeTurn);
 
+  const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
+  const advanceBudgetTurn = useBudgetStore((state) => state.advanceTurn);
+  const advanceGameTurn = useGameStore((state) => state.advanceTurn);
+  const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
+
   const handleClick = () => {
     setLoading(true);
     takeTurn(turn + 1);
-    advanceGameTurn();
+
     advanceActionTurn();
+    advanceBudgetTurn();
+    advanceGameTurn();
     advancePoliticalTurn();
+
     setLoading(false);
   };
 

@@ -6,6 +6,7 @@ import WindowButton from '../shared/WindowButton';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
 import useActionWindowStore from '../../stores/ActionWindowStore';
 import usePoliticalStore from '../../stores/PoliticalStore';
+import useBudgetStore from '../../stores/BudgetStore';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
@@ -25,15 +26,25 @@ const Footer: React.FC = () => {
 
   const graduation = useActionWindowStore((state) => state.graduation);
 
-  const addActionModifier = usePoliticalStore(
-    (state) => state.addActionModifier
-  );
+  const addBudgetModifier = useBudgetStore((state) => state.addActionModifier);
 
-  const editActionModifier = usePoliticalStore(
+  const editBudgetModifier = useBudgetStore(
     (state) => state.editActionModifier
   );
 
-  const removeActionModifier = usePoliticalStore(
+  const removeBudgetModifier = useBudgetStore(
+    (state) => state.removeActionModifier
+  );
+
+  const addPoliticalModifier = usePoliticalStore(
+    (state) => state.addActionModifier
+  );
+
+  const editPoliticalModifier = usePoliticalStore(
+    (state) => state.editActionModifier
+  );
+
+  const removePoliticalModifier = usePoliticalStore(
     (state) => state.removeActionModifier
   );
 
@@ -44,7 +55,8 @@ const Footer: React.FC = () => {
   const handleStart = () => {
     if (graduation.percentage !== undefined) {
       const action = startAction(shownAction, graduation.percentage);
-      addActionModifier(action, turn);
+      addPoliticalModifier(action, turn);
+      addBudgetModifier(action, turn);
     }
     handleClose();
   };
@@ -52,14 +64,16 @@ const Footer: React.FC = () => {
   const handleEdit = () => {
     if (graduation.percentage !== undefined) {
       const action = editAction(shownAction, graduation.percentage);
-      editActionModifier(action, turn);
+      editPoliticalModifier(action, turn);
+      editBudgetModifier(action, turn);
     }
     handleClose();
   };
 
   const handleCancel = () => {
     const action = cancelAction(shownAction);
-    removeActionModifier(action, turn);
+    removePoliticalModifier(action, turn);
+    removeBudgetModifier(action, turn);
     handleClose();
   };
 
