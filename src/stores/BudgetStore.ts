@@ -1,5 +1,7 @@
+import lodash from 'lodash';
 import create from 'zustand';
 import { actions, Action } from '../data/actions';
+import { getHighestValueKey } from '../libs/object';
 import immer from './shared/immer';
 
 const STARTING_CASH = 0;
@@ -13,6 +15,8 @@ type BudgetDetails = {
   cash: number;
   income: number;
   expenditure: number;
+  absoluteDifference: number;
+  inDebt: boolean;
 };
 
 type State = {
@@ -29,7 +33,7 @@ type State = {
   reset: () => void;
 };
 
-const usePoliticalStore = create<State>(
+const useBudgetStore = create<State>(
   immer((set, get) => ({
     budget: {},
 
@@ -48,11 +52,15 @@ const usePoliticalStore = create<State>(
       );
 
       const expenditure = actionModifiersArray.reduce(
-        (curr, am) => (am < 0 ? curr + am : curr),
+        (curr, am) => (am < 0 ? curr - am : curr),
         base
       );
 
-      return { cash, income, expenditure };
+      const absoluteDifference = Math.abs(expenditure - income);
+
+      const inDebt = expenditure > income;
+
+      return { cash, income, expenditure, absoluteDifference, inDebt };
     },
 
     addActionModifier: (action, turn) => {
@@ -74,7 +82,20 @@ const usePoliticalStore = create<State>(
         delete state.budget[turn + 1].actionModifiers[action.id];
       }),
 
-    advanceTurn: () => {},
+    advanceTurn: () => {
+      const { budget, getBudgetDetails } = get();
+      const turn = getHighestValueKey(budget);
+      const budgetDetails = getBudgetDetails(turn);
+
+      const { cash, income, expenditure } = budgetDetails;
+      const base = cash + income - expenditure;
+
+      const actionModifiers = lodash.cloneDeep(budget[turn].actionModifiers);
+
+      set((state) => {
+        state.budget[turn + 1] = { base, actionModifiers };
+      });
+    },
 
     reset: () => {
       const enabledActions = actions.filter((a) => a.enabledByDefault);
@@ -99,4 +120,4 @@ const usePoliticalStore = create<State>(
   }))
 );
 
-export default usePoliticalStore;
+export default useBudgetStore;
