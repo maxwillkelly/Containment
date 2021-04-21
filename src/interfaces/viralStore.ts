@@ -1,3 +1,4 @@
+import { Event as XStateEvent } from 'xstate';
 import { PersonState } from '../stores/viral/person.machine';
 
 export type ViralDetails = {
@@ -23,6 +24,7 @@ export type MachineComponent = {
 
 export type State = {
   rBaseline: number;
+  infectionExpansion: number;
   cfr: number;
 
   persons: Record<string, Record<number, MachineComponent[]>>;
@@ -71,6 +73,48 @@ export type State = {
     residentState: string,
     turn: number,
     infectors?: number
+  ) => void;
+
+  createInfectedMachine: (
+    newMachine: PersonState,
+    infects: number
+  ) => MachineComponent;
+
+  createRecoveredMachine: (
+    machineComponent: MachineComponent,
+    recoveries: number
+  ) => MachineComponent;
+
+  createDeadMachine: (
+    machineComponent: MachineComponent,
+    deaths: number
+  ) => MachineComponent;
+
+  //
+  storePerson: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  //
+  storeNewPerson: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  addsCommunityInfections: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  //
+  updateInfectedPerson: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
   ) => void;
 
   takeTurn: (turn: number) => void;

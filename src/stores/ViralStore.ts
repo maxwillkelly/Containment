@@ -3,7 +3,11 @@ import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
 
-import { createPersonMachine, personMachine } from './viral/person.machine';
+import {
+  Event,
+  createPersonMachine,
+  personMachine,
+} from './viral/person.machine';
 
 import states from '../../map/geojson/states.json';
 
@@ -38,6 +42,7 @@ const initialViralDetails: ViralDetails = {
 const useViralStore = create<State>(
   immer((set, get) => ({
     rBaseline: 2,
+    infectionExpansion: 1.4,
     cfr: 0.02,
 
     persons: {},
@@ -205,7 +210,7 @@ const useViralStore = create<State>(
       // Creates a person machine and infects them
       const newMachine = createPersonMachine();
 
-      const patient = {
+      const patient: MachineComponent = {
         machine: personMachine.transition(newMachine, 'Infect'),
         represents: Math.round(infectors ** 2),
       };
@@ -219,58 +224,111 @@ const useViralStore = create<State>(
       });
     },
 
-    takeTurn: (turn) =>
+    createInfectedMachine: (newMachine, infects) => {
+      return {
+        machine: personMachine.transition(newMachine, 'Infect'),
+        represents: infects,
+      };
+    },
+
+    createRecoveredMachine: (machineComponent, recoveries) => {
+      return {
+        machine: personMachine.transition(machineComponent.machine, 'Recover'),
+        represents: recoveries,
+      };
+    },
+
+    createDeadMachine: (machineComponent, deaths) => {
+      return {
+        machine: personMachine.transition(machineComponent.machine, 'Death'),
+        represents: deaths,
+      };
+    },
+
+    storePerson: (machineComponent, residentState, turn) => {
+      const { initialisesPersonsElement } = get();
+
+      initialisesPersonsElement(residentState, turn);
+
       set((state) => {
-        const { cfr } = state;
-        const persons = lodash.cloneDeep(state.persons);
+        state.persons[residentState][turn].push(machineComponent);
+      });
+    },
 
-        for (const [residentState, statePersons] of Object.entries(persons)) {
-          for (let i = 0; i < statePersons[turn - 1].length; i += 1) {
-            const p = statePersons[turn - 1][i];
+    storeNewPerson: (machineComponent, residentState, turn) => {
+      const { storePerson } = get();
 
-            if (p.machine.matches('infected')) {
-              const { represents } = p;
+      storePerson(machineComponent, residentState, turn);
 
-              // Infects more state residents
-              const newMachine = createPersonMachine();
+      set((state) => {
+        state.unsimulated[residentState] -= machineComponent.represents;
+      });
+    },
 
-              const patient = {
-                machine: personMachine.transition(newMachine, 'Infect'),
-                represents: Math.round(represents * 1.4),
-                transitionedTurn: { infected: turn },
-              };
+    addsCommunityInfections: (machineComponent, residentState, turn) => {
+      const {
+        infectionExpansion,
+        createInfectedMachine,
+        storeNewPerson,
+      } = get();
 
-              if (!state.persons[residentState][turn])
-                state.persons[residentState][turn] = [];
+      const { represents } = machineComponent;
 
-              state.persons[residentState][turn].push(patient);
-              state.unsimulated[residentState] -= patient.represents;
+      const infects = Math.round(represents * infectionExpansion);
 
-              // Adds new state machines representing recoveries and deaths
-              const deaths = Math.round(represents * cfr);
-              const recoveries = represents - deaths;
+      const newMachine = createPersonMachine();
 
-              if (deaths > 0) {
-                const dead = {
-                  machine: personMachine.transition(p.machine, 'Death'),
-                  represents: deaths,
-                };
+      const patient = createInfectedMachine(newMachine, infects);
 
-                state.persons[residentState][turn].push(dead);
-              }
+      storeNewPerson(patient, residentState, turn);
+    },
 
-              if (recoveries > 0) {
-                const recovered = {
-                  machine: personMachine.transition(p.machine, 'Recover'),
-                  represents: recoveries,
-                };
+    updateInfectedPerson: (machineComponent, residentState, turn) => {
+      const {
+        cfr,
+        addsCommunityInfections,
+        createDeadMachine,
+        createRecoveredMachine,
+        storePerson,
+      } = get();
 
-                state.persons[residentState][turn].push(recovered);
-              }
-            }
-          }
+      const { represents } = machineComponent;
+
+      // Infects more state residents
+      addsCommunityInfections(machineComponent, residentState, turn);
+
+      // Moves infected last turn to either dead or recovered
+      const deaths = Math.round(represents * cfr);
+      const recoveries = represents - deaths;
+
+      // Adds new state machines representing recoveries and deaths
+      if (deaths > 0) {
+        const dead = createDeadMachine(machineComponent, deaths);
+        storePerson(dead, residentState, turn);
+      }
+
+      if (recoveries > 0) {
+        const recovered = createRecoveredMachine(machineComponent, recoveries);
+        storePerson(recovered, residentState, turn);
+      }
+    },
+
+    takeTurn: (turn) => {
+      const { updateInfectedPerson, persons } = get();
+
+      const personsCopy = lodash.cloneDeep(persons);
+      const personsArray = Object.entries(personsCopy);
+
+      for (const [residentState, statePersons] of personsArray) {
+        // Gets persons from the last turn
+        const turnPersons = statePersons[turn - 1];
+
+        for (const machineComponent of turnPersons) {
+          if (machineComponent.machine.matches('infected'))
+            updateInfectedPerson(machineComponent, residentState, turn);
         }
-      }),
+      }
+    },
 
     reset: () => {
       get().setUnsimulated();
