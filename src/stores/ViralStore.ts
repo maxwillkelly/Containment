@@ -324,7 +324,9 @@ const useViralStore = create<State>(
         const turnPersons = statePersons[turn - 1];
 
         for (const machineComponent of turnPersons) {
-          if (machineComponent.machine.matches('infected'))
+          const { machine } = machineComponent;
+
+          if (machine.matches('infected'))
             updateInfectedPerson(machineComponent, residentState, turn);
         }
       }
