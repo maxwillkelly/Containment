@@ -3,11 +3,7 @@ import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
 
-import {
-  Event,
-  createPersonMachine,
-  personMachine,
-} from './viral/person.machine';
+import { createPersonMachine, personMachine } from './viral/person.machine';
 
 import states from '../../map/geojson/states.json';
 
@@ -49,17 +45,6 @@ const useViralStore = create<State>(
     unsimulated: {},
 
     personsInitialised: false,
-
-    /* getMachines: (residentState, turn) => {
-      const stateResidents = get().persons[residentState];
-
-      return turn === undefined
-        ? Object.values(stateResidents).reduce(
-            (array, r) => [...array, ...r],
-            []
-          )
-        : stateResidents[turn];
-    }, */
 
     getMachinesTotal: (residentState, turn) => {
       const stateResidents = get().persons[residentState];

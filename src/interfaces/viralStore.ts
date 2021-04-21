@@ -1,4 +1,3 @@
-import { Event as XStateEvent } from 'xstate';
 import { PersonState } from '../stores/viral/person.machine';
 
 export type ViralDetails = {
@@ -31,8 +30,6 @@ export type State = {
   unsimulated: Record<string, number>;
 
   personsInitialised: boolean;
-
-  // getMachines: (residentState: string, turn?: number) => MachineComponent[];
 
   // Gets the total number of machines in a residentState either in a specific turn or across all turns
   getMachinesTotal: (residentState: string, turn?: number) => number;
