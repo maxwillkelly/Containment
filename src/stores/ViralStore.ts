@@ -2,63 +2,37 @@
 import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
-import {
-  createPersonMachine,
-  personMachine,
-  PersonState,
-} from './viral/person.machine';
+
+import { createPersonMachine, personMachine } from './viral/person.machine';
+
 import states from '../../map/geojson/states.json';
 
-type ViralDetails = {
+import {
+  reduceArrayElements,
+  reduceArrayElementsAddition,
+  reduceArrayElementsLength,
+} from '../libs/reduce';
+
+import {
+  MachineComponent,
+  State,
+  ViralDetails,
+} from '../interfaces/viralStore';
+
+const initialViralDetails: ViralDetails = {
   weekly: {
-    infected: number;
-    death: number;
-    recovered: number;
-    inoculated: number;
-  };
+    infected: 0,
+    death: 0,
+    recovered: 0,
+    inoculated: 0,
+  },
   cumulative: {
-    unsimulated: number;
-    infected: number;
-    death: number;
-    recovered: number;
-    inoculated: number;
-  };
-};
-
-type MachineComponent = {
-  machine: PersonState;
-  represents: number;
-};
-
-type State = {
-  rBaseline: number;
-  cfr: number;
-
-  persons: Record<string, Record<number, MachineComponent[]>>;
-  unsimulated: Record<string, number>;
-
-  personsInitialised: boolean;
-
-  getMachines: (residentState: string, turn?: number) => MachineComponent[];
-  getMachinesTotal: (residentState: string, turn?: number) => number;
-  getMachinesStates: (
-    residentState: string,
-    turn?: number
-  ) => Record<string, unknown>;
-  getViralDetails: (turn: number, residentState?: string) => ViralDetails;
-
-  setUnsimulated: () => void;
-
-  generateOutbreak: (turn: number) => void;
-  generateLocalInfection: (
-    residentState: string,
-    turn: number,
-    infectors?: number
-  ) => void;
-
-  takeTurn: (turn: number) => void;
-
-  reset: () => void;
+    unsimulated: 0,
+    infected: 0,
+    death: 0,
+    recovered: 0,
+    inoculated: 0,
+  },
 };
 
 const useViralStore = create<State>(
@@ -71,7 +45,7 @@ const useViralStore = create<State>(
 
     personsInitialised: false,
 
-    getMachines: (residentState, turn) => {
+    /* getMachines: (residentState, turn) => {
       const stateResidents = get().persons[residentState];
 
       return turn === undefined
@@ -80,108 +54,118 @@ const useViralStore = create<State>(
             []
           )
         : stateResidents[turn];
-    },
+    }, */
 
     getMachinesTotal: (residentState, turn) => {
       const stateResidents = get().persons[residentState];
 
       if (!stateResidents) return 0;
 
-      if (turn === undefined)
-        return Object.values(stateResidents).reduce(
-          (currentLength, r) => currentLength + r.length,
-          0
-        );
+      if (turn === undefined) {
+        const stateResidentsArray = Object.values(stateResidents);
+
+        return reduceArrayElementsLength(stateResidentsArray);
+      }
 
       return stateResidents[turn].length;
     },
 
+    calculateMachineStates: (machineArray) => {
+      const machinesStates: Record<string, number> = {};
+
+      for (const resident of machineArray) {
+        const key = resident.machine.value.toString();
+        machinesStates[key] = machinesStates[key] + 1 || 1;
+      }
+
+      return machinesStates;
+    },
+
     getMachinesStates: (residentState, turn) => {
-      const stateResidents = get().persons[residentState];
+      const { persons, calculateMachineStates } = get();
+
+      const stateResidents = persons[residentState];
 
       if (!stateResidents) return {};
 
-      const calculateMachineStates = (machineArray: MachineComponent[]) => {
-        const machinesStates: Record<string, number> = {};
+      if (turn !== undefined) {
+        const turnStateResidents = stateResidents[turn];
 
-        for (const resident of machineArray) {
-          const key = resident.machine.value.toString();
-          machinesStates[key] = machinesStates[key] + 1 || 1;
-        }
-
-        return machinesStates;
-      };
-
-      if (turn === undefined) {
-        const machineArray = Object.values(stateResidents).reduce(
-          (array, r) => [...array, ...r],
-          []
-        );
-        return calculateMachineStates(machineArray);
+        return calculateMachineStates(turnStateResidents);
       }
 
-      return calculateMachineStates(stateResidents[turn]);
+      // Generates machine array to process machine states across all turns
+      const stateResidentsArray = Object.values(stateResidents);
+
+      const machineArray: MachineComponent[] = reduceArrayElements(
+        stateResidentsArray
+      );
+
+      return calculateMachineStates(machineArray);
+    },
+
+    calculateUnsimulatedPersons: (residentState) => {
+      const { unsimulated } = get();
+
+      if (residentState) return unsimulated[residentState];
+
+      const unsimulatedArray = Object.values(unsimulated);
+
+      return reduceArrayElementsAddition(unsimulatedArray);
+    },
+
+    calculateViralDetails: (turn, turnResidents, viralDetails) => {
+      if (!turnResidents) return;
+
+      for (const [key, residents] of Object.entries(turnResidents)) {
+        for (const resident of residents) {
+          const { machine, represents } = resident;
+          const machineStateValue = machine.value.toString();
+
+          viralDetails.cumulative[machineStateValue] += represents;
+
+          if (key === turn.toString()) {
+            viralDetails.weekly[machineStateValue] += represents;
+          }
+        }
+      }
     },
 
     getViralDetails: (turn, residentState) => {
-      const { unsimulated, persons } = get();
+      const {
+        persons,
+        calculateUnsimulatedPersons,
+        calculateViralDetails,
+      } = get();
 
-      const viralDetails = {
-        weekly: {
-          infected: 0,
-          death: 0,
-          recovered: 0,
-          inoculated: 0,
-        },
-        cumulative: {
-          unsimulated: residentState
-            ? unsimulated[residentState]
-            : Object.values(unsimulated).reduce(
-                (accumulator, current) => current + accumulator,
-                0
-              ),
-          infected: 0,
-          death: 0,
-          recovered: 0,
-          inoculated: 0,
-        },
-      };
+      const viralDetails = lodash.cloneDeep(initialViralDetails);
 
-      const calculateViralDetails = (
-        turnResidents: Record<number, MachineComponent[]>
-      ) => {
-        if (!turnResidents) return;
-
-        for (const [key, residents] of Object.entries(turnResidents)) {
-          for (const resident of residents) {
-            const { machine, represents } = resident;
-            const machineStateValue = machine.value.toString();
-
-            viralDetails.cumulative[machineStateValue] += represents;
-
-            if (key === turn.toString()) {
-              viralDetails.weekly[machineStateValue] += represents;
-            }
-          }
-        }
-      };
+      viralDetails.cumulative.unsimulated = calculateUnsimulatedPersons(
+        residentState
+      );
 
       if (residentState) {
-        calculateViralDetails(persons[residentState]);
+        calculateViralDetails(turn, persons[residentState], viralDetails);
       } else {
-        Object.values(persons).forEach((p) => calculateViralDetails(p));
+        Object.values(persons).forEach((p) =>
+          calculateViralDetails(turn, p, viralDetails)
+        );
       }
 
       return viralDetails;
     },
 
-    setUnsimulated: () =>
+    setUnsimulated: () => {
+      const residentStates = states.features;
+
       set((state) => {
-        state.unsimulated = states.features.reduce((obj, s) => {
+        state.unsimulated = residentStates.reduce((obj, s) => {
           const { name, population } = s.properties;
+
           return { ...obj, [name]: population };
         }, {});
-      }),
+      });
+    },
 
     generateOutbreak: (turn) => {
       const { features } = states;
