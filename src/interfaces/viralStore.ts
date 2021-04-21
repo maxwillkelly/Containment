@@ -46,6 +46,7 @@ export type State = {
     turn?: number
   ) => Record<string, unknown>;
 
+  // Calculates the number of unsimulated persons in a resident state or nationally
   calculateUnsimulatedPersons: (residentState?: string) => number;
 
   calculateViralDetails: (
@@ -59,8 +60,14 @@ export type State = {
   // Initialises the unsimulated property to have every resident state's unsimulated persons to be equal to its population
   setUnsimulated: () => void;
 
+  // Starts an outbreak in a random resident state
   generateOutbreak: (turn: number) => void;
-  generateLocalInfection: (
+
+  // Initialises appropriate properties on persons if they haven't been already
+  initialisesPersonsElement: (residentState: string, turn: number) => void;
+
+  // Generates an outbreak in a resident state
+  generateLocalOutbreak: (
     residentState: string,
     turn: number,
     infectors?: number

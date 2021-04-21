@@ -117,7 +117,9 @@ const useViralStore = create<State>(
     calculateViralDetails: (turn, turnResidents, viralDetails) => {
       if (!turnResidents) return;
 
-      for (const [key, residents] of Object.entries(turnResidents)) {
+      const turnResidentsArray = Object.entries(turnResidents);
+
+      for (const [key, residents] of turnResidentsArray) {
         for (const resident of residents) {
           const { machine, represents } = resident;
           const machineStateValue = machine.value.toString();
@@ -144,12 +146,16 @@ const useViralStore = create<State>(
         residentState
       );
 
-      if (residentState) {
-        calculateViralDetails(turn, persons[residentState], viralDetails);
-      } else {
-        Object.values(persons).forEach((p) =>
+      if (residentState === undefined) {
+        const personsArray = Object.values(persons);
+
+        personsArray.forEach((p) =>
           calculateViralDetails(turn, p, viralDetails)
         );
+      } else {
+        const stateResidents = persons[residentState];
+
+        calculateViralDetails(turn, stateResidents, viralDetails);
       }
 
       return viralDetails;
@@ -169,25 +175,35 @@ const useViralStore = create<State>(
 
     generateOutbreak: (turn) => {
       const { features } = states;
-      const { generateLocalInfection } = get();
+      const { generateLocalOutbreak } = get();
 
-      // Selects state of outbreak
+      // Selects state to start the outbreak
       const randomStateIndex = Math.floor(Math.random() * features.length);
       const firstOutbreakState = features[randomStateIndex].properties.name;
 
-      // Infects patient
-      generateLocalInfection(firstOutbreakState, turn);
+      // Infects first patients
+      generateLocalOutbreak(firstOutbreakState, turn);
 
       set((state) => {
         state.personsInitialised = true;
       });
     },
 
-    generateLocalInfection: (
+    initialisesPersonsElement: (residentState, turn) => {
+      const stateResidents = get().persons[residentState];
+
+      set((state) => {
+        if (!stateResidents) state.persons[residentState] = {};
+        if (!stateResidents[turn]) state.persons[residentState][turn] = [];
+      });
+    },
+
+    generateLocalOutbreak: (
       residentState,
       turn,
       infectors = get().rBaseline
     ) => {
+      // Creates a person machine and infects them
       const newMachine = createPersonMachine();
 
       const patient = {
@@ -195,17 +211,11 @@ const useViralStore = create<State>(
         represents: Math.round(infectors ** 2),
       };
 
-      // Generate 8 turns
+      get().initialisesPersonsElement(residentState, turn);
 
       // Infects patient
       set((state) => {
-        if (!state.persons[residentState]) state.persons[residentState] = {};
-
-        if (!state.persons[residentState][turn])
-          state.persons[residentState][turn] = [];
-
         state.persons[residentState][turn].push(patient);
-
         state.unsimulated[residentState] -= patient.represents;
       });
     },
