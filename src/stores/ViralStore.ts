@@ -190,11 +190,10 @@ const useViralStore = create<State>(
     },
 
     initialisesPersonsElement: (residentState, turn) => {
-      const stateResidents = get().persons[residentState];
-
       set((state) => {
-        if (!stateResidents) state.persons[residentState] = {};
-        if (!stateResidents[turn]) state.persons[residentState][turn] = [];
+        if (!state.persons[residentState]) state.persons[residentState] = {};
+        if (!state.persons[residentState][turn])
+          state.persons[residentState][turn] = [];
       });
     },
 
