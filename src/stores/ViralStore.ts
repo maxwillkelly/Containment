@@ -11,6 +11,7 @@ import {
   reduceArrayElements,
   reduceArrayElementsAddition,
   reduceArrayElementsLength,
+  reduceArrayToHighestElement,
 } from '../libs/reduce';
 
 import {
@@ -18,6 +19,7 @@ import {
   State,
   ViralDetails,
 } from '../interfaces/viralStore';
+import { StateProps } from '../interfaces/states';
 
 const initialViralDetails: ViralDetails = {
   weekly: {
@@ -40,6 +42,10 @@ const useViralStore = create<State>(
     rBaseline: 2,
     infectionExpansion: 1.4,
     cfr: 0.02,
+    rangeFactor: {
+      short: 0.1,
+      long: 0.01,
+    },
 
     persons: {},
     unsimulated: {},
@@ -163,13 +169,50 @@ const useViralStore = create<State>(
       });
     },
 
-    generateOutbreak: (turn) => {
+    selectRandomState: (excludes) => {
+      const { selectRandomState } = get();
       const { features } = states;
-      const { generateLocalOutbreak } = get();
+
+      const randomStateIndex = Math.floor(Math.random() * features.length);
+      const randomState = features[randomStateIndex].properties;
+
+      // Picks another state if it has chosen the excluded resident state
+      // if (randomState.name === excludes) return selectRandomState(excludes);
+
+      return randomState;
+    },
+
+    // selectCloseState: (centreState) => {
+    //   const { features } = states;
+
+    //   const statesProps: StateProps[] = features.map((s) => s.properties);
+
+    //   // Finds highest feature id
+    //   const stateFids = statesProps.map((s) => s.fid);
+    //   const highestFid = reduceArrayToHighestElement(stateFids);
+
+    //   const centreStateProps = statesProps.find((s) => s.name === centreState);
+
+    //   if (centreStateProps === undefined)
+    //     throw new Error(`centreState ${centreState} doesn't exist`);
+
+    //   const { fid } = centreStateProps;
+    //   const selectedFid = Math.round(Math.random() * 3 + fid) % highestFid;
+
+    //   const closeState = statesProps.find((s) => s.fid === selectedFid);
+    //   debugger;
+
+    //   if (closeState === undefined)
+    //     throw new Error(`selectedFid ${selectedFid} doesn't exist`);
+
+    //   return closeState;
+    // },
+
+    generateOutbreak: (turn) => {
+      const { selectRandomState, generateLocalOutbreak } = get();
 
       // Selects state to start the outbreak
-      const randomStateIndex = Math.floor(Math.random() * features.length);
-      const firstOutbreakState = features[randomStateIndex].properties.name;
+      const firstOutbreakState = selectRandomState().name;
 
       // Infects first patients
       generateLocalOutbreak(firstOutbreakState, turn);
@@ -268,10 +311,62 @@ const useViralStore = create<State>(
       storeNewPerson(patient, residentState, turn);
     },
 
+    // addsShortRangeInfections: (machineComponent, residentState, turn) => {
+    //   const {
+    //     rangeFactor,
+    //     selectCloseState,
+    //     createInfectedMachine,
+    //     storeNewPerson,
+    //   } = get();
+
+    //   const { represents } = machineComponent;
+    //   const { short } = rangeFactor;
+
+    //   const infects = Math.round(represents * short);
+
+    //   if (infects < 4) return;
+
+    //   const newMachine = createPersonMachine();
+    //   const patient = createInfectedMachine(newMachine, infects);
+    //   const closeState = selectCloseState(residentState).name;
+
+    //   storeNewPerson(patient, closeState, turn);
+    // },
+
+    addsLongRangeInfections: (machineComponent, residentState, turn) => {
+      const {
+        rangeFactor,
+        selectRandomState,
+        createInfectedMachine,
+        storeNewPerson,
+      } = get();
+
+      const { represents } = machineComponent;
+      const { long } = rangeFactor;
+
+      const infects = Math.round(represents * long);
+
+      if (infects < 4) return;
+
+      const newMachine = createPersonMachine();
+      const patient = createInfectedMachine(newMachine, infects);
+      const randomState = selectRandomState(residentState).name;
+
+      storeNewPerson(patient, randomState, turn);
+    },
+
+    addsCrossBorderInfections: (machineComponent, residentState, turn) => {
+      const { addsLongRangeInfections } = get();
+
+      // addsShortRangeInfections(machineComponent, residentState, turn);
+      addsLongRangeInfections(machineComponent, residentState, turn);
+    },
+
     updateInfectedPerson: (machineComponent, residentState, turn) => {
       const {
         cfr,
         addsCommunityInfections,
+        addsCrossBorderInfections,
         createDeadMachine,
         createRecoveredMachine,
         storePerson,
@@ -281,6 +376,9 @@ const useViralStore = create<State>(
 
       // Infects more state residents
       addsCommunityInfections(machineComponent, residentState, turn);
+
+      // Infects residents in other states
+      addsCrossBorderInfections(machineComponent, residentState, turn);
 
       // Moves infected last turn to either dead or recovered
       const deaths = Math.round(represents * cfr);
