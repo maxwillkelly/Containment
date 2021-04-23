@@ -7,6 +7,9 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
+import { useHistory } from 'react-router-dom';
+import { finished } from 'stream';
+import { ViralDetails } from '../../interfaces/viralStore';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
 
 import useActionsMenuStore from '../../stores/ActionsMenuStore';
@@ -179,6 +182,14 @@ const DashboardButton: React.FC = () => {
   );
 };
 
+const calculateImmunity = (viralDetails: ViralDetails) => {
+  const immune =
+    viralDetails.cumulative.inoculated + viralDetails.cumulative.recovered;
+
+  const immunity = (immune / 923000000) * 100;
+  return immunity;
+};
+
 const ImmunityBar: React.FC = () => {
   const applet = 'ImmunityBar';
 
@@ -192,12 +203,7 @@ const ImmunityBar: React.FC = () => {
 
   useEffect(() => {
     const viralDetails = getViralDetails(turn);
-
-    const immune =
-      viralDetails.cumulative.inoculated + viralDetails.cumulative.recovered;
-
-    const immunity = (immune / 923000000) * 100;
-    // const immunity = 50;
+    const immunity = calculateImmunity(viralDetails);
 
     if (progressBar.current)
       progressBar.current.style.width = `${immunity.toString()}%`;
@@ -222,14 +228,27 @@ const ImmunityBar: React.FC = () => {
 };
 
 const AdvanceTurnButton: React.FC = () => {
+  const history = useHistory();
+
   const setLoading = useGameStore((state) => state.setLoading);
   const turn = useGameStore((state) => state.turn);
-  const takeTurn = useViralStore((state) => state.takeTurn);
+  const getPopularity = usePoliticalStore((state) => state.getPopularity);
+  const getViralDetails = useViralStore((state) => state.getViralDetails);
 
+  const takeTurn = useViralStore((state) => state.takeTurn);
   const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
   const advanceBudgetTurn = useBudgetStore((state) => state.advanceTurn);
   const advanceGameTurn = useGameStore((state) => state.advanceTurn);
   const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
+
+  const checkFinished = () => {
+    const popularity = getPopularity(turn);
+    const viralDetails = getViralDetails(turn);
+    const immunity = calculateImmunity(viralDetails);
+
+    if (immunity > 80) history.push('/finish/true');
+    else if (popularity < 0.4) history.push('/finish/false');
+  };
 
   const handleClick = () => {
     setLoading(true);
@@ -239,6 +258,8 @@ const AdvanceTurnButton: React.FC = () => {
     advanceBudgetTurn();
     advanceGameTurn();
     advancePoliticalTurn();
+
+    checkFinished();
 
     setLoading(false);
   };

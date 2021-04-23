@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 import shallow from 'zustand/shallow';
+import { GiHamburgerMenu, GiInfo } from 'react-icons/gi';
 
 import useGameStore from '../stores/GameStore';
 import useMapStore from '../stores/MapStore';

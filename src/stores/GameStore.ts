@@ -5,11 +5,13 @@ type State = {
   turn: number;
   loading: boolean;
   isPaused: boolean;
+  isFinished: boolean;
   activeApplet: string;
   shownAction: Action | undefined;
 
   advanceTurn: () => void;
   setLoading: (value: boolean) => void;
+  finish: () => void;
   togglePause: () => void;
   toggleActiveApplet: (applet: string, open?: boolean) => void;
   toggleShownAction: (action: Action, open?: boolean) => void;
@@ -21,12 +23,15 @@ const useGameStore = create<State>((set, get) => ({
   turn: 0,
   loading: true,
   isPaused: true,
+  isFinished: false,
   activeApplet: '',
   shownAction: undefined,
 
   advanceTurn: () => set((state) => ({ turn: state.turn + 1 })),
 
   setLoading: (value) => set(() => ({ loading: value })),
+
+  finish: () => set(() => ({ isFinished: true })),
 
   togglePause: () => set((state) => ({ isPaused: !state.isPaused })),
 
@@ -65,6 +70,7 @@ const useGameStore = create<State>((set, get) => ({
       turn: 0,
       loading: true,
       isPaused: false,
+      isFinished: false,
       activeApplet: '',
     }),
 }));
