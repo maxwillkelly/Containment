@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatNumber } from '../../libs/numeral';
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 import useViralStore from '../../stores/ViralStore';
@@ -50,7 +51,7 @@ const StateDetails: React.FC = () => {
       <InformationList>
         <h4 className="text-left">Population</h4>
         <h4 className="text-right">
-          {`${selectedState.population / 1000000} million`}
+          {`${formatNumber(selectedState.population / 1000000)} million`}
         </h4>
       </InformationList>
     </>
@@ -73,24 +74,24 @@ const ViralDetails: React.FC = () => {
       <DashedHeading>Weekly Data</DashedHeading>
       <InformationList>
         <h4 className="text-left text-base text-yellow-300">Infected</h4>
-        <h4 className="text-right">{weekly.infected}</h4>
+        <h4 className="text-right">{formatNumber(weekly.infected)}</h4>
         <h4 className="text-left text-base text-red-500">Deaths</h4>
-        <h4 className="text-right">{weekly.death}</h4>
+        <h4 className="text-right">{formatNumber(weekly.death)}</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
-        <h4 className="text-right">{weekly.recovered}</h4>
+        <h4 className="text-right">{formatNumber(weekly.recovered)}</h4>
         <h4 className="text-left text-base text-blue-500">Inoculated</h4>
-        <h4 className="text-right">{weekly.inoculated}</h4>
+        <h4 className="text-right">{formatNumber(weekly.inoculated)}</h4>
       </InformationList>
       <DashedHeading>Cumulative Data</DashedHeading>
       <InformationList>
         <h4 className="text-left text-base text-yellow-300">Infected</h4>
-        <h4 className="text-right">{cumulative.infected}</h4>
+        <h4 className="text-right">{formatNumber(cumulative.infected)}</h4>
         <h4 className="text-left text-base text-red-500">Deaths</h4>
-        <h4 className="text-right">{cumulative.death}</h4>
+        <h4 className="text-right">{formatNumber(cumulative.death)}</h4>
         <h4 className="text-left text-base text-green-500">Recovered</h4>
-        <h4 className="text-right">{cumulative.recovered}</h4>
+        <h4 className="text-right">{formatNumber(cumulative.recovered)}</h4>
         <h4 className="text-left text-base text-blue-500">Inoculated</h4>
-        <h4 className="text-right">{cumulative.inoculated}</h4>
+        <h4 className="text-right">{formatNumber(cumulative.inoculated)}</h4>
       </InformationList>
     </>
   );

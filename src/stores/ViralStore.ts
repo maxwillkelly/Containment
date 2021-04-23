@@ -46,6 +46,7 @@ const useViralStore = create<State>(
       short: 0.005,
       long: 0.001,
     },
+    minimumInfections: 6,
 
     persons: {},
     unsimulated: {},
@@ -203,9 +204,8 @@ const useViralStore = create<State>(
 
       const closeState = statesProps.find((s) => s.fid === selectedFid);
 
-      if (closeState === undefined) {
+      if (closeState === undefined)
         throw new Error(`selectedFid ${selectedFid} doesn't exist`);
-      }
 
       return closeState;
     },
@@ -316,6 +316,7 @@ const useViralStore = create<State>(
     addsShortRangeInfections: (machineComponent, residentState, turn) => {
       const {
         rangeFactor,
+        minimumInfections,
         selectCloseState,
         createInfectedMachine,
         storeNewPerson,
@@ -324,9 +325,9 @@ const useViralStore = create<State>(
       const { represents } = machineComponent;
       const { short } = rangeFactor;
 
-      const infects = Math.round(represents * short);
+      const infects = Math.round(represents * short * Math.random());
 
-      if (infects < 8) return;
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
       const patient = createInfectedMachine(newMachine, infects);
@@ -338,6 +339,7 @@ const useViralStore = create<State>(
     addsLongRangeInfections: (machineComponent, residentState, turn) => {
       const {
         rangeFactor,
+        minimumInfections,
         selectRandomState,
         createInfectedMachine,
         storeNewPerson,
@@ -346,9 +348,9 @@ const useViralStore = create<State>(
       const { represents } = machineComponent;
       const { long } = rangeFactor;
 
-      const infects = Math.round(represents * long);
+      const infects = Math.round(represents * long * Math.random());
 
-      if (infects < 4) return;
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
       const patient = createInfectedMachine(newMachine, infects);

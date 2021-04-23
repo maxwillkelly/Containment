@@ -32,6 +32,7 @@ export type State = {
   infectionExpansion: number;
   cfr: number;
   rangeFactor: RangeFactor;
+  minimumInfections: number;
 
   persons: Record<string, Record<number, MachineComponent[]>>;
   unsimulated: Record<string, number>;
