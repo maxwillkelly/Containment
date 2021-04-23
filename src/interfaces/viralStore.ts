@@ -69,8 +69,8 @@ export type State = {
   // Returns a random state with its properties
   selectRandomState: (excludes?: string) => StateProps;
 
-  // // Returns a state close to centreState with its properties
-  // selectCloseState: (centreState: string) => StateProps;
+  // Returns a state close to centreState with its properties
+  selectCloseState: (centreState: string) => StateProps;
 
   // Starts an outbreak in a random resident state
   generateOutbreak: (turn: number) => void;
@@ -120,11 +120,11 @@ export type State = {
     turn: number
   ) => void;
 
-  // addsShortRangeInfections: (
-  //   machineComponent: MachineComponent,
-  //   residentState: string,
-  //   turn: number
-  // ) => void;
+  addsShortRangeInfections: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
 
   addsLongRangeInfections: (
     machineComponent: MachineComponent,
