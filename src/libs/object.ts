@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Based on CD.. and Yuval Pruss' stack overflow answer
 // https://stackoverflow.com/questions/27376295/getting-key-with-the-highest-value-from-object
 

@@ -1,4 +1,5 @@
 import { PersonState } from '../stores/viral/person.machine';
+import { StateProps } from './states';
 
 export type ViralDetails = {
   weekly: {
@@ -21,10 +22,16 @@ export type MachineComponent = {
   represents: number;
 };
 
+export type RangeFactor = {
+  short: number;
+  long: number;
+};
+
 export type State = {
   rBaseline: number;
   infectionExpansion: number;
   cfr: number;
+  rangeFactor: RangeFactor;
 
   persons: Record<string, Record<number, MachineComponent[]>>;
   unsimulated: Record<string, number>;
@@ -58,6 +65,12 @@ export type State = {
 
   // Initialises the unsimulated property to have every resident state's unsimulated persons to be equal to its population
   setUnsimulated: () => void;
+
+  // Returns a random state with its properties
+  selectRandomState: (excludes?: string) => StateProps;
+
+  // Returns a state close to centreState with its properties
+  selectCloseState: (centreState: string) => StateProps;
 
   // Starts an outbreak in a random resident state
   generateOutbreak: (turn: number) => void;
@@ -102,6 +115,24 @@ export type State = {
   ) => void;
 
   addsCommunityInfections: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  addsShortRangeInfections: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  addsLongRangeInfections: (
+    machineComponent: MachineComponent,
+    residentState: string,
+    turn: number
+  ) => void;
+
+  addsCrossBorderInfections: (
     machineComponent: MachineComponent,
     residentState: string,
     turn: number
