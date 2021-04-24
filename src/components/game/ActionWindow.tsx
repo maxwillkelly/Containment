@@ -7,6 +7,7 @@ import { formatCurrency, formatPercentage } from '../../libs/numeral';
 import useActionWindowStore from '../../stores/ActionWindowStore';
 import usePoliticalStore from '../../stores/PoliticalStore';
 import useBudgetStore from '../../stores/BudgetStore';
+import useViralStore from '../../stores/ViralStore';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
@@ -48,6 +49,14 @@ const Footer: React.FC = () => {
     (state) => state.removeActionModifier
   );
 
+  const addViralModifier = useViralStore((state) => state.addActionModifier);
+
+  const editViralModifier = useViralStore((state) => state.editActionModifier);
+
+  const removeViralModifier = useViralStore(
+    (state) => state.removeActionModifier
+  );
+
   if (!shownAction || graduation.percentage === undefined) return null;
 
   const handleClose = () => toggleShownAction(shownAction, false);
@@ -57,6 +66,7 @@ const Footer: React.FC = () => {
       const action = startAction(shownAction, graduation.percentage);
       addPoliticalModifier(action, turn);
       addBudgetModifier(action, turn);
+      addViralModifier(action, turn);
     }
     handleClose();
   };
@@ -66,6 +76,7 @@ const Footer: React.FC = () => {
       const action = editAction(shownAction, graduation.percentage);
       editPoliticalModifier(action, turn);
       editBudgetModifier(action, turn);
+      editViralModifier(action, turn);
     }
     handleClose();
   };
@@ -74,6 +85,7 @@ const Footer: React.FC = () => {
     const action = cancelAction(shownAction);
     removePoliticalModifier(action, turn);
     removeBudgetModifier(action, turn);
+    removeViralModifier(action, turn);
     handleClose();
   };
 
