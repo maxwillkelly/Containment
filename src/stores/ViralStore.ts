@@ -20,6 +20,7 @@ import {
   ViralDetails,
 } from '../interfaces/viralStore';
 import { StateProps } from '../interfaces/states';
+import { actions } from '../data/actions';
 
 const initialViralDetails: ViralDetails = {
   weekly: {
@@ -460,10 +461,30 @@ const useViralStore = create<State>(
             updateInfectedPerson(machineComponent, residentState, turn);
         }
       }
+
+      set((state) => {
+        state.actionModifiers[turn + 1] = lodash.cloneDeep(
+          state.actionModifiers[turn]
+        );
+      });
+    },
+
+    setActionModifiers: () => {
+      const enabledActions = actions.filter((a) => a.enabledByDefault);
+      const initialModifiers: Record<string, number> = {};
+
+      enabledActions.forEach((action) => {
+        initialModifiers[action.id] = action.impact.popularity(0.5);
+      });
+
+      set((state) => {
+        state.actionModifiers = { 0: initialModifiers, 1: initialModifiers };
+      });
     },
 
     reset: () => {
       get().setUnsimulated();
+      get().setActionModifiers();
 
       set((state) => {
         state.persons = {};

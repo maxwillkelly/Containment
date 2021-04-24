@@ -154,5 +154,7 @@ export type State = {
 
   takeTurn: (turn: number) => void;
 
+  setActionModifiers: () => void;
+
   reset: () => void;
 };
