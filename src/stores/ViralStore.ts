@@ -40,7 +40,7 @@ const initialViralDetails: ViralDetails = {
 const useViralStore = create<State>(
   immer((set, get) => ({
     rBaseline: 2,
-    infectionExpansion: 1.4,
+    infectionExpansion: 3,
     cfr: 0.02,
     rangeFactor: {
       short: 0.005,
@@ -297,14 +297,37 @@ const useViralStore = create<State>(
 
     addsCommunityInfections: (machineComponent, residentState, turn) => {
       const {
+        minimumInfections,
         infectionExpansion,
         createInfectedMachine,
         storeNewPerson,
+        getViralDetails,
       } = get();
 
       const { represents } = machineComponent;
 
-      const infects = Math.round(represents * infectionExpansion);
+      const stateProps: StateProps | undefined = states.features
+        .map((f) => f.properties)
+        .find((s) => s.name === residentState);
+
+      if (stateProps === undefined)
+        throw new Error(`Resident state ${residentState} doesn't exist`);
+
+      const { population } = stateProps;
+      const percentageInfected = represents / population;
+
+      const viralDetails = getViralDetails(turn, residentState);
+      const { unsimulated } = viralDetails.cumulative;
+      const percentageImmune = (population - unsimulated) / population;
+
+      const ceilingInfections =
+        represents * infectionExpansion -
+        200 * percentageInfected * represents -
+        15 * percentageImmune * represents * infectionExpansion;
+
+      const infects = Math.round(ceilingInfections);
+
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
 
