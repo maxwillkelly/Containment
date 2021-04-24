@@ -1,3 +1,4 @@
+import { Action } from '../data/actions';
 import { PersonState } from '../stores/viral/person.machine';
 import { StateProps } from './states';
 
@@ -36,6 +37,7 @@ export type State = {
 
   persons: Record<string, Record<number, MachineComponent[]>>;
   unsimulated: Record<string, number>;
+  actionModifiers: Record<number, Record<string, number>>;
 
   personsInitialised: boolean;
 
@@ -63,6 +65,10 @@ export type State = {
   ) => void;
 
   getViralDetails: (turn: number, residentState?: string) => ViralDetails;
+
+  addActionModifier: (action: Action, turn: number) => void;
+  editActionModifier: (action: Action, turn: number) => void;
+  removeActionModifier: (action: Action, turn: number) => void;
 
   // Initialises the unsimulated property to have every resident state's unsimulated persons to be equal to its population
   setUnsimulated: () => void;

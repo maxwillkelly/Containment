@@ -50,6 +50,7 @@ const useViralStore = create<State>(
 
     persons: {},
     unsimulated: {},
+    actionModifiers: {},
 
     personsInitialised: false,
 
@@ -157,6 +158,25 @@ const useViralStore = create<State>(
 
       return viralDetails;
     },
+
+    addActionModifier: (action, turn) => {
+      const { id, graduationPercentage, impact } = action;
+
+      if (graduationPercentage === undefined) return;
+
+      const modifier = impact.viral(graduationPercentage);
+
+      set((state) => {
+        state.actionModifiers[turn + 1][id] = modifier;
+      });
+    },
+
+    editActionModifier: (action, turn) => get().addActionModifier(action, turn),
+
+    removeActionModifier: (action, turn) =>
+      set((state) => {
+        delete state.actionModifiers[turn + 1][action.id];
+      }),
 
     setUnsimulated: () => {
       const residentStates = states.features;
