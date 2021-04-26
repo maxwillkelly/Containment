@@ -38,22 +38,33 @@ const VaccineItem: React.FC<VaccineItemProps> = ({ vaccine }) => {
   const phase = getPhaseString(vaccine);
 
   return (
-    <div className="flex flex-row items-center p-2 rounded-lg text-left text-white hover:bg-gray-600 w-full h-16">
-      <p className="pl-2">{name}</p>
-      <p className="pl-2">{formattedPrice}</p>
-      <p className="pl-2">{formattedOrders}</p>
-      <p className="pl-2">{formattedReceived}</p>
-      <p className="pl-2">{phase}</p>
+    <div className="grid grid-cols-5 text-white text-center rounded-lg hover:bg-gray-600 py-5 px-2 w-full">
+      <p className="text-left">{name}</p>
+      <p>{formattedPrice}</p>
+      <p>{formattedOrders}</p>
+      <p>{formattedReceived}</p>
+      <p>{phase}</p>
     </div>
   );
 };
+
+const VaccineListHeaders: React.FC = () => (
+  <div className="grid grid-cols-5 text-white text-center py-3 px-2 w-full">
+    <p className="text-left">Name</p>
+    <p>Cost</p>
+    <p>Orders</p>
+    <p>Received</p>
+    <p>Phase</p>
+  </div>
+);
 
 const VaccineList: React.FC = () => {
   const vaccines = useVaccineStore((state) => state.vaccines);
 
   return (
-    <div className="overflow-scroll h-full mx-4 my-2">
-      <div className="flex flex-col justify-center">
+    <div className="h-full mx-4 my-2 overflow-scroll">
+      <VaccineListHeaders />
+      <div className="grid grid-flow-row">
         {vaccines.map((v) => (
           <VaccineItem vaccine={v} key={v.id} />
         ))}
