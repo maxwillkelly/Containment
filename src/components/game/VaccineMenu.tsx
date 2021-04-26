@@ -28,11 +28,14 @@ interface VaccineItemProps {
 }
 
 const VaccineItem: React.FC<VaccineItemProps> = ({ vaccine }) => {
+  const getPhaseString = useVaccineStore((state) => state.getPhaseString);
+
   const { name, price, orders, received } = vaccine;
 
   const formattedPrice = formatCurrency(price);
   const formattedOrders = formatNumber(orders);
   const formattedReceived = formatNumber(received);
+  const phase = getPhaseString(vaccine);
 
   return (
     <div className="flex flex-row items-center p-2 rounded-lg text-left text-white hover:bg-gray-600 w-full h-16">
@@ -40,6 +43,7 @@ const VaccineItem: React.FC<VaccineItemProps> = ({ vaccine }) => {
       <p className="pl-2">{formattedPrice}</p>
       <p className="pl-2">{formattedOrders}</p>
       <p className="pl-2">{formattedReceived}</p>
+      <p className="pl-2">{phase}</p>
     </div>
   );
 };
@@ -48,10 +52,12 @@ const VaccineList: React.FC = () => {
   const vaccines = useVaccineStore((state) => state.vaccines);
 
   return (
-    <div className="grid grid-flow-row items-center mx-4 my-2">
-      {vaccines.map((v) => {
-        return <VaccineItem vaccine={v} key={v.id} />;
-      })}
+    <div className="overflow-scroll h-full mx-4 my-2">
+      <div className="flex flex-col justify-center">
+        {vaccines.map((v) => (
+          <VaccineItem vaccine={v} key={v.id} />
+        ))}
+      </div>
     </div>
   );
 };

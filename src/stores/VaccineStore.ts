@@ -10,6 +10,8 @@ import {
   VaccineState,
 } from './vaccine/vaccine.machine';
 
+import { capitalise } from '../libs/string';
+
 export type Vaccine = {
   id: string;
   name: string;
@@ -40,6 +42,7 @@ type State = {
   stageDetails: StageDetails;
 
   getPhase: (vaccine: Vaccine) => number;
+  getPhaseString: (vaccine: Vaccine) => string;
   getPhaseDetails: (vaccine: Vaccine) => PhaseDetails;
 
   generatePrice: () => number;
@@ -70,6 +73,19 @@ const useVaccineStore = create<State>(
       const phaseString = state[state.length - 1];
       const phase = parseInt(phaseString, 10);
       return phase;
+    },
+
+    getPhaseString: (vaccine) => {
+      const { getPhase } = get();
+
+      const phase = getPhase(vaccine);
+
+      if (Number.isNaN(phase)) {
+        const finishState = vaccine.machine.value;
+        return capitalise(finishState);
+      }
+
+      return `Phase ${phase}`;
     },
 
     getPhaseDetails: (vaccine) => {
