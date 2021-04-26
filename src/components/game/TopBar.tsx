@@ -7,8 +7,8 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
+
 import { useHistory } from 'react-router-dom';
-import { finished } from 'stream';
 import { ViralDetails } from '../../interfaces/viralStore';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
 
@@ -150,8 +150,8 @@ const MapSettingsButton: React.FC = () => {
   );
 };
 
-const ResearchButton: React.FC = () => {
-  const applet = 'ResearchButton';
+const VaccinesButton: React.FC = () => {
+  const applet = 'VaccinesButton';
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
@@ -282,7 +282,7 @@ const TopBar: React.FC = () => {
         <div className="mr-auto" />
         <ReproductionIndicator />
         <MapSettingsButton />
-        <ResearchButton />
+        <VaccinesButton />
         <DashboardButton />
         <ImmunityBar />
         <AdvanceTurnButton />

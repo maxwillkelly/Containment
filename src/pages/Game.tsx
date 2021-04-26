@@ -14,6 +14,7 @@ import MapDrawer from '../components/game/MapDrawer';
 import PolicyDrawer from '../components/game/PolicyDrawer';
 import LoadingScreen from '../components/game/LoadingScreen';
 import ActionWindow from '../components/game/ActionWindow';
+import VaccineMenu from '../components/game/VaccineMenu';
 
 const getBgColour = (state: boolean) =>
   state ? 'bg-selected' : 'hover:bg-gray-600';
@@ -58,6 +59,12 @@ const MapDrawerToggle: React.FC = () => {
   );
 };
 
+const ActiveApplets: React.FC = () => {
+  const activeApplet = useGameStore((state) => state.activeApplet);
+  if (activeApplet === 'VaccinesButton') return <VaccineMenu />;
+  return null;
+};
+
 const Game: React.FC = () => {
   const paused = useGameStore((state) => state.isPaused);
   const loading = useGameStore((state) => state.loading);
@@ -88,6 +95,7 @@ const Game: React.FC = () => {
         <MapDrawer />
         <Map />
         <ActionWindow />
+        <ActiveApplets />
         {paused && <PauseMenu />}
       </main>
     </div>
