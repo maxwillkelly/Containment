@@ -66,10 +66,9 @@ const useVaccineStore = create<State>(
     },
 
     getPhase: (vaccine) => {
-      const stateStrings = vaccine.machine.toStrings();
-      const stateString = stateStrings[0];
-      const phase = parseInt(stateString[stateString.length - 1], 10);
-
+      const state = vaccine.machine.value;
+      const phaseString = state[state.length - 1];
+      const phase = parseInt(phaseString, 10);
       return phase;
     },
 
@@ -79,7 +78,8 @@ const useVaccineStore = create<State>(
       const phase = getPhase(vaccine);
       const phaseTime = stageDetails[`phase${phase}`];
 
-      if (phaseTime === undefined) throw new Error('Phase Time is undefined');
+      if (phaseTime === undefined)
+        throw new Error(`Phase Time is undefined for phase ${phase}`);
 
       return phaseTime;
     },
@@ -87,6 +87,8 @@ const useVaccineStore = create<State>(
     generatePrice: () => Math.round(Math.random() * 40) + 3,
 
     generateNextTransition: (vaccine, turn) => {
+      if (vaccine.machine.done) return 0;
+
       const phaseDetails = get().getPhaseDetails(vaccine);
 
       const { min, max } = phaseDetails;
@@ -112,7 +114,9 @@ const useVaccineStore = create<State>(
 
       candidate.nextTransition = generateNextTransition(candidate, turn);
 
-      set((state) => state.vaccines.push(candidate));
+      set((state) => {
+        state.vaccines.push(candidate);
+      });
     },
 
     addCandidates: (turn) => {

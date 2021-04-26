@@ -18,6 +18,7 @@ import useBudgetStore from '../../stores/BudgetStore';
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 import usePoliticalStore from '../../stores/PoliticalStore';
+import useVaccineStore from '../../stores/VaccineStore';
 import useViralStore from '../../stores/ViralStore';
 import ActionsMenu from './ActionsMenu';
 
@@ -240,6 +241,7 @@ const AdvanceTurnButton: React.FC = () => {
   const advanceBudgetTurn = useBudgetStore((state) => state.advanceTurn);
   const advanceGameTurn = useGameStore((state) => state.advanceTurn);
   const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
+  const advanceVaccineTurn = useVaccineStore((state) => state.advanceTurn);
 
   const checkFinished = () => {
     const popularity = getPopularity(turn);
@@ -252,7 +254,10 @@ const AdvanceTurnButton: React.FC = () => {
 
   const handleClick = () => {
     setLoading(true);
-    takeTurn(turn + 1);
+    const nextTurn = turn + 1;
+
+    takeTurn(nextTurn);
+    advanceVaccineTurn(nextTurn);
 
     advanceActionTurn();
     advanceBudgetTurn();
