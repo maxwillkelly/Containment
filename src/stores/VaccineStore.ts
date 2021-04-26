@@ -52,6 +52,7 @@ type State = {
   addCandidates: (turn: number) => void;
 
   transitionVaccine: (vaccine: Vaccine, turn: number) => void;
+  sortVaccines: () => void;
   advanceTurn: (turn: number) => void;
   reset: () => void;
 };
@@ -158,8 +159,51 @@ const useVaccineStore = create<State>(
       vaccine.nextTransition = generateNextTransition(vaccine, turn);
     },
 
+    sortVaccines: () => {
+      const { vaccines } = get();
+
+      const sortedVaccines = lodash.cloneDeep(vaccines);
+
+      sortedVaccines.sort((first, second) => {
+        const phaseOrder = [
+          'Failed',
+          'Phase 1',
+          'Phase 2',
+          'Phase 3',
+          'Approved',
+        ];
+
+        const { getPhaseString } = get();
+
+        if (first.machine.value === second.machine.value) return 0;
+
+        const firstPhase = getPhaseString(first);
+        const secondPhase = getPhaseString(second);
+
+        const firstIndex = phaseOrder.findIndex((p) => p === firstPhase);
+        const secondIndex = phaseOrder.findIndex((p) => p === secondPhase);
+
+        if (firstIndex === -1)
+          throw new Error(`Sort Index ${firstPhase} invalid`);
+
+        if (secondIndex === -1)
+          throw new Error(`Sort Index ${secondPhase} invalid`);
+
+        return secondIndex - firstIndex;
+      });
+
+      set((state) => {
+        state.vaccines = sortedVaccines;
+      });
+    },
+
     advanceTurn: (turn) => {
-      const { vaccines, transitionVaccine, addCandidates } = get();
+      const {
+        vaccines,
+        transitionVaccine,
+        addCandidates,
+        sortVaccines,
+      } = get();
 
       const vaccinesCopy = lodash.cloneDeep(vaccines);
 
@@ -173,6 +217,7 @@ const useVaccineStore = create<State>(
       });
 
       addCandidates(turn);
+      sortVaccines();
     },
 
     reset: () =>
