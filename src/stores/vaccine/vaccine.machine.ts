@@ -37,8 +37,12 @@ export const vaccineMachine = Machine<undefined, Schema, Event>({
         Fail: 'failed',
       },
     },
-    approved: {},
-    failed: {},
+    approved: {
+      type: 'final',
+    },
+    failed: {
+      type: 'final',
+    },
   },
 });
 
