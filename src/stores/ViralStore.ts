@@ -323,6 +323,7 @@ const useViralStore = create<State>(
         createInfectedMachine,
         storeNewPerson,
         getViralDetails,
+        actionModifiers,
       } = get();
 
       const { represents } = machineComponent;
@@ -341,10 +342,15 @@ const useViralStore = create<State>(
       const { unsimulated } = viralDetails.cumulative;
       const percentageImmune = (population - unsimulated) / population;
 
-      const ceilingInfections =
+      let ceilingInfections =
         represents * infectionExpansion -
         200 * percentageInfected * represents -
         15 * percentageImmune * represents * infectionExpansion;
+
+      const actionModifiersArray = Object.values(actionModifiers[turn]);
+      actionModifiersArray.forEach((am) => {
+        ceilingInfections += am;
+      });
 
       const infects = Math.round(ceilingInfections);
 

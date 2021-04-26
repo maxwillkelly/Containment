@@ -1,13 +1,16 @@
 import React, { ChangeEvent, useEffect } from 'react';
+
 import useActionsStore from '../../stores/ActionsStore';
+import useActionWindowStore from '../../stores/ActionWindowStore';
+import useBudgetStore from '../../stores/BudgetStore';
 import useGameStore from '../../stores/GameStore';
+import usePoliticalStore from '../../stores/PoliticalStore';
+import useViralStore from '../../stores/ViralStore';
+
 import GameWindow from '../shared/GameWindow';
 import WindowButton from '../shared/WindowButton';
+
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
-import useActionWindowStore from '../../stores/ActionWindowStore';
-import usePoliticalStore from '../../stores/PoliticalStore';
-import useBudgetStore from '../../stores/BudgetStore';
-import useViralStore from '../../stores/ViralStore';
 
 const Footer: React.FC = () => {
   const shownAction = useGameStore((state) => state.shownAction);
