@@ -10,7 +10,8 @@ import {
   VaccineState,
 } from './vaccine/vaccine.machine';
 
-type Vaccine = {
+export type Vaccine = {
+  id: string;
   name: string;
   price: number;
   machine: VaccineState;
@@ -20,13 +21,13 @@ type Vaccine = {
   production?: (turnApproved: number) => number;
 };
 
-type PhaseDetails = {
+export type PhaseDetails = {
   min: number;
   max: number;
   chance: number;
 };
 
-type StageDetails = {
+export type StageDetails = {
   phase1: PhaseDetails;
   phase2: PhaseDetails;
   phase3: PhaseDetails;
@@ -100,6 +101,7 @@ const useVaccineStore = create<State>(
       const { generatePrice, generateNextTransition } = get();
 
       const candidate: Vaccine = {
+        id: faker.datatype.uuid(),
         name: faker.name.lastName(),
         price: generatePrice(),
         nextTransition: -1,

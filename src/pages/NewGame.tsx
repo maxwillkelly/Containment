@@ -9,6 +9,7 @@ import useBudgetStore from '../stores/BudgetStore';
 import useGameStore from '../stores/GameStore';
 import useMapStore from '../stores/MapStore';
 import usePoliticalStore from '../stores/PoliticalStore';
+import useVaccineStore from '../stores/VaccineStore';
 import useViralStore from '../stores/ViralStore';
 
 const Footer: React.FC = () => {
@@ -19,6 +20,7 @@ const Footer: React.FC = () => {
   const resetGameStore = useGameStore((state) => state.reset);
   const resetMapStore = useMapStore((state) => state.reset);
   const resetPoliticalStore = usePoliticalStore((state) => state.reset);
+  const resetVaccineStore = useVaccineStore((state) => state.reset);
   const resetViralStore = useViralStore((state) => state.reset);
 
   const handleStart = () => {
@@ -27,6 +29,7 @@ const Footer: React.FC = () => {
     resetGameStore();
     resetMapStore();
     resetPoliticalStore();
+    resetVaccineStore();
     resetViralStore();
     history.push('/game');
   };

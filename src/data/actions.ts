@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import faker from 'faker';
 import { Category } from './categories';
 
 export type ActionInput = 'slider' | 'checkbox' | 'progressiveTax';
@@ -39,7 +39,7 @@ export type Action = {
 
 export const actions: Array<Action> = [
   {
-    id: uuid(),
+    id: faker.datatype.uuid(),
     name: 'Universal Basic Income',
     category: 'Welfare',
     turnAvailable: 0,
@@ -64,7 +64,7 @@ export const actions: Array<Action> = [
     },
   },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Income Tax',
   //   category: 'Taxation',
   //   turnAvailable: 0,
@@ -72,7 +72,7 @@ export const actions: Array<Action> = [
   //   inputs: ['progressiveTax'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Value Added Tax',
   //   category: 'Taxation',
   //   turnAvailable: 0,
@@ -80,7 +80,7 @@ export const actions: Array<Action> = [
   //   inputs: ['slider'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Corporation Tax',
   //   category: 'Taxation',
   //   turnAvailable: 0,
@@ -88,7 +88,7 @@ export const actions: Array<Action> = [
   //   inputs: ['slider'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Carbon Tax',
   //   category: 'Taxation',
   //   turnAvailable: 0,
@@ -96,7 +96,7 @@ export const actions: Array<Action> = [
   //   inputs: ['slider'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Defence Production Act',
   //   category: 'Constitution',
   //   turnAvailable: 0,
@@ -104,7 +104,7 @@ export const actions: Array<Action> = [
   //   inputs: ['checkbox'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'State of Emergency',
   //   category: 'Constitution',
   //   turnAvailable: 0,
@@ -112,7 +112,7 @@ export const actions: Array<Action> = [
   //   inputs: ['checkbox'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Public Healthcare',
   //   category: 'Health',
   //   turnAvailable: 0,
@@ -120,7 +120,7 @@ export const actions: Array<Action> = [
   //   inputs: ['slider'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Unemployment Benefit',
   //   category: 'Welfare',
   //   turnAvailable: 0,
@@ -128,7 +128,7 @@ export const actions: Array<Action> = [
   //   inputs: ['slider'],
   // },
   // {
-  //   id: uuid(),
+  //   id: faker.datatype.uuid(),
   //   name: 'Child Benefit',
   //   category: 'Health',
   //   turnAvailable: 0,
