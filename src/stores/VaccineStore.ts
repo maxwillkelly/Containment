@@ -1,6 +1,9 @@
+/* eslint-disable no-restricted-syntax */
 import create from 'zustand';
 import faker from 'faker';
+import lodash from 'lodash';
 import immer from './shared/immer';
+
 import {
   createVaccineMachine,
   vaccineMachine,
@@ -37,10 +40,13 @@ type State = {
 
   getPhase: (vaccine: Vaccine) => number;
   getPhaseDetails: (vaccine: Vaccine) => PhaseDetails;
+
   generatePrice: () => number;
-  generatePhaseLength: (vaccine: Vaccine, turn: number) => number;
+  generateNextTransition: (vaccine: Vaccine, turn: number) => number;
+
   addCandidate: (turn: number) => void;
   addCandidates: (turn: number) => void;
+
   transitionVaccine: (vaccine: Vaccine, turn: number) => void;
   advanceTurn: (turn: number) => void;
   reset: () => void;
@@ -72,12 +78,14 @@ const useVaccineStore = create<State>(
       const phase = getPhase(vaccine);
       const phaseTime = stageDetails[`phase${phase}`];
 
+      if (phaseTime === undefined) throw new Error('Phase Time is undefined');
+
       return phaseTime;
     },
 
     generatePrice: () => Math.round(Math.random() * 40) + 3,
 
-    generatePhaseLength: (vaccine, turn) => {
+    generateNextTransition: (vaccine, turn) => {
       const phaseDetails = get().getPhaseDetails(vaccine);
 
       const { min, max } = phaseDetails;
@@ -89,7 +97,7 @@ const useVaccineStore = create<State>(
     },
 
     addCandidate: (turn) => {
-      const { generatePrice, generatePhaseLength } = get();
+      const { generatePrice, generateNextTransition } = get();
 
       const candidate: Vaccine = {
         name: faker.name.lastName(),
@@ -100,7 +108,7 @@ const useVaccineStore = create<State>(
         machine: createVaccineMachine(),
       };
 
-      candidate.nextTransition = generatePhaseLength(candidate, turn);
+      candidate.nextTransition = generateNextTransition(candidate, turn);
 
       set((state) => state.vaccines.push(candidate));
     },
@@ -115,7 +123,7 @@ const useVaccineStore = create<State>(
     },
 
     transitionVaccine: (vaccine, turn) => {
-      const { getPhaseDetails } = get();
+      const { getPhaseDetails, generateNextTransition } = get();
       const { nextTransition, machine } = vaccine;
 
       if (turn !== nextTransition) return;
@@ -125,15 +133,21 @@ const useVaccineStore = create<State>(
       const event = phaseDetails.chance > random ? 'Advance' : 'Fail';
 
       vaccine.machine = vaccineMachine.transition(machine, event);
+      vaccine.nextTransition = generateNextTransition(vaccine, turn);
     },
 
     advanceTurn: (turn) => {
       const { vaccines, transitionVaccine, addCandidates } = get();
 
-      const changingVaccines = vaccines.filter((v) => !v.machine.done);
+      const vaccinesCopy = lodash.cloneDeep(vaccines);
 
-      changingVaccines.forEach((v) => {
+      for (const v of vaccinesCopy) {
+        if (v.machine.done) break;
         transitionVaccine(v, turn);
+      }
+
+      set((state) => {
+        state.vaccines = vaccinesCopy;
       });
 
       addCandidates(turn);
