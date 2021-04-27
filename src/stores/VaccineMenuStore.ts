@@ -15,8 +15,11 @@ const useVaccineMenuStore = create<State>((set) => ({
   ordersChange: 0,
   vaccineSelected: null,
 
-  setOrdersChange: (ordersChange) => set(() => ({ ordersChange })),
-  setVaccineSelected: (vaccineSelected) => set(() => set({ vaccineSelected })),
+  setOrdersChange: (ordersChange) =>
+    ordersChange >= 0 && set(() => ({ ordersChange })),
+
+  setVaccineSelected: (vaccineSelected) =>
+    set(() => set({ vaccineSelected, ordersChange: 0 })),
 
   reset: () =>
     set(() => ({

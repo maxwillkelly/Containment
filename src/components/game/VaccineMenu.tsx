@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { formatCurrency, formatNumber } from '../../libs/numeral';
 import useGameStore from '../../stores/GameStore';
 import useVaccineMenuStore from '../../stores/VaccineMenuStore';
@@ -48,23 +48,36 @@ const VaccineOrders: React.FC = () => {
 
   if (!vaccineSelected) return null;
 
-  const newOrders = vaccineSelected.orders + ordersChange;
+  const denomination = 500000;
+  const newOrders = formatNumber(vaccineSelected.orders + ordersChange);
+  const buttonStyles =
+    'grid place-items-center rounded-full dark:disabled:bg-disabled dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 w-16 h-10';
 
   return (
-    <div className="z-30">
-      <GameWindow
-        title={`${vaccineSelected.name} Vaccine`}
-        footer={<VaccineOrdersFooter />}
-      >
-        <button type="button" onClick={() => setOrdersChange(100000)}>
-          +
-        </button>
-        <p>{newOrders}</p>
-        <button type="button" onClick={() => setOrdersChange(-100000)}>
-          -
-        </button>
-      </GameWindow>
-    </div>
+    <GameWindow
+      title={`${vaccineSelected.name} Vaccine`}
+      footer={<VaccineOrdersFooter />}
+    >
+      <div className="flex flex-grow row-span-7 items-center justify-center">
+        <div className="grid grid-rows-1 grid-cols-3 place-items-center text-white text-2xl max-w-sm">
+          <button
+            className={buttonStyles}
+            type="button"
+            onClick={() => setOrdersChange(ordersChange + denomination)}
+          >
+            +
+          </button>
+          <p>{newOrders}</p>
+          <button
+            type="button"
+            className={buttonStyles}
+            onClick={() => setOrdersChange(ordersChange - denomination)}
+          >
+            -
+          </button>
+        </div>
+      </div>
+    </GameWindow>
   );
 };
 
@@ -131,7 +144,7 @@ const VaccineList: React.FC = () => {
 const VaccineMenu: React.FC = () => (
   <>
     <div className="z-20">
-      <GameWindow title="Vaccine Menu" footer={<Footer />}>
+      <GameWindow title="Vaccines" footer={<Footer />}>
         <VaccineList />
       </GameWindow>
     </div>
