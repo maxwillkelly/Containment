@@ -45,6 +45,8 @@ type State = {
   getPhaseString: (vaccine: Vaccine) => string;
   getPhaseDetails: (vaccine: Vaccine) => PhaseDetails;
 
+  orderVaccines: (vaccine: Vaccine, orders: number) => void;
+
   generatePrice: () => number;
   generateNextTransition: (vaccine: Vaccine, turn: number) => number;
 
@@ -99,6 +101,20 @@ const useVaccineStore = create<State>(
         throw new Error(`Phase Time is undefined for phase ${phase}`);
 
       return phaseTime;
+    },
+
+    orderVaccines: (vaccine, orders) => {
+      const { vaccines } = get();
+
+      const vaccineCopy = lodash.cloneDeep(vaccine);
+      vaccineCopy.orders += orders;
+
+      const index = vaccines.findIndex((v) => v.id === vaccine.id);
+
+      set((state) => {
+        state.vaccines.splice(index, 1);
+        state.vaccines.push(vaccineCopy);
+      });
     },
 
     generatePrice: () => Math.round(Math.random() * 40) + 3,

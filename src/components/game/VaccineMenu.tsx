@@ -25,17 +25,28 @@ const Footer: React.FC = () => {
 };
 
 const VaccineOrdersFooter: React.FC = () => {
+  const orderVaccines = useVaccineStore((state) => state.orderVaccines);
+  const ordersChange = useVaccineMenuStore((state) => state.ordersChange);
+  const vaccineSelected = useVaccineMenuStore((state) => state.vaccineSelected);
   const setVaccineSelected = useVaccineMenuStore(
     (state) => state.setVaccineSelected
   );
 
   const handleClose = () => setVaccineSelected(null);
 
-  const handleSave = () => {};
+  const handleSave = () => {
+    if (!vaccineSelected) return;
+    orderVaccines(vaccineSelected, ordersChange);
+    handleClose();
+  };
 
   return (
     <>
-      <WindowButton title="Save" handleClick={handleSave} />
+      <WindowButton
+        title="Save"
+        handleClick={handleSave}
+        disabled={ordersChange <= 0}
+      />
       <WindowButton title="Cancel" handleClick={handleClose} />
     </>
   );
@@ -43,13 +54,13 @@ const VaccineOrdersFooter: React.FC = () => {
 
 const VaccineOrders: React.FC = () => {
   const vaccineSelected = useVaccineMenuStore((state) => state.vaccineSelected);
-  const ordersChange = useVaccineMenuStore((state) => state.ordersChange);
-  const setOrdersChange = useVaccineMenuStore((state) => state.setOrdersChange);
+  const ordersAdded = useVaccineMenuStore((state) => state.ordersChange);
+  const setOrdersAdded = useVaccineMenuStore((state) => state.setOrdersChange);
 
   if (!vaccineSelected) return null;
 
   const denomination = 500000;
-  const newOrders = formatNumber(vaccineSelected.orders + ordersChange);
+  const newOrders = formatNumber(vaccineSelected.orders + ordersAdded);
   const buttonStyles =
     'grid place-items-center rounded-full dark:disabled:bg-disabled dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 w-16 h-10';
 
@@ -63,7 +74,7 @@ const VaccineOrders: React.FC = () => {
           <button
             className={buttonStyles}
             type="button"
-            onClick={() => setOrdersChange(ordersChange + denomination)}
+            onClick={() => setOrdersAdded(ordersAdded + denomination)}
           >
             +
           </button>
@@ -71,7 +82,8 @@ const VaccineOrders: React.FC = () => {
           <button
             type="button"
             className={buttonStyles}
-            onClick={() => setOrdersChange(ordersChange - denomination)}
+            onClick={() => setOrdersAdded(ordersAdded - denomination)}
+            disabled={ordersAdded <= 0}
           >
             -
           </button>
