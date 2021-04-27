@@ -20,7 +20,6 @@ export type Vaccine = {
   orders: number;
   received: number;
   nextTransition: number;
-  production?: (turnApproved: number) => number;
 };
 
 export type PhaseDetails = {
@@ -54,7 +53,11 @@ type State = {
   addCandidates: (turn: number) => void;
 
   transitionVaccine: (vaccine: Vaccine, turn: number) => void;
+  calculateDosesReceived: (vaccine: Vaccine, turn: number) => number;
+  receiveDoses: (vaccine: Vaccine, turn: number) => void;
+
   sortVaccines: () => void;
+
   advanceTurn: (turn: number) => void;
   reset: () => void;
 };
@@ -62,13 +65,13 @@ type State = {
 const useVaccineStore = create<State>(
   immer((set, get) => ({
     candidatesAppear: 6,
-    candidateChance: 0.3,
+    candidateChance: 0.25,
     vaccines: [],
 
     stageDetails: {
-      phase1: { min: 3, max: 8, chance: 0.5 },
-      phase2: { min: 6, max: 15, chance: 0.4 },
-      phase3: { min: 9, max: 30, chance: 0.3 },
+      phase1: { min: 2, max: 6, chance: 0.6 },
+      phase2: { min: 4, max: 8, chance: 0.5 },
+      phase3: { min: 6, max: 10, chance: 0.4 },
     },
 
     getPhase: (vaccine) => {
@@ -120,7 +123,7 @@ const useVaccineStore = create<State>(
     generatePrice: () => Math.round(Math.random() * 40) + 3,
 
     generateNextTransition: (vaccine, turn) => {
-      if (vaccine.machine.done) return 0;
+      if (vaccine.machine.done) return vaccine.nextTransition;
 
       const phaseDetails = get().getPhaseDetails(vaccine);
 
@@ -175,6 +178,26 @@ const useVaccineStore = create<State>(
       vaccine.nextTransition = generateNextTransition(vaccine, turn);
     },
 
+    calculateDosesReceived: (vaccine, turn) => {
+      const turnApproved = vaccine.nextTransition;
+      const onOrder = vaccine.orders;
+
+      const doseCapacity = Math.round(
+        (turn - turnApproved) ** 2 * 10000000 * Math.random()
+      );
+
+      const dosesReceived = Math.min(doseCapacity, onOrder);
+
+      return dosesReceived;
+    },
+
+    receiveDoses: (vaccine, turn) => {
+      const dosesReceived = get().calculateDosesReceived(vaccine, turn);
+
+      vaccine.orders -= dosesReceived;
+      vaccine.received += dosesReceived;
+    },
+
     sortVaccines: () => {
       const { vaccines } = get();
 
@@ -190,8 +213,6 @@ const useVaccineStore = create<State>(
         ];
 
         const { getPhaseString } = get();
-
-        if (first.machine.value === second.machine.value) return 0;
 
         const firstPhase = getPhaseString(first);
         const secondPhase = getPhaseString(second);
@@ -218,13 +239,15 @@ const useVaccineStore = create<State>(
         vaccines,
         transitionVaccine,
         addCandidates,
+        receiveDoses,
         sortVaccines,
       } = get();
 
       const vaccinesCopy = lodash.cloneDeep(vaccines);
 
       for (const v of vaccinesCopy) {
-        if (v.machine.done) break;
+        if (v.machine.matches('approved')) receiveDoses(v, turn);
+        if (v.machine.matches('failed')) break;
         transitionVaccine(v, turn);
       }
 
