@@ -235,6 +235,7 @@ const AdvanceTurnButton: React.FC = () => {
   const turn = useGameStore((state) => state.turn);
   const getPopularity = usePoliticalStore((state) => state.getPopularity);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
+  const getVaccinations = useVaccineStore((state) => state.getVaccinations);
 
   const takeTurn = useViralStore((state) => state.takeTurn);
   const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
@@ -254,9 +255,11 @@ const AdvanceTurnButton: React.FC = () => {
 
   const handleClick = () => {
     setLoading(true);
+
+    const vaccinations = getVaccinations(turn);
     const nextTurn = turn + 1;
 
-    takeTurn(nextTurn);
+    takeTurn(vaccinations, nextTurn);
     advanceVaccineTurn(nextTurn);
 
     advanceActionTurn();

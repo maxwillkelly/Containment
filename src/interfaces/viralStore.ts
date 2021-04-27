@@ -20,6 +20,7 @@ export type ViralDetails = {
 
 export type MachineComponent = {
   machine: PersonState;
+  state: string;
   represents: number;
 };
 
@@ -82,6 +83,10 @@ export type State = {
   // Starts an outbreak in a random resident state
   generateOutbreak: (turn: number) => void;
 
+  vaccinateUnsimulated: (vaccinations: number, turn: number) => void;
+  vaccinateRecovered: (vaccinations: number, turn: number) => number;
+  vaccinate: (vaccinations: number, turn: number) => void;
+
   // Initialises appropriate properties on persons if they haven't been already
   initialisesPersonsElement: (residentState: string, turn: number) => void;
 
@@ -93,6 +98,11 @@ export type State = {
   ) => void;
 
   createInfectedMachine: (
+    newMachine: PersonState,
+    infects: number
+  ) => MachineComponent;
+
+  createInoculatedMachine: (
     newMachine: PersonState,
     infects: number
   ) => MachineComponent;
@@ -152,7 +162,7 @@ export type State = {
     turn: number
   ) => void;
 
-  takeTurn: (turn: number) => void;
+  takeTurn: (vaccinations: number, turn: number) => void;
 
   setActionModifiers: () => void;
 

@@ -11,6 +11,7 @@ import {
 } from './vaccine/vaccine.machine';
 
 import { capitalise } from '../libs/string';
+import { reduceArrayElementsAddition } from '../libs/reduce';
 
 export type Vaccine = {
   id: string;
@@ -43,6 +44,7 @@ type State = {
   getPhase: (vaccine: Vaccine) => number;
   getPhaseString: (vaccine: Vaccine) => string;
   getPhaseDetails: (vaccine: Vaccine) => PhaseDetails;
+  getVaccinations: (turn: number) => number;
 
   orderVaccines: (vaccine: Vaccine, orders: number) => void;
 
@@ -104,6 +106,15 @@ const useVaccineStore = create<State>(
         throw new Error(`Phase Time is undefined for phase ${phase}`);
 
       return phaseTime;
+    },
+
+    getVaccinations: (turn) => {
+      const { vaccines } = get();
+
+      const vaccinesReceivedArray = vaccines.map((v) => v.received[turn]);
+
+      const vaccinations = reduceArrayElementsAddition(vaccinesReceivedArray);
+      return vaccinations;
     },
 
     orderVaccines: (vaccine, orders) => {
