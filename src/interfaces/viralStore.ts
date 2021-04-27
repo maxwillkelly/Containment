@@ -20,7 +20,6 @@ export type ViralDetails = {
 
 export type MachineComponent = {
   machine: PersonState;
-  state: string;
   represents: number;
 };
 

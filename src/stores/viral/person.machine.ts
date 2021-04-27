@@ -84,13 +84,17 @@ export const personMachine = Machine<undefined, Schema, Event>({
       // },
       // },
     },
-    inoculated: {},
+    inoculated: {
+      type: 'final',
+    },
     recovered: {
       on: {
         Inoculate: 'inoculated',
       },
     },
-    death: {},
+    death: {
+      type: 'final',
+    },
   },
 });
 

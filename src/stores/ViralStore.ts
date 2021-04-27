@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 import create from 'zustand';
 import lodash from 'lodash';
@@ -22,6 +21,7 @@ import {
 } from '../interfaces/viralStore';
 import { StateProps } from '../interfaces/states';
 import { actions } from '../data/actions';
+import { getRandomStateByPopulation } from '../libs/geojson';
 
 const initialViralDetails: ViralDetails = {
   weekly: {
@@ -247,29 +247,36 @@ const useViralStore = create<State>(
     },
 
     vaccinateRecovered: (vaccinations, turn) => {
-      // const { persons } = get();
-      // const personsArray = Object.values(persons);
-      // const stateTurnPersons = personsArray.map((s) => s[turn]);
-      // const turnPersons: MachineComponent[] = reduceArrayElements(
-      //   stateTurnPersons
-      // );
-      // const personsWorking: MachineComponent[] = [];
-      // let vaccinationsRemaining = vaccinations;
-      // while (vaccinationsRemaining < p.represents) {
-      //   const index = Math.random() * turnPersons.length;
-      //   const p = turnPersons[p];
-      //   if (p.machine.matches('dead') || p.machine.matches('inoculated')) {
-      //     personsWorking.push(p);
-      //   } else {
-      //     const newMachine = personMachine.transition(p.machine, 'Inoculate');
-      //     const pCopy = lodash.cloneDeep(p);
-      //     pCopy.machine = newMachine;
-      //     personsWorking.push(pCopy);
-      //     vaccinationsRemaining -= pCopy.represents;
-      //   }
-      // }
-      // const vaccinesAdministered = vaccinations - vaccinationsRemaining;
-      // return vaccinesAdministered;
+      const { persons } = get();
+
+      let vaccinationsRemaining = vaccinations;
+      const personsWorking = lodash.cloneDeep(persons);
+
+      while (vaccinationsRemaining < 0) {
+        const stateChosen = getRandomStateByPopulation();
+        const stateResidents = personsWorking[stateChosen][turn];
+
+        for (const resident of stateResidents) {
+          const { machine } = resident;
+
+          if (!machine.done) {
+            const newMachine = personMachine.transition(machine, 'Inoculate');
+
+            const residentCopy = lodash.cloneDeep(resident);
+            residentCopy.machine = newMachine;
+            vaccinationsRemaining -= residentCopy.represents;
+
+            break;
+          }
+        }
+      }
+
+      set((state) => {
+        state.persons = personsWorking;
+      });
+
+      const vaccinesAdministered = vaccinations - vaccinationsRemaining;
+      return vaccinesAdministered;
     },
 
     vaccinateUnsimulated: (vaccinations, turn) => {},
@@ -509,7 +516,7 @@ const useViralStore = create<State>(
     takeTurn: (vaccinations, turn) => {
       const { updateInfectedPerson, persons, vaccinate } = get();
 
-      // vaccinate(vaccinations, turn);
+      vaccinate(vaccinations, turn);
 
       const personsCopy = lodash.cloneDeep(persons);
       const personsArray = Object.entries(personsCopy);
