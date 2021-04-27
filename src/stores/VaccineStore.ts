@@ -18,7 +18,7 @@ export type Vaccine = {
   price: number;
   machine: VaccineState;
   orders: number;
-  received: number;
+  received: number[];
   nextTransition: number;
 };
 
@@ -144,7 +144,7 @@ const useVaccineStore = create<State>(
         price: generatePrice(),
         nextTransition: -1,
         orders: 0,
-        received: 0,
+        received: [],
         machine: createVaccineMachine(),
       };
 
@@ -183,7 +183,7 @@ const useVaccineStore = create<State>(
       const onOrder = vaccine.orders;
 
       const doseCapacity = Math.round(
-        (turn - turnApproved) ** 2 * 10000000 * Math.random()
+        (turn - turnApproved + 1) ** 2 * 10000000 * Math.random()
       );
 
       const dosesReceived = Math.min(doseCapacity, onOrder);
@@ -195,7 +195,7 @@ const useVaccineStore = create<State>(
       const dosesReceived = get().calculateDosesReceived(vaccine, turn);
 
       vaccine.orders -= dosesReceived;
-      vaccine.received += dosesReceived;
+      vaccine.received.push(dosesReceived);
     },
 
     sortVaccines: () => {

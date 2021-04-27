@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatCurrency, formatNumber } from '../../libs/numeral';
+import { reduceArrayElementsAddition } from '../../libs/reduce';
 import useGameStore from '../../stores/GameStore';
 import useVaccineMenuStore from '../../stores/VaccineMenuStore';
 import useVaccineStore, { Vaccine } from '../../stores/VaccineStore';
@@ -107,7 +108,7 @@ const VaccineItem: React.FC<VaccineProp> = ({ vaccine }) => {
 
   const formattedPrice = formatCurrency(price);
   const formattedOrders = formatNumber(orders);
-  const formattedReceived = formatNumber(received);
+  const formattedReceived = formatNumber(reduceArrayElementsAddition(received));
   const phase = getPhaseString(vaccine);
 
   return (
