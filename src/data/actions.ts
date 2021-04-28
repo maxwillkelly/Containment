@@ -1,43 +1,11 @@
 import faker from 'faker';
-import { Category } from './categories';
+import { Action } from '../interfaces/action';
 
-export type ActionInput = 'slider' | 'checkbox' | 'progressiveTax';
+const averageIncome = 40000;
+const population = 923000000000;
+const gdp = averageIncome * population;
 
-export type ActionPointsCost = {
-  start: number;
-  cancel: number;
-  modify: (changePercentage: number) => number;
-};
-
-export type ActionImpact = {
-  budget: (graduation: number) => number;
-  popularity: (graduation: number) => number;
-  viral: (graduation: number) => number;
-};
-
-export type ActionRange = {
-  step: number;
-  lowest: number;
-  highest: number;
-  textPrepend: string;
-  textAppend: string;
-};
-
-export type Action = {
-  id: string;
-  name: string;
-  category: Category;
-  description?: string;
-  turnAvailable: number;
-  enabledByDefault: boolean;
-  inputs: ActionInput[];
-  pointsCost: ActionPointsCost;
-  range: ActionRange;
-  impact: ActionImpact;
-  graduationPercentage?: number;
-};
-
-export const actions: Array<Action> = [
+export const actions: Action[] = [
   {
     id: faker.datatype.uuid(),
     name: 'Universal Basic Income',
@@ -58,35 +26,89 @@ export const actions: Array<Action> = [
       textAppend: ' per year',
     },
     impact: {
-      budget: (graduation) => -6936345000000 + -1727149905000000 * graduation,
+      budget: (graduation) =>
+        -population * 100 * 1.002 - population * 24900 * graduation,
       popularity: (graduation) => 0.03 + graduation * 0.1,
       viral: (graduation) => -0.02 * graduation,
     },
   },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Income Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: true,
-  //   inputs: ['progressiveTax'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Value Added Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: true,
-  //   inputs: ['slider'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Corporation Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: true,
-  //   inputs: ['slider'],
-  // },
+
+  {
+    id: faker.datatype.uuid(),
+    name: 'Income Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 28,
+      cancel: 32,
+      modify: (changePercentage) => 10 + 22 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 80,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.006 * gdp + 0.006 * gdp * 79 * graduation,
+      popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
+      viral: (graduation) => 0,
+    },
+  },
+
+  {
+    id: faker.datatype.uuid(),
+    name: 'Value Added Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 16,
+      modify: (changePercentage) => 6 + 16 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 40,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.003 * gdp + 0.003 * 39 * gdp * graduation,
+      popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
+      viral: (graduation) => 0,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Corporation Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 28,
+      modify: (changePercentage) => 6 + 16 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 50,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.0011 * gdp + 0.0011 * 49 * gdp * graduation,
+      popularity: (graduation) => -0.02 - (2.5 * graduation) ** 2 / 100,
+      viral: (graduation) => 0,
+    },
+  },
   // {
   //   id: faker.datatype.uuid(),
   //   name: 'Carbon Tax',
