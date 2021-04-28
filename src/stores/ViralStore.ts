@@ -281,7 +281,28 @@ const useViralStore = create<State>(
       return vaccinesAdministered;
     },
 
-    vaccinateUnsimulated: (vaccinations, turn) => {},
+    vaccinateUnsimulated: (vaccinations, turn) => {
+      const { createInoculatedMachine, storeNewPerson } = get();
+      const newMachine = createPersonMachine();
+
+      const machines = Math.max(
+        1,
+        Math.min(94, Math.round(vaccinations / 200000))
+      );
+
+      let vaccinationsRemaining = vaccinations;
+
+      for (let i = 0; i < machines; i += 1) {
+        if (vaccinationsRemaining < 0) break;
+
+        const chosenState = getRandomStateByPopulation();
+        const represents = Math.round(vaccinationsRemaining / (machines - i));
+        const vaccinated = createInoculatedMachine(newMachine, represents);
+
+        storeNewPerson(vaccinated, chosenState, turn);
+        vaccinationsRemaining -= represents;
+      }
+    },
 
     vaccinate: (vaccinations, turn) => {
       const {
@@ -520,8 +541,6 @@ const useViralStore = create<State>(
     takeTurn: (vaccinations, turn) => {
       const { updateInfectedPerson, persons, vaccinate } = get();
 
-      vaccinate(vaccinations, turn);
-
       const personsCopy = lodash.cloneDeep(persons);
       const personsArray = Object.entries(personsCopy);
 
@@ -536,6 +555,8 @@ const useViralStore = create<State>(
             updateInfectedPerson(machineComponent, residentState, turn);
         }
       }
+
+      vaccinate(vaccinations, turn);
 
       set((state) => {
         state.actionModifiers[turn + 1] = lodash.cloneDeep(
