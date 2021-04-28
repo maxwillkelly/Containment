@@ -262,9 +262,8 @@ const useViralStore = create<State>(
           if (!machine.done) {
             const newMachine = personMachine.transition(machine, 'Inoculate');
 
-            const residentCopy = lodash.cloneDeep(resident);
-            residentCopy.machine = newMachine;
-            vaccinationsRemaining -= residentCopy.represents;
+            resident.machine = newMachine;
+            vaccinationsRemaining -= resident.represents;
 
             break;
           }
@@ -287,6 +286,8 @@ const useViralStore = create<State>(
         vaccinateUnsimulated,
         vaccinateRecovered,
       } = get();
+
+      if (vaccinations <= 0) return;
 
       const viralDetails = getViralDetails(turn);
       const { cumulative } = viralDetails;
