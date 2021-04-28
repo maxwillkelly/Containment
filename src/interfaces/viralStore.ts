@@ -161,6 +161,10 @@ export type State = {
     turn: number
   ) => void;
 
+  infect: (turn: number) => void;
+
+  cloneActionModifiers: (turn: number) => void;
+
   takeTurn: (vaccinations: number, turn: number) => void;
 
   setActionModifiers: () => void;

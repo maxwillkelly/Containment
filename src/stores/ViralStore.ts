@@ -538,8 +538,8 @@ const useViralStore = create<State>(
       }
     },
 
-    takeTurn: (vaccinations, turn) => {
-      const { updateInfectedPerson, persons, vaccinate } = get();
+    infect: (turn) => {
+      const { persons, updateInfectedPerson } = get();
 
       const personsCopy = lodash.cloneDeep(persons);
       const personsArray = Object.entries(personsCopy);
@@ -557,14 +557,21 @@ const useViralStore = create<State>(
           }
         }
       }
+    },
 
-      vaccinate(vaccinations, turn);
-
+    cloneActionModifiers: (turn) =>
       set((state) => {
         state.actionModifiers[turn + 1] = lodash.cloneDeep(
           state.actionModifiers[turn]
         );
-      });
+      }),
+
+    takeTurn: (vaccinations, turn) => {
+      const { infect, vaccinate, cloneActionModifiers } = get();
+
+      infect(turn);
+      vaccinate(vaccinations, turn);
+      cloneActionModifiers(turn);
     },
 
     setActionModifiers: () => {
