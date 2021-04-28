@@ -548,11 +548,13 @@ const useViralStore = create<State>(
         // Gets persons from the last turn
         const turnPersons = statePersons[turn - 1];
 
-        for (const machineComponent of turnPersons) {
-          const { machine } = machineComponent;
+        if (turnPersons) {
+          for (const machineComponent of turnPersons) {
+            const { machine } = machineComponent;
 
-          if (machine.matches('infected'))
-            updateInfectedPerson(machineComponent, residentState, turn);
+            if (machine.matches('infected'))
+              updateInfectedPerson(machineComponent, residentState, turn);
+          }
         }
       }
 
