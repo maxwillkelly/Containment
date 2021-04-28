@@ -111,7 +111,11 @@ const useVaccineStore = create<State>(
     getVaccinations: (turn) => {
       const { vaccines } = get();
 
-      const vaccinesReceivedArray = vaccines.map((v) => v.received[turn]);
+      const vaccinesReceivedArray = vaccines.map((v) => {
+        const doses = v.received[turn - v.nextTransition - 1];
+        if (doses) return doses;
+        return 0;
+      });
 
       const vaccinations = reduceArrayElementsAddition(vaccinesReceivedArray);
       return vaccinations;

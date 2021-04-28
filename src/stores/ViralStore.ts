@@ -247,32 +247,35 @@ const useViralStore = create<State>(
     },
 
     vaccinateRecovered: (vaccinations, turn) => {
-      const { persons } = get();
+      // const { persons } = get();
 
-      let vaccinationsRemaining = vaccinations;
-      const personsWorking = lodash.cloneDeep(persons);
+      const vaccinationsRemaining = vaccinations;
+      // const personsWorking = lodash.cloneDeep(persons);
 
-      while (vaccinationsRemaining < 0) {
-        const stateChosen = getRandomStateByPopulation();
-        const stateResidents = personsWorking[stateChosen][turn];
+      // while (vaccinationsRemaining > 0) {
+      //   const stateChosen = getRandomStateByPopulation();
 
-        for (const resident of stateResidents) {
-          const { machine } = resident;
+      //   if (personsWorking[stateChosen] && personsWorking[stateChosen][turn]) {
+      //     const stateResidents = personsWorking[stateChosen][turn];
 
-          if (!machine.done) {
-            const newMachine = personMachine.transition(machine, 'Inoculate');
+      //     for (const resident of stateResidents) {
+      //       const { machine } = resident;
 
-            resident.machine = newMachine;
-            vaccinationsRemaining -= resident.represents;
+      //       if (!machine.done) {
+      //         const newMachine = personMachine.transition(machine, 'Inoculate');
 
-            break;
-          }
-        }
-      }
+      //         resident.machine = newMachine;
+      //         vaccinationsRemaining -= resident.represents;
 
-      set((state) => {
-        state.persons = personsWorking;
-      });
+      //         break;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // set((state) => {
+      //   state.persons = personsWorking;
+      // });
 
       const vaccinesAdministered = vaccinations - vaccinationsRemaining;
       return vaccinesAdministered;
