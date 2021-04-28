@@ -66,14 +66,14 @@ type State = {
 
 const useVaccineStore = create<State>(
   immer((set, get) => ({
-    candidatesAppear: 1,
+    candidatesAppear: 6,
     candidateChance: 0.25,
     vaccines: [],
 
     stageDetails: {
-      phase1: { min: 1, max: 1, chance: 1 },
-      phase2: { min: 1, max: 1, chance: 1 },
-      phase3: { min: 1, max: 1, chance: 1 },
+      phase1: { min: 2, max: 6, chance: 0.6 },
+      phase2: { min: 4, max: 8, chance: 0.5 },
+      phase3: { min: 6, max: 10, chance: 0.4 },
     },
 
     getPhase: (vaccine) => {
