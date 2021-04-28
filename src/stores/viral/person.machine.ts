@@ -1,5 +1,4 @@
 import { Machine, State, StateMachine } from 'xstate';
-// import { v4 as uuid } from 'uuid';
 
 export type Event =
   | { type: 'Infect' }
@@ -85,13 +84,17 @@ export const personMachine = Machine<undefined, Schema, Event>({
       // },
       // },
     },
-    inoculated: {},
+    inoculated: {
+      type: 'final',
+    },
     recovered: {
       on: {
         Inoculate: 'inoculated',
       },
     },
-    death: {},
+    death: {
+      type: 'final',
+    },
   },
 });
 

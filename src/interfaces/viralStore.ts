@@ -1,3 +1,4 @@
+import { Action } from '../data/actions';
 import { PersonState } from '../stores/viral/person.machine';
 import { StateProps } from './states';
 
@@ -32,9 +33,11 @@ export type State = {
   infectionExpansion: number;
   cfr: number;
   rangeFactor: RangeFactor;
+  minimumInfections: number;
 
   persons: Record<string, Record<number, MachineComponent[]>>;
   unsimulated: Record<string, number>;
+  actionModifiers: Record<number, Record<string, number>>;
 
   personsInitialised: boolean;
 
@@ -63,6 +66,10 @@ export type State = {
 
   getViralDetails: (turn: number, residentState?: string) => ViralDetails;
 
+  addActionModifier: (action: Action, turn: number) => void;
+  editActionModifier: (action: Action, turn: number) => void;
+  removeActionModifier: (action: Action, turn: number) => void;
+
   // Initialises the unsimulated property to have every resident state's unsimulated persons to be equal to its population
   setUnsimulated: () => void;
 
@@ -75,6 +82,10 @@ export type State = {
   // Starts an outbreak in a random resident state
   generateOutbreak: (turn: number) => void;
 
+  vaccinateUnsimulated: (vaccinations: number, turn: number) => void;
+  vaccinateRecovered: (vaccinations: number, turn: number) => number;
+  vaccinate: (vaccinations: number, turn: number) => void;
+
   // Initialises appropriate properties on persons if they haven't been already
   initialisesPersonsElement: (residentState: string, turn: number) => void;
 
@@ -86,6 +97,11 @@ export type State = {
   ) => void;
 
   createInfectedMachine: (
+    newMachine: PersonState,
+    infects: number
+  ) => MachineComponent;
+
+  createInoculatedMachine: (
     newMachine: PersonState,
     infects: number
   ) => MachineComponent;
@@ -145,7 +161,13 @@ export type State = {
     turn: number
   ) => void;
 
-  takeTurn: (turn: number) => void;
+  infect: (turn: number) => void;
+
+  cloneActionModifiers: (turn: number) => void;
+
+  takeTurn: (vaccinations: number, turn: number) => void;
+
+  setActionModifiers: () => void;
 
   reset: () => void;
 };

@@ -20,6 +20,8 @@ import {
   ViralDetails,
 } from '../interfaces/viralStore';
 import { StateProps } from '../interfaces/states';
+import { actions } from '../data/actions';
+import { getRandomStateByPopulation } from '../libs/geojson';
 
 const initialViralDetails: ViralDetails = {
   weekly: {
@@ -40,15 +42,17 @@ const initialViralDetails: ViralDetails = {
 const useViralStore = create<State>(
   immer((set, get) => ({
     rBaseline: 2,
-    infectionExpansion: 1.4,
+    infectionExpansion: 3,
     cfr: 0.02,
     rangeFactor: {
       short: 0.005,
       long: 0.001,
     },
+    minimumInfections: 6,
 
     persons: {},
     unsimulated: {},
+    actionModifiers: {},
 
     personsInitialised: false,
 
@@ -157,6 +161,25 @@ const useViralStore = create<State>(
       return viralDetails;
     },
 
+    addActionModifier: (action, turn) => {
+      const { id, graduationPercentage, impact } = action;
+
+      if (graduationPercentage === undefined) return;
+
+      const modifier = impact.viral(graduationPercentage);
+
+      set((state) => {
+        state.actionModifiers[turn + 1][id] = modifier;
+      });
+    },
+
+    editActionModifier: (action, turn) => get().addActionModifier(action, turn),
+
+    removeActionModifier: (action, turn) =>
+      set((state) => {
+        delete state.actionModifiers[turn + 1][action.id];
+      }),
+
     setUnsimulated: () => {
       const residentStates = states.features;
 
@@ -203,9 +226,8 @@ const useViralStore = create<State>(
 
       const closeState = statesProps.find((s) => s.fid === selectedFid);
 
-      if (closeState === undefined) {
+      if (closeState === undefined)
         throw new Error(`selectedFid ${selectedFid} doesn't exist`);
-      }
 
       return closeState;
     },
@@ -222,6 +244,86 @@ const useViralStore = create<State>(
       set((state) => {
         state.personsInitialised = true;
       });
+    },
+
+    vaccinateRecovered: (vaccinations, turn) => {
+      // const { persons } = get();
+
+      const vaccinationsRemaining = vaccinations;
+      // const personsWorking = lodash.cloneDeep(persons);
+
+      // while (vaccinationsRemaining > 0) {
+      //   const stateChosen = getRandomStateByPopulation();
+
+      //   if (personsWorking[stateChosen] && personsWorking[stateChosen][turn]) {
+      //     const stateResidents = personsWorking[stateChosen][turn];
+
+      //     for (const resident of stateResidents) {
+      //       const { machine } = resident;
+
+      //       if (!machine.done) {
+      //         const newMachine = personMachine.transition(machine, 'Inoculate');
+
+      //         resident.machine = newMachine;
+      //         vaccinationsRemaining -= resident.represents;
+
+      //         break;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // set((state) => {
+      //   state.persons = personsWorking;
+      // });
+
+      const vaccinesAdministered = vaccinations - vaccinationsRemaining;
+      return vaccinesAdministered;
+    },
+
+    vaccinateUnsimulated: (vaccinations, turn) => {
+      const { createInoculatedMachine, storeNewPerson } = get();
+      const newMachine = createPersonMachine();
+
+      const machines = Math.max(
+        1,
+        Math.min(94, Math.round(vaccinations / 200000))
+      );
+
+      let vaccinationsRemaining = vaccinations;
+
+      for (let i = 0; i < machines; i += 1) {
+        if (vaccinationsRemaining < 0) break;
+
+        const chosenState = getRandomStateByPopulation();
+        const represents = Math.round(vaccinationsRemaining / (machines - i));
+        const vaccinated = createInoculatedMachine(newMachine, represents);
+
+        storeNewPerson(vaccinated, chosenState, turn);
+        vaccinationsRemaining -= represents;
+      }
+    },
+
+    vaccinate: (vaccinations, turn) => {
+      const {
+        getViralDetails,
+        vaccinateUnsimulated,
+        vaccinateRecovered,
+      } = get();
+
+      if (vaccinations <= 0) return;
+
+      const viralDetails = getViralDetails(turn);
+      const { cumulative } = viralDetails;
+      const { unsimulated, recovered } = cumulative;
+
+      const recoveredPercentage = recovered / (unsimulated + recovered);
+      const recoveredEstimate = Math.round(recoveredPercentage * vaccinations);
+
+      const recoveredActual = vaccinateRecovered(recoveredEstimate, turn);
+      const unsimulatedActual = vaccinations - recoveredActual;
+
+      vaccinateUnsimulated(unsimulatedActual, turn);
     },
 
     initialisesPersonsElement: (residentState, turn) => {
@@ -261,6 +363,13 @@ const useViralStore = create<State>(
       };
     },
 
+    createInoculatedMachine: (newMachine, inoculated) => {
+      return {
+        machine: personMachine.transition(newMachine, 'Inoculate'),
+        represents: inoculated,
+      };
+    },
+
     createRecoveredMachine: (machineComponent, recoveries) => {
       return {
         machine: personMachine.transition(machineComponent.machine, 'Recover'),
@@ -297,14 +406,43 @@ const useViralStore = create<State>(
 
     addsCommunityInfections: (machineComponent, residentState, turn) => {
       const {
+        minimumInfections,
         infectionExpansion,
         createInfectedMachine,
         storeNewPerson,
+        getViralDetails,
+        actionModifiers,
       } = get();
 
       const { represents } = machineComponent;
 
-      const infects = Math.round(represents * infectionExpansion);
+      const stateProps: StateProps | undefined = states.features
+        .map((f) => f.properties)
+        .find((s) => s.name === residentState);
+
+      if (stateProps === undefined)
+        throw new Error(`Resident state ${residentState} doesn't exist`);
+
+      const { population } = stateProps;
+      const percentageInfected = represents / population;
+
+      const viralDetails = getViralDetails(turn, residentState);
+      const { unsimulated } = viralDetails.cumulative;
+      const percentageImmune = (population - unsimulated) / population;
+
+      let ceilingInfections =
+        represents * infectionExpansion -
+        200 * percentageInfected * represents -
+        15 * percentageImmune * represents * infectionExpansion;
+
+      const actionModifiersArray = Object.values(actionModifiers[turn]);
+      actionModifiersArray.forEach((am) => {
+        ceilingInfections += am;
+      });
+
+      const infects = Math.round(ceilingInfections);
+
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
 
@@ -316,6 +454,7 @@ const useViralStore = create<State>(
     addsShortRangeInfections: (machineComponent, residentState, turn) => {
       const {
         rangeFactor,
+        minimumInfections,
         selectCloseState,
         createInfectedMachine,
         storeNewPerson,
@@ -324,9 +463,9 @@ const useViralStore = create<State>(
       const { represents } = machineComponent;
       const { short } = rangeFactor;
 
-      const infects = Math.round(represents * short);
+      const infects = Math.round(represents * short * Math.random());
 
-      if (infects < 8) return;
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
       const patient = createInfectedMachine(newMachine, infects);
@@ -338,6 +477,7 @@ const useViralStore = create<State>(
     addsLongRangeInfections: (machineComponent, residentState, turn) => {
       const {
         rangeFactor,
+        minimumInfections,
         selectRandomState,
         createInfectedMachine,
         storeNewPerson,
@@ -346,9 +486,9 @@ const useViralStore = create<State>(
       const { represents } = machineComponent;
       const { long } = rangeFactor;
 
-      const infects = Math.round(represents * long);
+      const infects = Math.round(represents * long * Math.random());
 
-      if (infects < 4) return;
+      if (infects < minimumInfections) return;
 
       const newMachine = createPersonMachine();
       const patient = createInfectedMachine(newMachine, infects);
@@ -398,8 +538,8 @@ const useViralStore = create<State>(
       }
     },
 
-    takeTurn: (turn) => {
-      const { updateInfectedPerson, persons } = get();
+    infect: (turn) => {
+      const { persons, updateInfectedPerson } = get();
 
       const personsCopy = lodash.cloneDeep(persons);
       const personsArray = Object.entries(personsCopy);
@@ -408,17 +548,48 @@ const useViralStore = create<State>(
         // Gets persons from the last turn
         const turnPersons = statePersons[turn - 1];
 
-        for (const machineComponent of turnPersons) {
-          const { machine } = machineComponent;
+        if (turnPersons) {
+          for (const machineComponent of turnPersons) {
+            const { machine } = machineComponent;
 
-          if (machine.matches('infected'))
-            updateInfectedPerson(machineComponent, residentState, turn);
+            if (machine.matches('infected'))
+              updateInfectedPerson(machineComponent, residentState, turn);
+          }
         }
       }
     },
 
+    cloneActionModifiers: (turn) =>
+      set((state) => {
+        state.actionModifiers[turn + 1] = lodash.cloneDeep(
+          state.actionModifiers[turn]
+        );
+      }),
+
+    takeTurn: (vaccinations, turn) => {
+      const { infect, vaccinate, cloneActionModifiers } = get();
+
+      infect(turn);
+      vaccinate(vaccinations, turn);
+      cloneActionModifiers(turn);
+    },
+
+    setActionModifiers: () => {
+      const enabledActions = actions.filter((a) => a.enabledByDefault);
+      const initialModifiers: Record<string, number> = {};
+
+      enabledActions.forEach((action) => {
+        initialModifiers[action.id] = action.impact.popularity(0.5);
+      });
+
+      set((state) => {
+        state.actionModifiers = { 0: initialModifiers, 1: initialModifiers };
+      });
+    },
+
     reset: () => {
       get().setUnsimulated();
+      get().setActionModifiers();
 
       set((state) => {
         state.persons = {};

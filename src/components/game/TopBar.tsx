@@ -7,8 +7,8 @@ import {
   GiStoneCrafting,
   GiTestTubes,
 } from 'react-icons/gi';
+
 import { useHistory } from 'react-router-dom';
-import { finished } from 'stream';
 import { ViralDetails } from '../../interfaces/viralStore';
 import { formatCurrency, formatPercentage } from '../../libs/numeral';
 
@@ -18,6 +18,7 @@ import useBudgetStore from '../../stores/BudgetStore';
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 import usePoliticalStore from '../../stores/PoliticalStore';
+import useVaccineStore from '../../stores/VaccineStore';
 import useViralStore from '../../stores/ViralStore';
 import ActionsMenu from './ActionsMenu';
 
@@ -150,8 +151,8 @@ const MapSettingsButton: React.FC = () => {
   );
 };
 
-const ResearchButton: React.FC = () => {
-  const applet = 'ResearchButton';
+const VaccinesButton: React.FC = () => {
+  const applet = 'VaccinesButton';
   const activeApplet = useGameStore((state) => state.activeApplet);
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
@@ -234,12 +235,14 @@ const AdvanceTurnButton: React.FC = () => {
   const turn = useGameStore((state) => state.turn);
   const getPopularity = usePoliticalStore((state) => state.getPopularity);
   const getViralDetails = useViralStore((state) => state.getViralDetails);
+  const getVaccinations = useVaccineStore((state) => state.getVaccinations);
 
   const takeTurn = useViralStore((state) => state.takeTurn);
   const advanceActionTurn = useActionsStore((state) => state.advanceTurn);
   const advanceBudgetTurn = useBudgetStore((state) => state.advanceTurn);
   const advanceGameTurn = useGameStore((state) => state.advanceTurn);
   const advancePoliticalTurn = usePoliticalStore((state) => state.advanceTurn);
+  const advanceVaccineTurn = useVaccineStore((state) => state.advanceTurn);
 
   const checkFinished = () => {
     const popularity = getPopularity(turn);
@@ -252,7 +255,12 @@ const AdvanceTurnButton: React.FC = () => {
 
   const handleClick = () => {
     setLoading(true);
-    takeTurn(turn + 1);
+
+    const vaccinations = getVaccinations(turn);
+    const nextTurn = turn + 1;
+
+    takeTurn(vaccinations, nextTurn);
+    advanceVaccineTurn(nextTurn);
 
     advanceActionTurn();
     advanceBudgetTurn();
@@ -282,7 +290,7 @@ const TopBar: React.FC = () => {
         <div className="mr-auto" />
         <ReproductionIndicator />
         <MapSettingsButton />
-        <ResearchButton />
+        <VaccinesButton />
         <DashboardButton />
         <ImmunityBar />
         <AdvanceTurnButton />
