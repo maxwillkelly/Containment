@@ -55,7 +55,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.006 * gdp + 0.006 * gdp * 79 * graduation,
       popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
-      viral: (graduation) => 0,
+      viral: () => 0,
     },
   },
 
@@ -81,7 +81,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.003 * gdp + 0.003 * 39 * gdp * graduation,
       popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
-      viral: (graduation) => 0,
+      viral: () => 0,
     },
   },
   {
@@ -106,7 +106,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.0011 * gdp + 0.0011 * 49 * gdp * graduation,
       popularity: (graduation) => -0.02 - (2.5 * graduation) ** 2 / 100,
-      viral: (graduation) => 0,
+      viral: () => 0,
     },
   },
   {
@@ -131,7 +131,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.0011 * gdp + 0.0011 * 190 * gdp * graduation,
       popularity: (graduation) => -0.01 - (3.5 * graduation) ** 2 / 100,
-      viral: (graduation) => 0,
+      viral: () => 0,
     },
   },
   // {
@@ -150,14 +150,31 @@ export const actions: Action[] = [
   //   enabledByDefault: false,
   //   inputs: ['checkbox'],
   // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Public Healthcare',
-  //   category: 'Health',
-  //   turnAvailable: 0,
-  //   enabledByDefault: true,
-  //   inputs: ['slider'],
-  // },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Public Healthcare',
+    category: 'Health',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 32,
+      cancel: 40,
+      modify: (graduation) => 4 + 36 * graduation,
+    },
+    range: {
+      step: (0.01 * gdp) / 1000000000000,
+      lowest: (0.03 * gdp) / 1000000000000,
+      highest: (0.15 * gdp) / 1000000000000,
+      textPrepend: '£',
+      textAppend: ' trillion',
+    },
+    impact: {
+      budget: (graduation) => 0.03 * gdp + 0.12 * gdp * graduation,
+      popularity: (graduation) => 0.03 + 0.07 * graduation,
+      viral: (graduation) => 0.01 + 0.05 * graduation,
+    },
+  },
   // {
   //   id: faker.datatype.uuid(),
   //   name: 'Unemployment Benefit',
