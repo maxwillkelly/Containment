@@ -16,7 +16,7 @@ export const actions: Action[] = [
     pointsCost: {
       start: 14,
       cancel: 20,
-      modify: (changePercentage) => 4 + 20 * changePercentage,
+      modify: (changePercentage) => 4 + 16 * changePercentage,
     },
     range: {
       step: 100,
@@ -69,7 +69,7 @@ export const actions: Action[] = [
     pointsCost: {
       start: 24,
       cancel: 16,
-      modify: (changePercentage) => 6 + 16 * changePercentage,
+      modify: (changePercentage) => 8 + 16 * changePercentage,
     },
     range: {
       step: 1,
@@ -94,7 +94,7 @@ export const actions: Action[] = [
     pointsCost: {
       start: 24,
       cancel: 28,
-      modify: (changePercentage) => 6 + 16 * changePercentage,
+      modify: (changePercentage) => 6 + 22 * changePercentage,
     },
     range: {
       step: 1,
@@ -109,14 +109,31 @@ export const actions: Action[] = [
       viral: (graduation) => 0,
     },
   },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Carbon Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: false,
-  //   inputs: ['slider'],
-  // },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Carbon Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 20,
+      cancel: 24,
+      modify: (changePercentage) => 6 + 14 * changePercentage,
+    },
+    range: {
+      step: 10,
+      lowest: 10,
+      highest: 200,
+      textPrepend: '£',
+      textAppend: ' per tonne',
+    },
+    impact: {
+      budget: (graduation) => 0.0011 * gdp + 0.0011 * 190 * gdp * graduation,
+      popularity: (graduation) => -0.01 - (3.5 * graduation) ** 2 / 100,
+      viral: (graduation) => 0,
+    },
+  },
   // {
   //   id: faker.datatype.uuid(),
   //   name: 'Defence Production Act',
