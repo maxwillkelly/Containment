@@ -2271,11 +2271,6 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-amplitudejs@^5.3.0:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/amplitudejs/-/amplitudejs-5.3.1.tgz#56c071808443ef796b8cf53ec4ed25cb5ea672a7"
-  integrity sha512-5T0+e4xJIi2FjobGqnMfS77SU0CFmYeBXpGX6zc1MLbr5FY+5R9x2EwiFlKCekcykWoPPFaBMqg72M7OAaDdow==
-
 ansi-align@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.0.tgz#b536b371cf687caaef236c18d3e21fe3797467cb"
