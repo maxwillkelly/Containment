@@ -97,37 +97,37 @@ const ViralDetails: React.FC = () => {
   );
 };
 
-const DebugDetails: React.FC = () => {
-  const turn = useGameStore((state) => state.turn);
-  const selectedState = useMapStore((state) => state.selectedState);
-  const getMachinesTotal = useViralStore((state) => state.getMachinesTotal);
-  const getMachinesStates = useViralStore((state) => state.getMachinesStates);
-  const getViralDetails = useViralStore((state) => state.getViralDetails);
+// const DebugDetails: React.FC = () => {
+//   const turn = useGameStore((state) => state.turn);
+//   const selectedState = useMapStore((state) => state.selectedState);
+//   const getMachinesTotal = useViralStore((state) => state.getMachinesTotal);
+//   const getMachinesStates = useViralStore((state) => state.getMachinesStates);
+//   const getViralDetails = useViralStore((state) => state.getViralDetails);
 
-  const viralDetails = selectedState
-    ? getViralDetails(turn, selectedState.name)
-    : getViralDetails(turn);
+//   const viralDetails = selectedState
+//     ? getViralDetails(turn, selectedState.name)
+//     : getViralDetails(turn);
 
-  return (
-    <>
-      <DashedHeading>Debug</DashedHeading>
-      {selectedState && (
-        <InformationList>
-          <h4 className="text-left">Person Machines</h4>
-          <h4 className="text-right">{getMachinesTotal(selectedState.name)}</h4>
-          <pre>
-            {JSON.stringify(getMachinesStates(selectedState.name), null, 2)}
-          </pre>
-        </InformationList>
-      )}
-      <InformationList>
-        <h4 className="text-left">Viral Details</h4>
-        <h4 className="text-right">{}</h4>
-        <pre>{JSON.stringify(viralDetails, null, 2)}</pre>
-      </InformationList>
-    </>
-  );
-};
+//   return (
+//     <>
+//       <DashedHeading>Debug</DashedHeading>
+//       {selectedState && (
+//         <InformationList>
+//           <h4 className="text-left">Person Machines</h4>
+//           <h4 className="text-right">{getMachinesTotal(selectedState.name)}</h4>
+//           <pre>
+//             {JSON.stringify(getMachinesStates(selectedState.name), null, 2)}
+//           </pre>
+//         </InformationList>
+//       )}
+//       <InformationList>
+//         <h4 className="text-left">Viral Details</h4>
+//         <h4 className="text-right">{}</h4>
+//         <pre>{JSON.stringify(viralDetails, null, 2)}</pre>
+//       </InformationList>
+//     </>
+//   );
+// };
 
 const MapDrawer: React.FC = () => {
   const open = useMapStore((state) => state.isMapDrawerOpen);
@@ -146,7 +146,7 @@ const MapDrawer: React.FC = () => {
       </div>
       <ViralDetails />
       {selectedState ? <StateDetails /> : <NationalDetails />}
-      <DebugDetails />
+      {/* <DebugDetails /> */}
     </aside>
   );
 };
