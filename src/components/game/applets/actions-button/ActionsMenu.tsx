@@ -2,12 +2,12 @@ import React from 'react';
 import shallow from 'zustand/shallow';
 import { FaSearch } from 'react-icons/fa';
 
-import categories, { Category } from '../../data/categories';
+import categories, { Category } from '../../../../data/categories';
 
-import useActionsStore from '../../stores/ActionsStore';
-import useActionsMenuStore from '../../stores/ActionsMenuStore';
-import useGameStore from '../../stores/GameStore';
-import ActionItem from '../shared/ActionItem';
+import useActionsStore from '../../../../stores/ActionsStore';
+import useActionsMenuStore from '../../../../stores/ActionsMenuStore';
+import useGameStore from '../../../../stores/GameStore';
+import ActionItem from '../../../shared/ActionItem';
 
 const SearchBar: React.FC = () => {
   const [searchText, setSearchText] = useActionsMenuStore(
