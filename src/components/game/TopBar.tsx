@@ -4,9 +4,9 @@ import PauseButton from './applets/PauseButton';
 import ActionsButton from './applets/ActionsButton';
 import NationalApproval from './applets/NationalApproval';
 import BudgetIndicator from './applets/BudgetIndicator';
-import MapSettingsButton from './applets/MapSettingsButton';
+// import MapSettingsButton from './applets/MapSettingsButton';
 import VaccinesButton from './applets/VaccinesButton';
-import DashboardButton from './applets/DashboardButton';
+// import DashboardButton from './applets/DashboardButton';
 import ImmunityBar from './applets/ImmunityBar';
 import AdvanceTurnButton from './applets/AdvanceTurnButton';
 
@@ -18,9 +18,9 @@ const TopBar: React.FC = () => (
       <NationalApproval />
       <BudgetIndicator />
       <div className="mr-auto" />
-      <MapSettingsButton />
+      {/* <MapSettingsButton /> */}
       <VaccinesButton />
-      <DashboardButton />
+      {/* <DashboardButton /> */}
       <ImmunityBar />
       <AdvanceTurnButton />
     </div>
