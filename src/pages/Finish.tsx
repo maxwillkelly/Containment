@@ -33,8 +33,13 @@ const Finish: React.FC = () => {
         title={success ? 'Congratulations' : 'You have been defeated'}
         footer={<Footer />}
       >
-        <div className="flex items-center justify-center h-full w-full">
-          <div className="grid grid-cols-2 grid-flow-row place-items-center gap-y-3 px-4 py-5 w-96 text-base text-white">
+        <div className="flex flex-col items-center justify-center h-full w-full text-white">
+          <h3 className="text-base text-justify w-2/3 pb-3">
+            {success
+              ? 'You have steered the United Planet during the pandemic and for that you will be commended like a war hero.'
+              : "Unfortunately, you have been removed by your own party due to your personal unpopularity in a leadership contest. Maybe you enforced too many restrictions that people were not willing to put up with or maybe you callously stood by and watched millions die. I don't know, this text is the same regardless of how you lose."}
+          </h3>
+          <div className="grid grid-cols-2 grid-flow-row place-items-center gap-y-3 px-5 py-5 w-96 text-base">
             <h4 className="text-left text-lg text-yellow-300">Infected</h4>
             <h4 className="text-right">{formatNumber(cumulative.infected)}</h4>
             <h4 className="text-left text-lg text-red-500">Deaths</h4>

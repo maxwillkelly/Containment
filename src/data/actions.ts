@@ -494,9 +494,9 @@ export const actions: Action[] = [
     enabledByDefault: false,
     inputs: ['slider'],
     pointsCost: {
-      start: 20,
-      cancel: 15,
-      modify: (graduation) => 1 + 14 * graduation,
+      start: 30,
+      cancel: 24,
+      modify: (graduation) => 6 + 18 * graduation,
     },
     range: {
       step: 5,
@@ -523,6 +523,14 @@ export const actions: Action[] = [
   //   id: faker.datatype.uuid(),
   //   name: 'Intelligence Services',
   //   category: 'Crime',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Contact Tracing',
+  //   category: 'Health',
   //   turnAvailable: 0,
   //   enabledByDefault: false,
   //   inputs: ['slider'],
