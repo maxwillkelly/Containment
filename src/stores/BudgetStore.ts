@@ -1,6 +1,7 @@
 import lodash from 'lodash';
 import create from 'zustand';
-import { actions, Action } from '../data/actions';
+import { Action } from '../interfaces/action';
+import { actions } from '../data/actions';
 import { getHighestValueKey } from '../libs/object';
 import immer from './shared/immer';
 

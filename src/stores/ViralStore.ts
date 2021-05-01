@@ -3,7 +3,7 @@ import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
 
-import { createPersonMachine, personMachine } from './viral/person.machine';
+import { createPersonMachine, personMachine } from './machines/person';
 
 import states from '../../map/geojson/states.json';
 
@@ -246,6 +246,7 @@ const useViralStore = create<State>(
       });
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     vaccinateRecovered: (vaccinations, turn) => {
       // const { persons } = get();
 

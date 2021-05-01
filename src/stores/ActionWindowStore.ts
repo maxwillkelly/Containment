@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { Action } from '../data/actions';
+import { Action } from '../interfaces/action';
 
 type Graduation = {
   totalSteps?: number;

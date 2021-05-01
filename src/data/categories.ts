@@ -1,12 +1,12 @@
 const categories = [
   'Health',
-  'Constitution',
+  'Emergency',
   'Welfare',
   'Education',
   'Environment',
   'Energy',
   'Foreign Affairs',
-  'Crime',
+  'Justice',
   'Transportation',
   'Taxation',
 ] as const;

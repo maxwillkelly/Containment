@@ -8,7 +8,7 @@ import {
   createVaccineMachine,
   vaccineMachine,
   VaccineState,
-} from './vaccine/vaccine.machine';
+} from './machines/vaccine';
 
 import { capitalise } from '../libs/string';
 import { reduceArrayElementsAddition } from '../libs/reduce';

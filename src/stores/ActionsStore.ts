@@ -1,7 +1,8 @@
 import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
-import { actions, Action } from '../data/actions';
+import { actions } from '../data/actions';
+import { Action } from '../interfaces/action';
 
 const POINTS_START = 30;
 const POINTS_MAX = 40;
@@ -23,6 +24,7 @@ type State = {
     graduationPercentage: number
   ) => Action;
 
+  calcMiddlePercentage: (action: Action) => number;
   calcEditDeduction: (action: Action, graduationPercentage: number) => number;
   editAction: (actionParameter: Action, graduationPercentage: number) => Action;
 
@@ -76,10 +78,23 @@ const useActionsStore = create<State>(
       return action;
     },
 
-    calcEditDeduction: (action: Action, graduationPercentage: number) => {
-      const oldGraduationPercentage = action.graduationPercentage;
+    calcMiddlePercentage: (action) => {
+      const { step, lowest, highest } = action.range;
 
-      if (oldGraduationPercentage === undefined) return -1;
+      const rawRange = highest - lowest;
+      const totalSteps = rawRange / step;
+
+      const currentSteps = Math.round(totalSteps / 2);
+      const percentage = currentSteps / totalSteps;
+
+      return percentage;
+    },
+
+    calcEditDeduction: (action, graduationPercentage) => {
+      const oldGraduationPercentage =
+        action.graduationPercentage === undefined
+          ? get().calcMiddlePercentage(action)
+          : action.graduationPercentage;
 
       const graduationChange = Math.abs(
         oldGraduationPercentage - graduationPercentage

@@ -1,43 +1,11 @@
 import faker from 'faker';
-import { Category } from './categories';
+import { Action } from '../interfaces/action';
 
-export type ActionInput = 'slider' | 'checkbox' | 'progressiveTax';
+const averageIncome = 40000;
+const population = 923000000;
+const gdp = averageIncome * population;
 
-export type ActionPointsCost = {
-  start: number;
-  cancel: number;
-  modify: (changePercentage: number) => number;
-};
-
-export type ActionImpact = {
-  budget: (graduation: number) => number;
-  popularity: (graduation: number) => number;
-  viral: (graduation: number) => number;
-};
-
-export type ActionRange = {
-  step: number;
-  lowest: number;
-  highest: number;
-  textPrepend: string;
-  textAppend: string;
-};
-
-export type Action = {
-  id: string;
-  name: string;
-  category: Category;
-  description?: string;
-  turnAvailable: number;
-  enabledByDefault: boolean;
-  inputs: ActionInput[];
-  pointsCost: ActionPointsCost;
-  range: ActionRange;
-  impact: ActionImpact;
-  graduationPercentage?: number;
-};
-
-export const actions: Array<Action> = [
+export const actions: Action[] = [
   {
     id: faker.datatype.uuid(),
     name: 'Universal Basic Income',
@@ -48,7 +16,7 @@ export const actions: Array<Action> = [
     pointsCost: {
       start: 14,
       cancel: 20,
-      modify: (changePercentage) => 4 + 20 * changePercentage,
+      modify: (changePercentage) => 6 + 8 * changePercentage,
     },
     range: {
       step: 100,
@@ -58,62 +26,588 @@ export const actions: Array<Action> = [
       textAppend: ' per year',
     },
     impact: {
-      budget: (graduation) => -6936345000000 + -1727149905000000 * graduation,
+      budget: (graduation) =>
+        -population * 100 * 1.002 - population * 24900 * graduation,
       popularity: (graduation) => 0.03 + graduation * 0.1,
       viral: (graduation) => -0.02 * graduation,
     },
   },
+
+  {
+    id: faker.datatype.uuid(),
+    name: 'Income Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 28,
+      cancel: 32,
+      modify: (changePercentage) => 6 + 22 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 70,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.006 * gdp + 0.006 * gdp * 69 * graduation,
+      popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
+      viral: () => 0,
+    },
+  },
+
+  {
+    id: faker.datatype.uuid(),
+    name: 'Value Added Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 28,
+      cancel: 20,
+      modify: (changePercentage) => 8 + 12 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 40,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.003 * gdp + 0.003 * 39 * gdp * graduation,
+      popularity: (graduation) => -0.03 - (4 * graduation) ** 2 / 100,
+      viral: () => 0,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Corporation Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 28,
+      modify: (changePercentage) => 6 + 18 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 50,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.0011 * gdp + 0.0011 * 49 * gdp * graduation,
+      popularity: (graduation) => -0.02 - (2.5 * graduation) ** 2 / 100,
+      viral: () => 0,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Carbon Tax',
+    category: 'Taxation',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 20,
+      cancel: 24,
+      modify: (changePercentage) => 6 + 14 * changePercentage,
+    },
+    range: {
+      step: 10,
+      lowest: 10,
+      highest: 200,
+      textPrepend: '£',
+      textAppend: ' per tonne',
+    },
+    impact: {
+      budget: (graduation) => 0.0011 * gdp + 0.0011 * 190 * gdp * graduation,
+      popularity: (graduation) => -0.01 - (3.5 * graduation) ** 2 / 100,
+      viral: () => 0,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Defence Production Act',
+    category: 'Emergency',
+    turnAvailable: 6,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 12,
+      cancel: 12,
+      modify: (changePercentage) => 3 + 9 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.00001 * gdp * graduation,
+      popularity: (graduation) => 0.001 + 0.007 * graduation,
+      viral: (graduation) => 0.001 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'State of Emergency',
+    category: 'Emergency',
+    turnAvailable: 6,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 14,
+      cancel: 12,
+      modify: (changePercentage) => 4 + 8 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '%',
+    },
+    impact: {
+      budget: (graduation) => 0.0001 * gdp * graduation,
+      popularity: (graduation) => 0.001 + 0.01 * graduation,
+      viral: (graduation) => 0.005 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Public Health Service',
+    category: 'Health',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 32,
+      cancel: 40,
+      modify: (graduation) => 4 + 28 * graduation,
+    },
+    range: {
+      step: (0.005 * gdp) / 1000000000000,
+      lowest: (0.03 * gdp) / 1000000000000,
+      highest: (0.15 * gdp) / 1000000000000,
+      textPrepend: '£',
+      textAppend: ' trillion',
+    },
+    impact: {
+      budget: (graduation) => -0.03 * gdp - 0.12 * gdp * graduation,
+      popularity: (graduation) => 0.03 + 0.07 * graduation,
+      viral: (graduation) => 0.01 + 0.05 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Unemployment Benefit',
+    category: 'Welfare',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 32,
+      modify: (graduation) => 3 + 21 * graduation,
+    },
+    range: {
+      step: 100,
+      lowest: 100,
+      highest: 25000,
+      textPrepend: '£',
+      textAppend: ' per year',
+    },
+    impact: {
+      budget: (graduation) =>
+        -population * 100 * 0.11 - population * 24900 * graduation * 0.1,
+      popularity: (graduation) => 0.02 + graduation * 0.02,
+      viral: (graduation) => -0.002 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Child Benefit',
+    category: 'Welfare',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 32,
+      modify: (graduation) => 3 + 21 * graduation,
+    },
+    range: {
+      step: 100,
+      lowest: 100,
+      highest: 8000,
+      textPrepend: '£',
+      textAppend: ' per year',
+    },
+    impact: {
+      budget: (graduation) =>
+        -population * 100 * 0.3 - population * 7900 * graduation * 0.25,
+      popularity: (graduation) => 0.01 + graduation * 0.04,
+      viral: (graduation) => -0.001 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Online Education Program',
+    category: 'Education',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 12,
+      cancel: 16,
+      modify: (graduation) => 2 + 10 * graduation,
+    },
+    range: {
+      step: (0.000125 * gdp) / 1000000000,
+      lowest: (0.000125 * gdp) / 1000000000,
+      highest: (0.005 * gdp) / 1000000000,
+      textPrepend: '£',
+      textAppend: ' billion',
+    },
+    impact: {
+      budget: (graduation) => -0.000125 * gdp - 0.004875 * gdp * graduation,
+      popularity: (graduation) => 0.005 + graduation * 0.005,
+      viral: (graduation) => -0.001 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Telecommunication Initiative',
+    category: 'Environment',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 14,
+      cancel: 18,
+      modify: (graduation) => 2 + 12 * graduation,
+    },
+    range: {
+      step: (0.00025 * gdp) / 1000000000,
+      lowest: (0.00025 * gdp) / 1000000000,
+      highest: (0.01 * gdp) / 1000000000,
+      textPrepend: '£',
+      textAppend: ' billion',
+    },
+    impact: {
+      budget: (graduation) => -0.00025 * gdp - 0.00975 * gdp * graduation,
+      popularity: (graduation) => 0.006 + graduation * 0.008,
+      viral: (graduation) => -0.002 - 0.004 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Inside Capacity Limits',
+    category: 'Emergency',
+    turnAvailable: 8,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 20,
+      cancel: 14,
+      modify: (graduation) => 3 + 11 * graduation,
+    },
+    range: {
+      step: 10,
+      lowest: 0,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '% restricted',
+    },
+    impact: {
+      budget: (graduation) => -0.1 * gdp * graduation,
+      popularity: (graduation) => -0.01 - 0.05 * graduation,
+      viral: (graduation) => -0.05 - 0.2 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Outdoor Gathering Limits',
+    category: 'Emergency',
+    turnAvailable: 12,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 18,
+      cancel: 12,
+      modify: (graduation) => 2 + 10 * graduation,
+    },
+    range: {
+      step: 10,
+      lowest: 0,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '% restricted',
+    },
+    impact: {
+      budget: (graduation) => -0.025 * gdp * graduation,
+      popularity: (graduation) => -0.03 - 0.07 * graduation,
+      viral: (graduation) => -0.02 - 0.03 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Compulsory Mask Wearing',
+    category: 'Emergency',
+    turnAvailable: 12,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 16,
+      cancel: 16,
+      modify: (graduation) => 4 + 12 * graduation,
+    },
+    range: {
+      step: 100,
+      lowest: 100,
+      highest: 10000,
+      textPrepend: '£',
+      textAppend: ' max fine',
+    },
+    impact: {
+      budget: (graduation) => 0.001 * gdp + 0.005 * population * graduation,
+      popularity: (graduation) => 0.01 - 0.01 * graduation,
+      viral: (graduation) => -0.05 - 0.1 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Public Health Campaign',
+    category: 'Health',
+    turnAvailable: 4,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 6,
+      cancel: 6,
+      modify: (graduation) => 1 + 5 * graduation,
+    },
+    range: {
+      step: (0.0001 * gdp) / 1000000000,
+      lowest: (0.0001 * gdp) / 1000000000,
+      highest: (0.001 * gdp) / 1000000000,
+      textPrepend: '£',
+      textAppend: ' billion',
+    },
+    impact: {
+      budget: (graduation) => -0.0001 * gdp - 0.0009 * gdp * graduation,
+      popularity: () => 0,
+      viral: (graduation) => -0.01 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Private Healthcare Subsidies',
+    category: 'Health',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 16,
+      cancel: 8,
+      modify: (graduation) => 8 + 8 * graduation,
+    },
+    range: {
+      step: (0.0005 * gdp) / 1000000000000,
+      lowest: (0.0005 * gdp) / 1000000000000,
+      highest: (0.05 * gdp) / 1000000000000,
+      textPrepend: '£',
+      textAppend: ' trillion',
+    },
+    impact: {
+      budget: (graduation) => -0.0005 * gdp - 0.0495 * gdp * graduation,
+      popularity: (graduation) => -0.03 - 0.05 * graduation,
+      viral: (graduation) => 0.001 + 0.02 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Quarantining International Arrivals',
+    category: 'Foreign Affairs',
+    turnAvailable: 6,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 14,
+      cancel: 14,
+      modify: (graduation) => 6 + 8 * graduation,
+    },
+    range: {
+      step: (0.0003 * gdp) / 1000000000,
+      lowest: (0.0003 * gdp) / 1000000000,
+      highest: (0.003 * gdp) / 1000000000,
+      textPrepend: '£',
+      textAppend: '',
+    },
+    impact: {
+      budget: (graduation) => -0.0003 * gdp - 0.0027 * gdp * graduation,
+      popularity: (graduation) => 0.02 + 0.05 * graduation,
+      viral: (graduation) => -0.02 - 0.02 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Restrictions on Interstate Migration',
+    category: 'Foreign Affairs',
+    turnAvailable: 12,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 28,
+      cancel: 20,
+      modify: (graduation) => 8 + 12 * graduation,
+    },
+    range: {
+      step: 5,
+      lowest: 0,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '% restricted',
+    },
+    impact: {
+      budget: (graduation) => -0.03 * gdp - 0.027 * gdp * graduation,
+      popularity: (graduation) => -0.01 - 0.07 * graduation,
+      viral: (graduation) => -0.05 - 0.1 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Stay At Home Order',
+    category: 'Emergency',
+    turnAvailable: 12,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 30,
+      cancel: 24,
+      modify: (graduation) => 6 + 18 * graduation,
+    },
+    range: {
+      step: 5,
+      lowest: 0,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '% restricted',
+    },
+    impact: {
+      budget: (graduation) => -0.06 * gdp - 0.06 * gdp * graduation,
+      popularity: (graduation) => -0.03 - 0.07 * graduation,
+      viral: (graduation) => -0.1 - 0.2 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Contact Tracing',
+    category: 'Health',
+    turnAvailable: 0,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 12,
+      cancel: 14,
+      modify: (changePercentage) => 2 + 10 * changePercentage,
+    },
+    range: {
+      step: (0.0004 * gdp) / 1000000000,
+      lowest: (0.0004 * gdp) / 1000000000,
+      highest: (0.004 * gdp) / 1000000000,
+      textPrepend: '£',
+      textAppend: ' billion',
+    },
+    impact: {
+      budget: (graduation) => -0.0004 * gdp - 0.0036 * gdp * graduation,
+      popularity: (graduation) => 0.01 + 0.02 * graduation,
+      viral: (graduation) => -0.001 - 0.005 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'Furlough Scheme',
+    category: 'Welfare',
+    turnAvailable: 10,
+    enabledByDefault: false,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 20,
+      cancel: 28,
+      modify: (changePercentage) => 8 + 20 * changePercentage,
+    },
+    range: {
+      step: 1,
+      lowest: 1,
+      highest: 100,
+      textPrepend: '',
+      textAppend: '% wages',
+    },
+    impact: {
+      budget: (graduation) =>
+        -population * 0.12 * averageIncome * 0.01 -
+        population * 0.12 * averageIncome * 0.99 * graduation,
+      popularity: (graduation) => 0.04 + graduation * 0.12,
+      viral: (graduation) => -0.03 * graduation,
+    },
+  },
+  {
+    id: faker.datatype.uuid(),
+    name: 'State Pension',
+    category: 'Welfare',
+    turnAvailable: 0,
+    enabledByDefault: true,
+    inputs: ['slider'],
+    pointsCost: {
+      start: 24,
+      cancel: 36,
+      modify: (changePercentage) => 6 + 18 * changePercentage,
+    },
+    range: {
+      step: 100,
+      lowest: 100,
+      highest: 35000,
+      textPrepend: '£',
+      textAppend: ' per year',
+    },
+    impact: {
+      budget: (graduation) =>
+        -population * 100 * 0.26 - population * 0.25 * 34900 * graduation,
+      popularity: (graduation) => 0.03 + graduation * 0.06,
+      viral: (graduation) => -0.005 * graduation,
+    },
+  },
   // {
   //   id: faker.datatype.uuid(),
-  //   name: 'Income Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: true,
-  //   inputs: ['progressiveTax'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Value Added Tax',
-  //   category: 'Taxation',
+  //   name: 'Military',
+  //   category: 'Foreign Affairs',
   //   turnAvailable: 0,
   //   enabledByDefault: true,
   //   inputs: ['slider'],
   // },
   // {
   //   id: faker.datatype.uuid(),
-  //   name: 'Corporation Tax',
-  //   category: 'Taxation',
+  //   name: 'Defence Spending',
+  //   category: 'Foreign Affairs',
   //   turnAvailable: 0,
   //   enabledByDefault: true,
   //   inputs: ['slider'],
   // },
   // {
   //   id: faker.datatype.uuid(),
-  //   name: 'Carbon Tax',
-  //   category: 'Taxation',
-  //   turnAvailable: 0,
-  //   enabledByDefault: false,
-  //   inputs: ['slider'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Defence Production Act',
-  //   category: 'Constitution',
-  //   turnAvailable: 0,
-  //   enabledByDefault: false,
-  //   inputs: ['checkbox'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'State of Emergency',
-  //   category: 'Constitution',
-  //   turnAvailable: 0,
-  //   enabledByDefault: false,
-  //   inputs: ['checkbox'],
-  // },
-  // {
-  //   id: faker.datatype.uuid(),
-  //   name: 'Public Healthcare',
+  //   name: 'Higher Education Subsidies',
   //   category: 'Health',
   //   turnAvailable: 0,
   //   enabledByDefault: true,
@@ -121,16 +615,120 @@ export const actions: Array<Action> = [
   // },
   // {
   //   id: faker.datatype.uuid(),
-  //   name: 'Unemployment Benefit',
+  //   name: 'School Closures',
+  //   category: 'Health',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Police',
+  //   category: 'Justice',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Prisons',
+  //   category: 'Justice',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Education Subsidies',
+  //   category: 'Education',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'State Grants',
   //   category: 'Welfare',
   //   turnAvailable: 0,
-  //   enabledByDefault: true,
+  //   enabledByDefault: false,
   //   inputs: ['slider'],
   // },
   // {
   //   id: faker.datatype.uuid(),
-  //   name: 'Child Benefit',
+  //   name: 'Agricultural Subsidies',
+  //   category: 'Environment',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'International Aid',
+  //   category: 'Foreign Affairs',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Intelligence Services',
+  //   category: 'Justice',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Bus Subsidies',
+  //   category: 'Transportation',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Rail Subsidies',
+  //   category: 'Transportation',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Road Maintenance',
+  //   category: 'Transportation',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Highway Expansion',
+  //   category: 'Transportation',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Public Social Care Service',
   //   category: 'Health',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Public Social Care Service',
+  //   category: 'Transportation',
+  //   turnAvailable: 0,
+  //   enabledByDefault: false,
+  //   inputs: ['slider'],
+  // },
+  // {
+  //   id: faker.datatype.uuid(),
+  //   name: 'Legal Aid',
+  //   category: 'Justice',
   //   turnAvailable: 0,
   //   enabledByDefault: false,
   //   inputs: ['slider'],
