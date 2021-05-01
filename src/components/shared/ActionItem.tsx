@@ -1,5 +1,5 @@
 import React from 'react';
-import { Action } from '../../data/actions';
+import { Action } from '../../interfaces/action';
 import useGameStore from '../../stores/GameStore';
 import useMapStore from '../../stores/MapStore';
 

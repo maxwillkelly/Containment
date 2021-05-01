@@ -246,6 +246,7 @@ const useViralStore = create<State>(
       });
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     vaccinateRecovered: (vaccinations, turn) => {
       // const { persons } = get();
 
