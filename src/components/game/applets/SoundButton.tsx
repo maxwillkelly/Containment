@@ -20,7 +20,7 @@ const SoundButton = () => {
         )}
       </button>
       <audio autoPlay muted={muted} loop>
-        <source src="./music/bensound-epic.mp3" type="audio/mpeg" />
+        <source src="../music/bensound-epic.mp3" type="audio/mpeg" />
       </audio>
     </>
   );

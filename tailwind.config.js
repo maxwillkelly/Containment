@@ -2,6 +2,7 @@
 
 module.exports = {
   darkMode: 'class',
+  purge: ['./src/**/*.tsx'],
   theme: {
     backgroundColor: (theme) => ({
       ...theme('colors'),

@@ -1,10 +1,12 @@
 {
-  "name": "containment",
+  "name": "@maxwillkelly/containment",
   "productName": "Containment",
+  "version": "1.0.0",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
+    "dist": "yarn build && electron-builder build --publish always",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "package": "yarn build && electron-builder build --publish never",
@@ -31,6 +33,9 @@
   "build": {
     "productName": "Containment",
     "appId": "org.containment.app",
+    "publish": [{
+      "provider": "github"
+    }],
     "files": [
       "dist/",
       "node_modules/",
@@ -51,8 +56,7 @@
       "gatekeeperAssess": false
     },
     "dmg": {
-      "contents": [
-        {
+      "contents": [{
           "x": 130,
           "y": 220
         },
@@ -81,12 +85,13 @@
       "output": "release"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./music/**"
     ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxwillkelly/Containment"
+    "url": "git://github.com/maxwillkelly/Containment.git"
   },
   "author": {
     "name": "Max Kelly"
@@ -252,18 +257,16 @@
   },
   "browserslist": [],
   "prettier": {
-    "overrides": [
-      {
-        "files": [
-          ".prettierrc",
-          ".babelrc",
-          ".eslintrc"
-        ],
-        "options": {
-          "parser": "json"
-        }
+    "overrides": [{
+      "files": [
+        ".prettierrc",
+        ".babelrc",
+        ".eslintrc"
+      ],
+      "options": {
+        "parser": "json"
       }
-    ],
+    }],
     "singleQuote": true
   },
   "renovate": {
