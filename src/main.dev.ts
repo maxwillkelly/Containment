@@ -112,6 +112,8 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 /**
  * Add event listeners...
  */

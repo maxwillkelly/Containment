@@ -8,7 +8,7 @@ const MusicDirectory: Record<string, MusicDirectoryType> = {
   epic: {
     title: 'Epic',
     artist: 'Bensound',
-    path: '/possible/epic',
+    path: './epic',
   },
 };
 

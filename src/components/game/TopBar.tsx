@@ -7,6 +7,7 @@ import BudgetIndicator from './applets/BudgetIndicator';
 // import MapSettingsButton from './applets/MapSettingsButton';
 import VaccinesButton from './applets/VaccinesButton';
 // import DashboardButton from './applets/DashboardButton';
+import SoundButton from './applets/SoundButton';
 import ImmunityBar from './applets/ImmunityBar';
 import AdvanceTurnButton from './applets/AdvanceTurnButton';
 
@@ -21,6 +22,7 @@ const TopBar: React.FC = () => (
       {/* <MapSettingsButton /> */}
       <VaccinesButton />
       {/* <DashboardButton /> */}
+      <SoundButton />
       <ImmunityBar />
       <AdvanceTurnButton />
     </div>
