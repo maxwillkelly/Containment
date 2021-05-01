@@ -1,5 +1,5 @@
-import { Action } from '../data/actions';
-import { PersonState } from '../stores/viral/person.machine';
+import { Action } from './action';
+import { PersonState } from '../stores/machines/person';
 import { StateProps } from './states';
 
 export type ViralDetails = {

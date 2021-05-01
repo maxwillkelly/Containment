@@ -3,7 +3,7 @@ import create from 'zustand';
 import lodash from 'lodash';
 import immer from './shared/immer';
 
-import { createPersonMachine, personMachine } from './viral/person.machine';
+import { createPersonMachine, personMachine } from './machines/person';
 
 import states from '../../map/geojson/states.json';
 
