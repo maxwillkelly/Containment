@@ -6,7 +6,7 @@ const categories = [
   'Environment',
   'Energy',
   'Foreign Affairs',
-  'Crime',
+  'Justice',
   'Transportation',
   'Taxation',
 ] as const;
