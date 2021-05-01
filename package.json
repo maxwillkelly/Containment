@@ -91,10 +91,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/maxwillkelly/Containment.git"
+    "url": "git+https://github.com/maxwillkelly/Containment.git"
   },
   "author": {
-    "name": "Max Kelly"
+    "name": "Max Kelly",
+    "email": "maxwill.kelly@gmail.com"
   },
   "license": "MIT",
   "jest": {
