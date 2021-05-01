@@ -1,6 +1,6 @@
 const categories = [
   'Health',
-  'Constitution',
+  'Emergency',
   'Welfare',
   'Education',
   'Environment',
