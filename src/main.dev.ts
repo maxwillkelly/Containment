@@ -69,6 +69,7 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: true,
+    fullscreen: true,
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),
@@ -77,6 +78,14 @@ const createWindow = async () => {
       contextIsolation: false,
     },
   });
+
+  mainWindow.setBackgroundColor('#27272a');
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.setFullScreen(false);
+  } else {
+    mainWindow.setMenuBarVisibility(false);
+  }
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
