@@ -453,7 +453,7 @@ export const actions: Action[] = [
       lowest: (0.0003 * gdp) / 1000000000,
       highest: (0.003 * gdp) / 1000000000,
       textPrepend: '£',
-      textAppend: '',
+      textAppend: ' billion',
     },
     impact: {
       budget: (graduation) => -0.0003 * gdp - 0.0027 * gdp * graduation,
