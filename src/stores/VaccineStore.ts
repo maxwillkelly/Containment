@@ -18,6 +18,7 @@ export type Vaccine = {
   name: string;
   price: number;
   machine: VaccineState;
+  turnCreated: number;
   orders: number;
   received: number[];
   nextTransition: number;
@@ -67,13 +68,13 @@ type State = {
 const useVaccineStore = create<State>(
   immer((set, get) => ({
     candidatesAppear: 6,
-    candidateChance: 0.25,
+    candidateChance: 0.1,
     vaccines: [],
 
     stageDetails: {
-      phase1: { min: 2, max: 6, chance: 0.6 },
-      phase2: { min: 4, max: 8, chance: 0.5 },
-      phase3: { min: 6, max: 10, chance: 0.4 },
+      phase1: { min: 2, max: 6, chance: 0.95 },
+      phase2: { min: 4, max: 8, chance: 0.9 },
+      phase3: { min: 6, max: 10, chance: 0.8 },
     },
 
     getPhase: (vaccine) => {
@@ -112,7 +113,7 @@ const useVaccineStore = create<State>(
       const { vaccines } = get();
 
       const vaccinesReceivedArray = vaccines.map((v) => {
-        const doses = v.received[turn - v.nextTransition - 2];
+        const doses = v.received[turn - v.turnCreated - 2];
         if (doses) return doses;
         return 0;
       });
@@ -157,6 +158,7 @@ const useVaccineStore = create<State>(
         id: faker.datatype.uuid(),
         name: faker.name.lastName(),
         price: generatePrice(),
+        turnCreated: turn,
         nextTransition: -1,
         orders: 0,
         received: [],
@@ -196,6 +198,8 @@ const useVaccineStore = create<State>(
     calculateDosesReceived: (vaccine, turn) => {
       const turnApproved = vaccine.nextTransition;
       const onOrder = vaccine.orders;
+
+      if (!vaccine.machine.matches('approved')) return 0;
 
       const doseCapacity = Math.round(
         (turn - turnApproved + 1) ** 2 * 10000000 * Math.random()
@@ -261,9 +265,9 @@ const useVaccineStore = create<State>(
       const vaccinesCopy = lodash.cloneDeep(vaccines);
 
       for (const v of vaccinesCopy) {
-        if (v.machine.matches('approved')) receiveDoses(v, turn);
         if (v.machine.matches('failed')) break;
         transitionVaccine(v, turn);
+        receiveDoses(v, turn);
       }
 
       set((state) => {
