@@ -11,18 +11,11 @@ const Footer: React.FC = () => {
   const applet = 'VaccinesButton';
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
-  const handleClose = () => toggleActiveApplet(applet, false);
-
-  const handleSave = () => {
-    handleClose();
+  const handleClose = () => {
+    toggleActiveApplet(applet, false);
   };
 
-  return (
-    <>
-      <WindowButton title="Save" handleClick={handleSave} />
-      <WindowButton title="Cancel" handleClick={handleClose} />
-    </>
-  );
+  return <WindowButton title="Close" handleClick={handleClose} />;
 };
 
 const VaccineOrdersFooter: React.FC = () => {
@@ -60,10 +53,13 @@ const VaccineOrders: React.FC = () => {
 
   if (!vaccineSelected) return null;
 
-  const denomination = 500000;
+  const smallDenomination = 1000000;
+  const middleDenomination = 10000000;
+  const largeDenomination = 100000000;
+
   const newOrders = formatNumber(vaccineSelected.orders + ordersAdded);
   const buttonStyles =
-    'grid place-items-center rounded-full dark:disabled:bg-disabled dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 w-16 h-10';
+    'grid place-items-center rounded-full dark:disabled:bg-disabled dark:hover:bg-gray-600 dark:bg-gray-700 dark:text-gray-200 px-3';
 
   return (
     <GameWindow
@@ -71,11 +67,25 @@ const VaccineOrders: React.FC = () => {
       footer={<VaccineOrdersFooter />}
     >
       <div className="flex flex-grow row-span-7 items-center justify-center">
-        <div className="grid grid-rows-1 grid-cols-3 place-items-center text-white text-2xl max-w-sm">
+        <div className="grid grid-rows-1 grid-cols-7 place-items-center text-white text-2xl">
           <button
             className={buttonStyles}
             type="button"
-            onClick={() => setOrdersAdded(ordersAdded + denomination)}
+            onClick={() => setOrdersAdded(ordersAdded + largeDenomination)}
+          >
+            +++
+          </button>
+          <button
+            className={buttonStyles}
+            type="button"
+            onClick={() => setOrdersAdded(ordersAdded + middleDenomination)}
+          >
+            ++
+          </button>
+          <button
+            className={buttonStyles}
+            type="button"
+            onClick={() => setOrdersAdded(ordersAdded + smallDenomination)}
           >
             +
           </button>
@@ -83,10 +93,26 @@ const VaccineOrders: React.FC = () => {
           <button
             type="button"
             className={buttonStyles}
-            onClick={() => setOrdersAdded(ordersAdded - denomination)}
-            disabled={ordersAdded <= 0}
+            onClick={() => setOrdersAdded(ordersAdded - smallDenomination)}
+            disabled={ordersAdded < smallDenomination}
           >
             -
+          </button>
+          <button
+            className={buttonStyles}
+            type="button"
+            onClick={() => setOrdersAdded(ordersAdded - middleDenomination)}
+            disabled={ordersAdded < middleDenomination}
+          >
+            --
+          </button>
+          <button
+            className={buttonStyles}
+            type="button"
+            onClick={() => setOrdersAdded(ordersAdded - largeDenomination)}
+            disabled={ordersAdded < largeDenomination}
+          >
+            ---
           </button>
         </div>
       </div>

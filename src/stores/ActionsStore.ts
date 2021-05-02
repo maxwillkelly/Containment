@@ -5,8 +5,8 @@ import { actions } from '../data/actions';
 import { Action } from '../interfaces/action';
 
 const POINTS_START = 30;
-const POINTS_MAX = 40;
-const POINTS_PER_TURN = 10;
+const POINTS_MAX = 50;
+const POINTS_PER_TURN = 15;
 
 type State = {
   points: number;

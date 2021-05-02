@@ -274,15 +274,15 @@ export const actions: Action[] = [
       modify: (graduation) => 2 + 10 * graduation,
     },
     range: {
-      step: (0.000125 * gdp) / 1000000000,
-      lowest: (0.000125 * gdp) / 1000000000,
+      step: (0.0001 * gdp) / 1000000000,
+      lowest: (0.001 * gdp) / 1000000000,
       highest: (0.005 * gdp) / 1000000000,
       textPrepend: '£',
       textAppend: ' billion',
     },
     impact: {
-      budget: (graduation) => -0.000125 * gdp - 0.004875 * gdp * graduation,
-      popularity: (graduation) => 0.005 + graduation * 0.005,
+      budget: (graduation) => -0.001 * gdp - 0.004 * gdp * graduation,
+      popularity: (graduation) => 0.003 + graduation * 0.007,
       viral: (graduation) => -0.001 * graduation,
     },
   },
@@ -453,7 +453,7 @@ export const actions: Action[] = [
       lowest: (0.0003 * gdp) / 1000000000,
       highest: (0.003 * gdp) / 1000000000,
       textPrepend: '£',
-      textAppend: '',
+      textAppend: ' billion',
     },
     impact: {
       budget: (graduation) => -0.0003 * gdp - 0.0027 * gdp * graduation,
