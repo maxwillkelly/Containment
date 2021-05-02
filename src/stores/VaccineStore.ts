@@ -67,7 +67,7 @@ type State = {
 
 const useVaccineStore = create<State>(
   immer((set, get) => ({
-    candidatesAppear: 6,
+    candidatesAppear: 4,
     candidateChance: 0.1,
     vaccines: [],
 
@@ -123,7 +123,7 @@ const useVaccineStore = create<State>(
     },
 
     orderVaccines: (vaccine, orders) => {
-      const { vaccines } = get();
+      const { vaccines, sortVaccines } = get();
 
       const vaccineCopy = lodash.cloneDeep(vaccine);
       vaccineCopy.orders += orders;
@@ -134,6 +134,8 @@ const useVaccineStore = create<State>(
         state.vaccines.splice(index, 1);
         state.vaccines.push(vaccineCopy);
       });
+
+      sortVaccines();
     },
 
     generatePrice: () => Math.round(Math.random() * 40) + 3,
@@ -222,7 +224,13 @@ const useVaccineStore = create<State>(
 
       const sortedVaccines = lodash.cloneDeep(vaccines);
 
-      sortedVaccines.sort((first, second) => {
+      // Sorts by name
+      sortedVaccines.sort((first: Vaccine, second: Vaccine) =>
+        first.name.localeCompare(second.name)
+      );
+
+      // Sorts by phase
+      sortedVaccines.sort((first: Vaccine, second: Vaccine) => {
         const phaseOrder = [
           'Failed',
           'Phase 1',
