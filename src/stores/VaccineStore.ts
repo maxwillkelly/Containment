@@ -112,7 +112,7 @@ const useVaccineStore = create<State>(
       const { vaccines } = get();
 
       const vaccinesReceivedArray = vaccines.map((v) => {
-        const doses = v.received[turn - v.nextTransition - 1];
+        const doses = v.received[turn - v.nextTransition - 2];
         if (doses) return doses;
         return 0;
       });

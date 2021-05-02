@@ -11,18 +11,11 @@ const Footer: React.FC = () => {
   const applet = 'VaccinesButton';
   const toggleActiveApplet = useGameStore((state) => state.toggleActiveApplet);
 
-  const handleClose = () => toggleActiveApplet(applet, false);
-
-  const handleSave = () => {
-    handleClose();
+  const handleClose = () => {
+    toggleActiveApplet(applet, false);
   };
 
-  return (
-    <>
-      <WindowButton title="Save" handleClick={handleSave} />
-      <WindowButton title="Cancel" handleClick={handleClose} />
-    </>
-  );
+  return <WindowButton title="Close" handleClick={handleClose} />;
 };
 
 const VaccineOrdersFooter: React.FC = () => {
@@ -33,23 +26,18 @@ const VaccineOrdersFooter: React.FC = () => {
     (state) => state.setVaccineSelected
   );
 
-  const handleClose = () => setVaccineSelected(null);
-
   const handleSave = () => {
     if (!vaccineSelected) return;
     orderVaccines(vaccineSelected, ordersChange);
-    handleClose();
+    setVaccineSelected(null);
   };
 
   return (
-    <>
-      <WindowButton
-        title="Save"
-        handleClick={handleSave}
-        disabled={ordersChange <= 0}
-      />
-      <WindowButton title="Cancel" handleClick={handleClose} />
-    </>
+    <WindowButton
+      title="Save"
+      handleClick={handleSave}
+      disabled={ordersChange <= 0}
+    />
   );
 };
 
