@@ -438,7 +438,7 @@ const useViralStore = create<State>(
 
       const actionModifiersArray = Object.values(actionModifiers[turn]);
       actionModifiersArray.forEach((am) => {
-        ceilingInfections += am;
+        ceilingInfections += ceilingInfections * am;
       });
 
       const infects = Math.round(ceilingInfections);
