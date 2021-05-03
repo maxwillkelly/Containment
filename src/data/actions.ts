@@ -156,7 +156,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.00001 * gdp * graduation,
       popularity: (graduation) => 0.001 + 0.007 * graduation,
-      viral: (graduation) => 0.001 * graduation,
+      viral: (graduation) => -0.001 * graduation,
     },
   },
   {
@@ -181,7 +181,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => 0.0001 * gdp * graduation,
       popularity: (graduation) => 0.001 + 0.01 * graduation,
-      viral: (graduation) => 0.005 * graduation,
+      viral: (graduation) => -0.005 * graduation,
     },
   },
   {
@@ -433,7 +433,7 @@ export const actions: Action[] = [
     impact: {
       budget: (graduation) => -0.0005 * gdp - 0.0495 * gdp * graduation,
       popularity: (graduation) => -0.03 - 0.05 * graduation,
-      viral: (graduation) => 0.001 + 0.02 * graduation,
+      viral: (graduation) => -0.001 - 0.02 * graduation,
     },
   },
   {

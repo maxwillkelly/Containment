@@ -1,7 +1,7 @@
 {
   "name": "@maxwillkelly/containment",
   "productName": "Containment",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.babel.js",
