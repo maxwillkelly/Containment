@@ -1,6 +1,6 @@
 {
   "name": "@maxwillkelly/containment",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "./main.prod.js",
   "author": {
     "name": "Max Kelly"
